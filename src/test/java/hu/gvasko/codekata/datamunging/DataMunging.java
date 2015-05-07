@@ -1,8 +1,15 @@
 package hu.gvasko.codekata.datamunging;
 
+import hu.gvasko.stringtable.StringTable;
+import hu.gvasko.stringtable.StringTableFactory;
+import hu.gvasko.stringtable.StringTableParser;
+import hu.gvasko.stringtable.TrimToInteger;
 import org.junit.Assert;
 import org.junit.Test;
+//import static org.hamcrest.MatcherAssert.assertThat;
+//import static org.hamcrest.Matchers.*;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -19,22 +26,21 @@ public class DataMunging {
     final String WEATHER_MAX_T_NAME = "MxT";
     final String WEATHER_MIN_T_NAME = "MnT";
 
-    // load and parse weather.dat into a StringTable
-    // process the table and get the day number with the smallest temperature spread
     @Test
-    public void testDayOfSmallestTemperatureSpread() {
+    public void testDayOfSmallestTemperatureSpread() throws Exception {
         URL datFile = this.getClass().getResource("weather.dat");
-        try (StringTableParser parser = factory.getParser(datFile.toURI()) {
-            // parser config: what part of the file should be parsed
+        try (StringTableParser parser = StringTableFactory.getSoleInstance().getParser(datFile.toURI())) {
+            // parser config: select the range to be parsed
             StringTable table = parser.firstRowIsHeader().excludeLastRow().excludeEmptyRows().parse(
                     WEATHER_DAY_LEN, WEATHER_MAX_T_LEN, WEATHER_MIN_T_LEN
             );
 
-            table.addDecoder(new TrimToInteger(), WEATHER_MXT_COLUMN, WEATHER_MIN_T_NAME);
+            // decoder: how to process each field in the selected range
+            table.addStringDecoder(new TrimToInteger(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
 
             String dayOfSmallestTemperatureSpread = "14";
-            Assert.assertThat(DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME).get(WEATHER_DAY_NAME),
-                    equals(dayOfSmallestTemperatureSpread));
+            String actualDay = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME).get(WEATHER_DAY_NAME);
+            Assert.assertEquals(dayOfSmallestTemperatureSpread, actualDay);
         }
     }
 }
