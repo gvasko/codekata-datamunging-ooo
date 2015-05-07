@@ -30,7 +30,7 @@ public class DataMunging {
                     WEATHER_DAY_LEN, WEATHER_MAX_T_LEN, WEATHER_MIN_T_LEN
             );
 
-            table.addStringDecoder(new TrimToInteger(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
+            table.addStringDecoder(new KeepIntegerOnly(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
 
             String dayOfSmallestTemperatureSpread = "14";
             StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);

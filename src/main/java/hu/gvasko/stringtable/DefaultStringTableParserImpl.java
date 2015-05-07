@@ -9,14 +9,14 @@ import java.nio.file.Paths;
 /**
  * Created by Gvasko on 2015.05.07..
  */
-class DefaultStringTableParser implements StringTableParser {
+class DefaultStringTableParserImpl implements StringTableParser {
 
     private BufferedReader reader;
     private boolean firstRowIsHeader = false;
     private boolean excludeLastRow = false;
     private boolean excludeEmptyRows = false;
 
-    public DefaultStringTableParser(URI fileLocation) throws IOException {
+    public DefaultStringTableParserImpl(URI fileLocation) throws IOException {
         reader = Files.newBufferedReader(Paths.get(fileLocation));
     }
 
