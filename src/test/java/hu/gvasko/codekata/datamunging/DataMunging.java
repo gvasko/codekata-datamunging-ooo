@@ -1,15 +1,11 @@
 package hu.gvasko.codekata.datamunging;
 
-import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.StringTableFactory;
-import hu.gvasko.stringtable.StringTableParser;
-import hu.gvasko.stringtable.TrimToInteger;
+import hu.gvasko.stringtable.*;
 import org.junit.Assert;
 import org.junit.Test;
 //import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.hamcrest.Matchers.*;
 
-import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -29,17 +25,16 @@ public class DataMunging {
     @Test
     public void testDayOfSmallestTemperatureSpread() throws Exception {
         URL datFile = this.getClass().getResource("weather.dat");
-        try (StringTableParser parser = StringTableFactory.getSoleInstance().getParser(datFile.toURI())) {
-            // parser config: select the range to be parsed
+        try (StringTableParser parser = StringTableFactory.getInstance().getParser(datFile.toURI())) {
             StringTable table = parser.firstRowIsHeader().excludeLastRow().excludeEmptyRows().parse(
                     WEATHER_DAY_LEN, WEATHER_MAX_T_LEN, WEATHER_MIN_T_LEN
             );
 
-            // decoder: how to process each field in the selected range
             table.addStringDecoder(new TrimToInteger(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
 
             String dayOfSmallestTemperatureSpread = "14";
-            String actualDay = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME).get(WEATHER_DAY_NAME);
+            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
+            String actualDay = actualRecord.get(WEATHER_DAY_NAME);
             Assert.assertEquals(dayOfSmallestTemperatureSpread, actualDay);
         }
     }

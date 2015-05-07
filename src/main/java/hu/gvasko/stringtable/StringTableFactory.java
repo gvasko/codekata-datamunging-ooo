@@ -8,7 +8,7 @@ import java.net.URI;
 public class StringTableFactory {
     private static StringTableFactory soleInstance = new StringTableFactory();
 
-    public static StringTableFactory getSoleInstance() {
+    public static StringTableFactory getInstance() {
         return soleInstance;
     }
 
