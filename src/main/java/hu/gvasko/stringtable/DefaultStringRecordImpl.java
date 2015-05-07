@@ -1,6 +1,8 @@
 package hu.gvasko.stringtable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,13 +12,16 @@ class DefaultStringRecordImpl implements  StringRecord {
 
     static class Builder {
 
+        List<String> order;
         Map<String, String> stringMap;
 
         Builder() {
+            order = new ArrayList<>();
             stringMap = new HashMap<>();
         }
 
         Builder addField(String key, String value) {
+            order.add(key);
             stringMap.put(key, value);
             return this;
         }
@@ -25,7 +30,7 @@ class DefaultStringRecordImpl implements  StringRecord {
             if (stringMap.isEmpty()) {
                 throw new IllegalStateException("Empty record cannot be created.");
             } else {
-                return new DefaultStringRecordImpl(stringMap);
+                return new DefaultStringRecordImpl(order, stringMap);
             }
         }
     }
@@ -34,9 +39,16 @@ class DefaultStringRecordImpl implements  StringRecord {
         return new Builder();
     }
 
+    private List<String> fieldOrder;
     private Map<String, String> fields;
 
-    DefaultStringRecordImpl(Map<String, String> sharedFields) {
+    DefaultStringRecordImpl(List<String> sharedFieldOrder, Map<String, String> sharedFields) {
+        for (String field : sharedFieldOrder) {
+            if (!sharedFields.containsKey(field)) {
+                throw new IllegalArgumentException("Invalid fieldOrder: " + field);
+            }
+        }
+        fieldOrder = sharedFieldOrder;
         fields = sharedFields;
     }
 
@@ -56,7 +68,7 @@ class DefaultStringRecordImpl implements  StringRecord {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (String field : fields.keySet()) {
+        for (String field : fieldOrder) {
             if (!first) {
                 sb.append(',');
             }
