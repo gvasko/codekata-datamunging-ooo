@@ -12,16 +12,13 @@ class DefaultStringRecordImpl implements  StringRecord {
 
     static class Builder {
 
-        List<String> order;
         Map<String, String> stringMap;
 
         Builder() {
-            order = new ArrayList<>();
             stringMap = new HashMap<>();
         }
 
         Builder addField(String key, String value) {
-            order.add(key);
             stringMap.put(key, value);
             return this;
         }
@@ -30,7 +27,7 @@ class DefaultStringRecordImpl implements  StringRecord {
             if (stringMap.isEmpty()) {
                 throw new IllegalStateException("Empty record cannot be created.");
             } else {
-                return new DefaultStringRecordImpl(order, stringMap);
+                return new DefaultStringRecordImpl(stringMap);
             }
         }
     }
@@ -42,13 +39,7 @@ class DefaultStringRecordImpl implements  StringRecord {
     private List<String> fieldOrder;
     private Map<String, String> fields;
 
-    DefaultStringRecordImpl(List<String> sharedFieldOrder, Map<String, String> sharedFields) {
-        for (String field : sharedFieldOrder) {
-            if (!sharedFields.containsKey(field)) {
-                throw new IllegalArgumentException("Invalid fieldOrder: " + field);
-            }
-        }
-        fieldOrder = sharedFieldOrder;
+    DefaultStringRecordImpl(Map<String, String> sharedFields) {
         fields = sharedFields;
     }
 
@@ -68,7 +59,7 @@ class DefaultStringRecordImpl implements  StringRecord {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (String field : fieldOrder) {
+        for (String field : fields.keySet()) {
             if (!first) {
                 sb.append(',');
             }
