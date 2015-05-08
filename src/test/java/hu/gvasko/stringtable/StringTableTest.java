@@ -24,9 +24,11 @@ public class StringTableTest {
         StringTable table = getAbcTable();
         Assert.assertEquals("Row count: ", abcTable.length, table.getRowCount());
         for (int row = 0; row < table.getRowCount(); row++) {
+            String[] expectedRecord = abcTable[row];
+            StringRecord actualRecord = table.getRecord(row);
             for (int col = 0; col < defaultSchema.length; col++) {
                 String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
-                Assert.assertEquals(message, abcTable[row][col], table.getRecord(row).get(defaultSchema[col]));
+                Assert.assertEquals(message, expectedRecord[col], actualRecord.get(defaultSchema[col]));
             }
         }
     }
@@ -37,9 +39,11 @@ public class StringTableTest {
         List<StringRecord> records = table.getAllRecords();
         Assert.assertEquals("Row count: ", abcTable.length, records.size());
         for (int row = 0; row < records.size(); row++) {
+            String[] expectedRecord = abcTable[row];
+            StringRecord actualRecord = records.get(row);
             for (int col = 0; col < defaultSchema.length; col++) {
                 String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
-                Assert.assertEquals(message, abcTable[row][col], records.get(row).get(defaultSchema[col]));
+                Assert.assertEquals(message, expectedRecord[col], actualRecord.get(defaultSchema[col]));
             }
         }
     }
@@ -53,13 +57,15 @@ public class StringTableTest {
         table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
 
         for (int row = 0; row < table.getRowCount(); row++) {
+            String[] expectedRecord = abcTable[row];
+            StringRecord actualRecord = table.getRecord(row);
             for (int col = 0; col < defaultSchema.length; col++) {
                 String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
-                String expected = abcTable[row][col];
+                String expectedValue = expectedRecord[col];
                 if (row == testRow && col == testCol) {
-                    expected = replacedValue;
+                    expectedValue = replacedValue;
                 }
-                Assert.assertEquals(message, expected, table.getRecord(row).get(defaultSchema[col]));
+                Assert.assertEquals(message, expectedValue, actualRecord.get(defaultSchema[col]));
             }
         }
     }
@@ -74,13 +80,15 @@ public class StringTableTest {
 
         List<StringRecord> records = table.getAllRecords();
         for (int row = 0; row < records.size(); row++) {
+            String[] expectedRecord = abcTable[row];
+            StringRecord actualRecord = records.get(row);
             for (int col = 0; col < defaultSchema.length; col++) {
                 String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
-                String expected = abcTable[row][col];
+                String expectedValue = expectedRecord[col];
                 if (row == testRow && col == testCol) {
-                    expected = replacedValue;
+                    expectedValue = replacedValue;
                 }
-                Assert.assertEquals(message, expected, records.get(row).get(defaultSchema[col]));
+                Assert.assertEquals(message, expectedValue, actualRecord.get(defaultSchema[col]));
             }
         }
     }

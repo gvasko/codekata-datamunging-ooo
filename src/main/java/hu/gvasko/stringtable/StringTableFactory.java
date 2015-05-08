@@ -1,5 +1,7 @@
 package hu.gvasko.stringtable;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.net.URI;
 
 /**
@@ -12,7 +14,11 @@ public class StringTableFactory {
         return soleInstance;
     }
 
-    public StringTableParser getParser(URI uri) {
-        throw new RuntimeException("Not implemented");
+    public StringTableParser getParser(URI uri) throws IOException {
+        return new DefaultStringTableParserImpl(uri);
+    }
+
+    public StringTableParser getParser(Reader reader) {
+        return new DefaultStringTableParserImpl(reader);
     }
 }

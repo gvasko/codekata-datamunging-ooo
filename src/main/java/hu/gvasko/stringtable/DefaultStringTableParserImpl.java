@@ -2,6 +2,7 @@ package hu.gvasko.stringtable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,13 +12,17 @@ import java.nio.file.Paths;
  */
 class DefaultStringTableParserImpl implements StringTableParser {
 
-    private BufferedReader reader;
+    private Reader reader;
     private boolean firstRowIsHeader = false;
     private boolean excludeLastRow = false;
     private boolean excludeEmptyRows = false;
 
     public DefaultStringTableParserImpl(URI fileLocation) throws IOException {
         reader = Files.newBufferedReader(Paths.get(fileLocation));
+    }
+
+    public DefaultStringTableParserImpl(Reader sharedReader) {
+        reader = sharedReader;
     }
 
     @Override

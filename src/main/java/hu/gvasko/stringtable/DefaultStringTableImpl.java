@@ -7,7 +7,7 @@ import java.util.function.UnaryOperator;
 /**
  * Created by gvasko on 2015.05.07..
  */
-public class DefaultStringTableImpl implements StringTable {
+class DefaultStringTableImpl implements StringTable {
 
     static class Builder {
         private String[] schema;
