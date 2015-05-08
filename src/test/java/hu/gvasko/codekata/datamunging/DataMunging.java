@@ -2,6 +2,7 @@ package hu.gvasko.codekata.datamunging;
 
 import hu.gvasko.stringtable.*;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 //import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.hamcrest.Matchers.*;
@@ -37,15 +38,26 @@ public class DataMunging {
     static final String FOOTBALL_GOALS_FOR_NAME = "F";
     static final String FOOTBALL_GOALS_AGAINST_NAME = "A";
 
+    private StringTableFactory factory;
+
+    @Before
+    public void setUp() {
+        factory = StringTableFactory.getInstance();
+    }
+
     @Test
     public void testDayWithSmallestTemperatureSpread() throws Exception {
         URL datFile = this.getClass().getResource("weather.dat");
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(datFile.toURI())) {
-            StringTable table = parser.firstRowIsHeader().excludeLastRow().excludeEmptyRows().parse(
+        try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
+            parser.addLineFilter(factory.skipEmptyLines());
+            parser.addRecordFilter(factory.onlyNumbers(WEATHER_DAY_NAME));
+            StringTable table = parser.firstRowIsHeader().parse(
                     WEATHER_DAY_LEN, WEATHER_MAX_T_LEN, WEATHER_MIN_T_LEN
             );
 
-            table.addStringDecoder(new KeepIntegerOnly(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
+            table.addStringDecoder(
+                    factory.getKeepIntegerOnlyOperator(),
+                    WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
 
             String dayOfSmallestTemperatureSpread = "14";
             StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
@@ -57,8 +69,10 @@ public class DataMunging {
     @Test
     public void testNameOfTeamWithSmallestGoalDifference() throws Exception {
         URL datFile = this.getClass().getResource("football.dat");
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(datFile.toURI())) {
-            StringTable table = parser.firstRowIsHeader().excludeEmptyRows().parse(
+        try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
+            parser.addLineFilter(factory.skipEmptyLines());
+            parser.addLineFilter(factory.skipSplitterLines());
+            StringTable table = parser.firstRowIsHeader().parse(
                     FOOTBALL_NUM_LEN, FOOTBALL_TEAM_LEN, FOOTBALL_P_LEN, FOOTBALL_W_LEN,
                     FOOTBALL_L_LEN, FOOTBALL_D_LEN, FOOTBALL_F_LEN, FOOTBALL_MINUS_LEN,
                     FOOTBALL_A_LEN, FOOTBALL_PTS_LEN

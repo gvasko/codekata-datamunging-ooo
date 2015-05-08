@@ -3,6 +3,8 @@ package hu.gvasko.stringtable;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Created by gvasko on 2015.05.06..
@@ -29,4 +31,24 @@ public class StringTableFactory {
     public StringTableParser getFixWidthParser(Reader reader) {
         return new DefaultStringTableParserImpl(reader);
     }
+
+
+    // TODO: move to somewhere else?
+
+    public UnaryOperator<String> getKeepIntegerOnlyOperator() {
+        return new KeepIntegerOnly();
+    }
+
+    public Predicate<String> skipEmptyLines() {
+
+    }
+
+    public Predicate<String> skipSplitterLines() {
+
+    }
+
+    public Predicate<StringRecord> onlyNumbers(String column) {
+
+    }
+
 }

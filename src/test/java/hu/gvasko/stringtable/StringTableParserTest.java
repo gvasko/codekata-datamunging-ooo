@@ -1,6 +1,7 @@
 package hu.gvasko.stringtable;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringReader;
@@ -12,33 +13,45 @@ import static hu.gvasko.stringtable.StringTableParserFixtures.*;
  */
 public class StringTableParserTest {
 
+    private StringTableFactory factory;
+
+    @Before
+    public void setUp() {
+        factory = StringTableFactory.getInstance();
+    }
+
     @Test
-    public void parseWith_firstRowIsHeader_excludeLastRow_excludeEmptyRows() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
-            StringTable table = parser.firstRowIsHeader().excludeLastRow().excludeEmptyRows().parse(defaultHeader);
-            assertEachCellIsValid(table_firstRowIsHeader_excludeLastRow_excludeEmptyRows, table, defaultSchema);
+    public void parseWith_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn() throws Exception {
+        try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
+            parser.addLineFilter(factory.skipEmptyLines());
+            parser.addRecordFilter(factory.onlyNumbers(defaultSchema[0]));
+            StringTable table = parser.firstRowIsHeader().parse(defaultHeader);
+            assertEachCellIsValid(table_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn, table, defaultSchema);
         }
     }
 
     @Test
-    public void parseWith_excludeLastRow_excludeEmptyRows() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
-            StringTable table = parser.excludeLastRow().excludeEmptyRows().parse(defaultHeader);
-            assertEachCellIsValid(table_excludeLastRow_excludeEmptyRows, table, numberedSchema);
+    public void parseWith_skipEmptyLines_skipSplitterLines() throws Exception {
+        try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
+            parser.addLineFilter(factory.skipEmptyLines());
+            parser.addLineFilter(factory.skipSplitterLines());
+            StringTable table = parser.parse(defaultHeader);
+            assertEachCellIsValid(table_skipEmptyLines_skipSplitterLines, table, numberedSchema);
         }
     }
 
     @Test
     public void parseWith_excludeEmptyRows() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
-            StringTable table = parser.excludeEmptyRows().parse(defaultHeader);
-            assertEachCellIsValid(table_excludeEmptyRows, table, numberedSchema);
+        try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
+            parser.addLineFilter(factory.skipEmptyLines());
+            StringTable table = parser.parse(defaultHeader);
+            assertEachCellIsValid(table_skipEmptyLines, table, numberedSchema);
         }
     }
 
     @Test
     public void parseWith_fullTable() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
+        try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
             StringTable table = parser.parse(defaultHeader);
             assertEachCellIsValid(table_full, table, numberedSchema);
         }
@@ -46,7 +59,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseEmptyText() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(emptyText))) {
+        try (StringTableParser parser = factory.getFixWidthParser(new StringReader(emptyText))) {
             StringTable emptyTable = parser.parse(defaultHeader);
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
@@ -54,8 +67,9 @@ public class StringTableParserTest {
 
     @Test
     public void parseSpaces() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(spaceText))) {
-            StringTable emptyTable = parser.excludeEmptyRows().parse(defaultHeader);
+        try (StringTableParser parser = factory.getFixWidthParser(new StringReader(spaceText))) {
+            parser.addLineFilter(factory.skipEmptyLines());
+            StringTable emptyTable = parser.parse(defaultHeader);
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
     }

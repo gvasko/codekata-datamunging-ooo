@@ -5,7 +5,7 @@ import java.util.function.UnaryOperator;
 /**
  * Created by gvasko on 2015.05.06..
  */
-public class KeepIntegerOnly implements UnaryOperator<String> {
+class KeepIntegerOnly implements UnaryOperator<String> {
     @Override
     public String apply(String s) {
         StringBuilder sb = new StringBuilder();
