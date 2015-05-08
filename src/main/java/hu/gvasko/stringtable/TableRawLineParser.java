@@ -1,5 +1,8 @@
 package hu.gvasko.stringtable;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * Created by Gvasko on 2015.05.08..
  */
@@ -8,18 +11,21 @@ class TableRawLineParser {
     private StringTableBuilder builder = null;
 
     private boolean isFirstRowHeader;
-    private boolean isLastRowExcluded;
-    private boolean isEmptyRowExcluded;
 
     private int[] fieldLengths;
     private String[] lastRecord = null;
+    private List<Predicate<String>> linePredicates;
+    private List<Predicate<StringRecord>> recordPredicates;
 
-
-    public TableRawLineParser(int[] fieldLengths, boolean isFirstRowHeader, boolean isLastRowExcluded, boolean isEmptyRowExcluded) {
+    public TableRawLineParser(
+            int[] fieldLengths,
+            boolean isFirstRowHeader,
+            List<Predicate<String>> linePredicates,
+            List<Predicate<StringRecord>> recordPredicates) {
         this.fieldLengths = fieldLengths;
         this.isFirstRowHeader = isFirstRowHeader;
-        this.isLastRowExcluded = isLastRowExcluded;
-        this.isEmptyRowExcluded = isEmptyRowExcluded;
+        this.linePredicates = linePredicates;
+        this.recordPredicates = recordPredicates;
 
         if (!isFirstRowHeader) {
             builder = getBuilderWithNumberedHeader(fieldLengths.length);
@@ -32,8 +38,10 @@ class TableRawLineParser {
     }
 
     public void parseRawLine(String rawLine) {
-        if (isEmptyRowExcluded && "".equals(rawLine.trim())) {
-            return;
+        for (Predicate<String> linePredicate : linePredicates) {
+            if (!linePredicate.test(rawLine.trim())) {
+                return;
+            }
         }
 
         if (builder == null) {
@@ -45,20 +53,29 @@ class TableRawLineParser {
             }
             builder = getBuilderWithHeader(toUniqueStringArray(toStringArray(rawLine, fieldLengths)));
         } else {
-            if (lastRecord != null) {
-                builder.addRecord(lastRecord);
-            }
+            addLastRecord();
             setLastRecord(rawLine);
         }
+    }
+
+    private void addLastRecord() {
+        if (lastRecord == null) {
+            return;
+        }
+        StringRecord sRec = DefaultStringRecordImpl.newRecord(builder.getSchema(), lastRecord);
+        for (Predicate<StringRecord> recordPredicate : recordPredicates) {
+            if (!recordPredicate.test(sRec)) {
+                return;
+            }
+        }
+        builder.addRecord(lastRecord);
     }
 
     private void finishParsing() {
         if (builder == null) {
             builder = getBuilderWithNumberedHeader(fieldLengths.length);
         }
-        if (lastRecord != null && !isLastRowExcluded) {
-            builder.addRecord(lastRecord);
-        }
+        addLastRecord();
     }
 
     private void setLastRecord(String rawLine) {

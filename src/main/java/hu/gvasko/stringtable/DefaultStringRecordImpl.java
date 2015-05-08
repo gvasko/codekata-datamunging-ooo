@@ -36,6 +36,22 @@ class DefaultStringRecordImpl implements  StringRecord {
         return new Builder();
     }
 
+    static StringRecord newRecord(String[] schema, String[] values) {
+        if (schema.length != values.length) {
+            throw new IllegalArgumentException("Invalid values according to the schema.");
+        }
+        if (schema.length == 0) {
+            throw new IllegalStateException("Empty record cannot be created.");
+        }
+
+        Map<String, String> stringMap = new HashMap<>();
+        for (int i = 0; i < schema.length; i++) {
+            stringMap.put(schema[i], values[i]);
+        }
+
+        return new DefaultStringRecordImpl(stringMap);
+    }
+
     private List<String> fieldOrder;
     private Map<String, String> fields;
 

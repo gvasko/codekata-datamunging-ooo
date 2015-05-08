@@ -41,7 +41,7 @@ public class StringTableParserTest {
     }
 
     @Test
-    public void parseWith_excludeEmptyRows() throws Exception {
+    public void parseWith_skipEmptyLines() throws Exception {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             StringTable table = parser.parse(defaultHeader);

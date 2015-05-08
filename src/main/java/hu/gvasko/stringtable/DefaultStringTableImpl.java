@@ -23,6 +23,11 @@ class DefaultStringTableImpl implements StringTable {
         }
 
         @Override
+        public String[] getSchema() {
+            return Arrays.copyOf(schema, schema.length);
+        }
+
+        @Override
         public StringTableBuilder addRecord(String... fields) {
             if (schema.length != fields.length) {
                 throw new RuntimeException("Unexpected record.");

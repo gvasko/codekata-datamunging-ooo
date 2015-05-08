@@ -40,15 +40,15 @@ public class StringTableFactory {
     }
 
     public Predicate<String> skipEmptyLines() {
-
+        return line -> !"".equals(line);
     }
 
     public Predicate<String> skipSplitterLines() {
-
+        return line -> "".equals(line) || !"".equals(line.replace(line.charAt(0), ' ').trim());
     }
 
     public Predicate<StringRecord> onlyNumbers(String column) {
-
+        return record -> record.get(column).matches("^[+-]?\\d+$");
     }
 
 }
