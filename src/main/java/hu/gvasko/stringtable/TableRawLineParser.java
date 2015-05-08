@@ -43,7 +43,7 @@ class TableRawLineParser {
             if (lastRecord != null) {
                 throw new IllegalStateException("lastRecord should be null");
             }
-            builder = getBuilderWithHeader(toStringArray(rawLine, fieldLengths));
+            builder = getBuilderWithHeader(toUniqueStringArray(toStringArray(rawLine, fieldLengths)));
         } else {
             if (lastRecord != null) {
                 builder.addRecord(lastRecord);
@@ -84,5 +84,27 @@ class TableRawLineParser {
         return strArr;
     }
 
+    private static String[] toUniqueStringArray(String[] stringArray) {
+        // O(n^2), but it is designed for tables with a few columns only
+        String[] uniqueStringArray = new String[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            if (getCount(stringArray[i], stringArray) > 1) {
+                uniqueStringArray[i] = Integer.toString(i) + stringArray[i];
+            } else {
+                uniqueStringArray[i] = stringArray[i];
+            }
+        }
+        return uniqueStringArray;
+    }
+
+    private static int getCount(String ss, String[] stringArray) {
+        int counter = 0;
+        for (String s : stringArray) {
+            if (ss.equals(s)) {
+                counter++;
+            }
+        }
+        return counter;
+    }
 
 }
