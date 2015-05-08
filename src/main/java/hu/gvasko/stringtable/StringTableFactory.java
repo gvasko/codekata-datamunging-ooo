@@ -22,11 +22,11 @@ public class StringTableFactory {
         return numberedHeader;
     }
 
-    public StringTableParser getParser(URI uri) throws IOException {
+    public StringTableParser getFixWidthParser(URI uri) throws IOException {
         return new DefaultStringTableParserImpl(uri);
     }
 
-    public StringTableParser getParser(Reader reader) {
+    public StringTableParser getFixWidthParser(Reader reader) {
         return new DefaultStringTableParserImpl(reader);
     }
 }

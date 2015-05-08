@@ -149,7 +149,7 @@ public class StringTableTest {
 
     @Test
     public void singleRowTable() {
-        StringTable singleRowTable = StringTableFactory.getInstance().getParser(new StringReader("A B C ")).parse(new int[] {2, 2, 2});
+        StringTable singleRowTable = StringTableFactory.getInstance().getFixWidthParser(new StringReader("A B C ")).parse(new int[] {2, 2, 2});
         Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
         StringRecord theRecord = singleRowTable.getRecord(0);
         Assert.assertEquals("element 0", "A", theRecord.get("0"));

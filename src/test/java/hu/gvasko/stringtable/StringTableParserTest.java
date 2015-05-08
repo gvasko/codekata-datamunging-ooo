@@ -14,7 +14,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_firstRowIsHeader_excludeLastRow_excludeEmptyRows() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
+        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
             StringTable table = parser.firstRowIsHeader().excludeLastRow().excludeEmptyRows().parse(defaultHeader);
             assertEachCellIsValid(table_firstRowIsHeader_excludeLastRow_excludeEmptyRows, table, defaultSchema);
         }
@@ -22,7 +22,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_excludeLastRow_excludeEmptyRows() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
+        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
             StringTable table = parser.excludeLastRow().excludeEmptyRows().parse(defaultHeader);
             assertEachCellIsValid(table_excludeLastRow_excludeEmptyRows, table, numberedSchema);
         }
@@ -30,7 +30,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_excludeEmptyRows() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
+        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
             StringTable table = parser.excludeEmptyRows().parse(defaultHeader);
             assertEachCellIsValid(table_excludeEmptyRows, table, numberedSchema);
         }
@@ -38,7 +38,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_fullTable() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
+        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(defaultText))) {
             StringTable table = parser.parse(defaultHeader);
             assertEachCellIsValid(table_full, table, numberedSchema);
         }
@@ -46,7 +46,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseEmptyText() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(emptyText))) {
+        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(emptyText))) {
             StringTable emptyTable = parser.parse(defaultHeader);
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
@@ -54,7 +54,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseSpaces() throws Exception {
-        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(spaceText))) {
+        try (StringTableParser parser = StringTableFactory.getInstance().getFixWidthParser(new StringReader(spaceText))) {
             StringTable emptyTable = parser.excludeEmptyRows().parse(defaultHeader);
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
