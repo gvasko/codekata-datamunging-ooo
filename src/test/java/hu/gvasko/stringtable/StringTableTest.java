@@ -3,6 +3,8 @@ package hu.gvasko.stringtable;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
+
 import static hu.gvasko.stringtable.StringTableFixtures.*;
 
 
@@ -18,34 +20,81 @@ public class StringTableTest {
     }
 
     @Test
-    public void returnsAllRecords() {
+    public void returnsRecordAtIndex() {
         StringTable table = getAbcTable();
-        String[] actualRecords = table.getAllRecords().stream().map(rec -> rec.toString()).toArray(String[]::new);
-        String[] expectedRecords = { ROW_1_CSV, ROW_2_CSV, ROW_3_CSV, ROW_4_CSV };
-        Assert.assertArrayEquals(expectedRecords, actualRecords);
+        Assert.assertEquals("Row count: ", abcTable.length, table.getRowCount());
+        for (int row = 0; row < table.getRowCount(); row++) {
+            for (int col = 0; col < defaultSchema.length; col++) {
+                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                Assert.assertEquals(message, abcTable[row][col], table.getRecord(row).get(defaultSchema[col]));
+            }
+        }
     }
 
     @Test
-    public void returnsDecodedRecords() {
+    public void returnsAllRecords() {
+        StringTable table = getAbcTable();
+        List<StringRecord> records = table.getAllRecords();
+        Assert.assertEquals("Row count: ", abcTable.length, records.size());
+        for (int row = 0; row < records.size(); row++) {
+            for (int col = 0; col < defaultSchema.length; col++) {
+                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                Assert.assertEquals(message, abcTable[row][col], records.get(row).get(defaultSchema[col]));
+            }
+        }
+    }
+
+    @Test
+    public void recordAtIndexDecoded() {
         StringTable table = getAbcTable();
         final String replacedValue = "replaced-value";
-        table.addStringDecoder(value -> BBB_3_VALUE.equals(value) ? replacedValue : value, defaultSchema[BBB_COLUMN]);
-        String[] actualRecords = table.getAllRecords().stream().map(rec -> rec.toString()).toArray(String[]::new);
-        final String new_row_3_csv = AAA_3_VALUE + ',' + replacedValue + ',' + CCC_3_VALUE;
-        String[] expectedRecords = { ROW_1_CSV, ROW_2_CSV, new_row_3_csv, ROW_4_CSV };
-        Assert.assertArrayEquals(expectedRecords, actualRecords);
+        final int testRow = 2;
+        final int testCol = BBB_COLUMN;
+        table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
+
+        for (int row = 0; row < table.getRowCount(); row++) {
+            for (int col = 0; col < defaultSchema.length; col++) {
+                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                String expected = abcTable[row][col];
+                if (row == testRow && col == testCol) {
+                    expected = replacedValue;
+                }
+                Assert.assertEquals(message, expected, table.getRecord(row).get(defaultSchema[col]));
+            }
+        }
+    }
+
+    @Test
+    public void allRecordsDecoded() {
+        StringTable table = getAbcTable();
+        final String replacedValue = "replaced-value";
+        final int testRow = 2;
+        final int testCol = BBB_COLUMN;
+        table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
+
+        List<StringRecord> records = table.getAllRecords();
+        for (int row = 0; row < records.size(); row++) {
+            for (int col = 0; col < defaultSchema.length; col++) {
+                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                String expected = abcTable[row][col];
+                if (row == testRow && col == testCol) {
+                    expected = replacedValue;
+                }
+                Assert.assertEquals(message, expected, records.get(row).get(defaultSchema[col]));
+            }
+        }
     }
 
     @Test
     public void multipleDecodersAreChained() {
         StringTable table = getAbcTable();
         final String replacedValue = "replaced-value";
-        table.addStringDecoder(value -> BBB_3_VALUE.equals(value) ? replacedValue : value, defaultSchema[BBB_COLUMN]);
-        table.addStringDecoder(value -> value.replace("replaced", "new"), defaultSchema[BBB_COLUMN]);
-        String[] actualRecords = table.getAllRecords().stream().map(rec -> rec.toString()).toArray(String[]::new);
-        final String new_row_3_csv = AAA_3_VALUE + ',' + "new-value" + ',' + CCC_3_VALUE;
-        String[] expectedRecords = { ROW_1_CSV, ROW_2_CSV, new_row_3_csv, ROW_4_CSV };
-        Assert.assertArrayEquals(expectedRecords, actualRecords);
+        final int testRow = 2;
+        final int testCol = BBB_COLUMN;
+        table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
+        table.addStringDecoder(value -> value.replace("replaced", "new"), defaultSchema[testCol]);
+
+        Assert.assertEquals("new-value", table.getRecord(testRow).get(defaultSchema[testCol]));
     }
 
     @Test(expected = IllegalArgumentException.class)

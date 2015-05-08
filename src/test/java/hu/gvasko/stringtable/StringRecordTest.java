@@ -49,9 +49,4 @@ public class StringRecordTest {
         DefaultStringRecordImpl.newBuilder().build();
     }
 
-    @Test
-    public void toStringReturnsCSV() {
-        StringRecord rec = getTrioFieldsRecord();
-        Assert.assertEquals(TRIO1_VALUE+','+TRIO2_VALUE+','+TRIO3_VALUE, rec.toString());
-    }
 }

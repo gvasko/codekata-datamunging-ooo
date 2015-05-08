@@ -58,6 +58,7 @@ class DefaultStringRecordImpl implements  StringRecord {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append('{');
         boolean first = true;
         for (String field : fields.keySet()) {
             if (!first) {
@@ -66,6 +67,7 @@ class DefaultStringRecordImpl implements  StringRecord {
             sb.append(fields.get(field));
             first = false;
         }
+        sb.append('}');
         return sb.toString();
     }
 }
