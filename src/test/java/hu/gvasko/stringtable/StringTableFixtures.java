@@ -23,7 +23,7 @@ public final class StringTableFixtures {
     }
 
     public static StringTable getAbcTable() {
-        DefaultStringTableImpl.Builder builder = DefaultStringTableImpl.newBuilder(defaultSchema);
+        StringTableBuilder builder = DefaultStringTableImpl.newBuilder(defaultSchema);
 
         for (int i = 0; i < abcTable.length; i++) {
             builder.addRecord(abcTable[i][AAA_COLUMN], abcTable[i][BBB_COLUMN], abcTable[i][CCC_COLUMN]);

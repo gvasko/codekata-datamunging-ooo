@@ -6,7 +6,11 @@ package hu.gvasko.stringtable;
 public class StringTableParserFixtures {
 
     public static final String[] defaultSchema = { "Aaa", "Bbb", "Ccc" };
+    public static final String[] numberedSchema = StringTableFactory.getDefaultHeader(defaultSchema.length);
     public static final int[] defaultHeader = { 5, 5, 5 };
+
+    public static final String emptyText = "";
+    public static final String spaceText = "   ";
 
     public static final String defaultText = ""
             + " Aaa  Bbb  Ccc \n"
@@ -23,7 +27,7 @@ public class StringTableParserFixtures {
             { "a0", "b0", "c0" },
             { "a1", "b1", "c1" },
             { "a2", "", "c2" },
-            { "a3", "b3", "c3" }
+            { "a3", "b3", "" }
     };
 
     public static final String[][] table_excludeLastRow_excludeEmptyRows = {
@@ -51,7 +55,6 @@ public class StringTableParserFixtures {
             { "a2", "", "c2" },
             { "a3", "b3", "" },
             { "-----", "-----", "-----" },
-            { "", "", "" },
             { "", "", "" }
     };
 

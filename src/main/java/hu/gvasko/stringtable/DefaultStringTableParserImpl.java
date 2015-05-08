@@ -12,7 +12,7 @@ import java.nio.file.Paths;
  */
 class DefaultStringTableParserImpl implements StringTableParser {
 
-    private Reader reader;
+    private BufferedReader reader;
     private boolean firstRowIsHeader = false;
     private boolean excludeLastRow = false;
     private boolean excludeEmptyRows = false;
@@ -22,12 +22,32 @@ class DefaultStringTableParserImpl implements StringTableParser {
     }
 
     public DefaultStringTableParserImpl(Reader sharedReader) {
-        reader = sharedReader;
+        reader = new BufferedReader(sharedReader);
     }
 
     @Override
     public StringTable parse(int... fieldLengths) {
-        return null;
+        try {
+            return parseWithoutTry(fieldLengths);
+        } catch (IOException exReadlLine) {
+            RuntimeException ex = new RuntimeException("Parse exception", exReadlLine);
+            try {
+                close();
+            }
+            catch (Exception exClose) {
+                ex.addSuppressed(exClose);
+            }
+            throw ex;
+        }
+    }
+
+    private StringTable parseWithoutTry(int[] fieldLengths) throws IOException {
+        TableRawLineProcessor lineProcessor = new TableRawLineProcessor(fieldLengths, firstRowIsHeader, excludeLastRow, excludeEmptyRows);
+        String line;
+        while ((line = reader.readLine()) != null) {
+            lineProcessor.processRawLine(line);
+        }
+        return lineProcessor.getTableBuilder().build();
     }
 
     @Override

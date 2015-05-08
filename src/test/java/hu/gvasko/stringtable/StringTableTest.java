@@ -141,4 +141,14 @@ public class StringTableTest {
         table.addStringDecoder(value -> "");
     }
 
+    @Test(expected = IllegalAccessException.class)
+    public void schemaMustBeUnique() {
+
+    }
+
+    @Test
+    public void singleRowTable() {
+        throw new RuntimeException("not implemented");
+    }
+
 }

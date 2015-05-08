@@ -16,7 +16,7 @@ public class StringTableParserTest {
     public void parseWith_firstRowIsHeader_excludeLastRow_excludeEmptyRows() throws Exception {
         try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
             StringTable table = parser.firstRowIsHeader().excludeLastRow().excludeEmptyRows().parse(defaultHeader);
-            assertEachCellIsValid(table_firstRowIsHeader_excludeLastRow_excludeEmptyRows, table);
+            assertEachCellIsValid(table_firstRowIsHeader_excludeLastRow_excludeEmptyRows, table, defaultSchema);
         }
     }
 
@@ -24,7 +24,7 @@ public class StringTableParserTest {
     public void parseWith_excludeLastRow_excludeEmptyRows() throws Exception {
         try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
             StringTable table = parser.excludeLastRow().excludeEmptyRows().parse(defaultHeader);
-            assertEachCellIsValid(table_excludeLastRow_excludeEmptyRows, table);
+            assertEachCellIsValid(table_excludeLastRow_excludeEmptyRows, table, numberedSchema);
         }
     }
 
@@ -32,7 +32,7 @@ public class StringTableParserTest {
     public void parseWith_excludeEmptyRows() throws Exception {
         try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
             StringTable table = parser.excludeEmptyRows().parse(defaultHeader);
-            assertEachCellIsValid(table_excludeEmptyRows, table);
+            assertEachCellIsValid(table_excludeEmptyRows, table, numberedSchema);
         }
     }
 
@@ -40,17 +40,34 @@ public class StringTableParserTest {
     public void parseWith_fullTable() throws Exception {
         try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(defaultText))) {
             StringTable table = parser.parse(defaultHeader);
-            assertEachCellIsValid(table_full, table);
+            assertEachCellIsValid(table_full, table, numberedSchema);
         }
     }
 
-    private void assertEachCellIsValid(String[][] expected, StringTable actual) {
+    @Test
+    public void parseEmptyText() throws Exception {
+        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(emptyText))) {
+            StringTable emptyTable = parser.parse(defaultHeader);
+            Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
+        }
+    }
+
+    @Test
+    public void parseSpaces() throws Exception {
+        try (StringTableParser parser = StringTableFactory.getInstance().getParser(new StringReader(spaceText))) {
+            StringTable emptyTable = parser.excludeEmptyRows().parse(defaultHeader);
+            Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
+        }
+    }
+
+    private void assertEachCellIsValid(String[][] expected, StringTable actual, String[] schema) {
         Assert.assertEquals("Row count: ", expected.length, actual.getRowCount());
         for (int row = 0; row < expected.length; row++) {
             String[] expectedRecord = expected[row];
             StringRecord actualRecord = actual.getRecord(row);
             for (int col = 0; col < defaultSchema.length; col++) {
-                Assert.assertEquals(expectedRecord[col], actualRecord.get(defaultSchema[col]));
+                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                Assert.assertEquals(message, expectedRecord[col], actualRecord.get(schema[col]));
             }
         }
     }

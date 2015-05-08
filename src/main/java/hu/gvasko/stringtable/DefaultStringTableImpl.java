@@ -9,17 +9,18 @@ import java.util.function.UnaryOperator;
  */
 class DefaultStringTableImpl implements StringTable {
 
-    static class Builder {
+    private static class BuilderImpl implements StringTableBuilder {
         private String[] schema;
         private List<String[]> records;
 
-        Builder(String... schema) {
+        BuilderImpl(String... schema) {
             // TODO: no duplicate names allowed
             this.schema = schema;
             records = new ArrayList<>();
         }
 
-        Builder addRecord(String... fields) {
+        @Override
+        public StringTableBuilder addRecord(String... fields) {
             if (schema.length != fields.length) {
                 throw new RuntimeException("Unexpected record.");
             }
@@ -27,14 +28,15 @@ class DefaultStringTableImpl implements StringTable {
             return this;
         }
 
-        DefaultStringTableImpl build() {
+        @Override
+        public StringTable build() {
             return new DefaultStringTableImpl(schema, records);
         }
 
     }
 
-    static Builder newBuilder(String... schema) {
-        return new Builder(schema);
+    static StringTableBuilder newBuilder(String... schema) {
+        return new BuilderImpl(schema);
     }
 
     private String[] schema;

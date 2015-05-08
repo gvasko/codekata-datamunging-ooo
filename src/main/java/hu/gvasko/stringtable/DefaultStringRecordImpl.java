@@ -52,7 +52,7 @@ class DefaultStringRecordImpl implements  StringRecord {
             return fields.get(field);
         }
 
-        throw new RuntimeException("Field does not exist.");
+        throw new RuntimeException("Field does not exist: " +field);
     }
 
     @Override
