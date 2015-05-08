@@ -3,6 +3,7 @@ package hu.gvasko.stringtable;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.StringReader;
 import java.util.List;
 
 import static hu.gvasko.stringtable.StringTableFixtures.*;
@@ -141,14 +142,19 @@ public class StringTableTest {
         table.addStringDecoder(value -> "");
     }
 
-    @Test(expected = IllegalAccessException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void schemaMustBeUnique() {
-
+        DefaultStringTableImpl.newBuilder(new String[] {"A","B","A"});
     }
 
     @Test
     public void singleRowTable() {
-        throw new RuntimeException("not implemented");
+        StringTable singleRowTable = StringTableFactory.getInstance().getParser(new StringReader("A B C ")).parse(new int[] {2, 2, 2});
+        Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
+        StringRecord theRecord = singleRowTable.getRecord(0);
+        Assert.assertEquals("element 0", "A", theRecord.get("0"));
+        Assert.assertEquals("element 1", "B", theRecord.get("1"));
+        Assert.assertEquals("element 2", "C", theRecord.get("2"));
     }
 
 }

@@ -14,7 +14,10 @@ class DefaultStringTableImpl implements StringTable {
         private List<String[]> records;
 
         BuilderImpl(String... schema) {
-            // TODO: no duplicate names allowed
+            Set<String> uniqueSchema = new HashSet<>(Arrays.asList(schema));
+            if (uniqueSchema.size() != schema.length) {
+                throw new IllegalArgumentException("Duplicated attribute in the schema");
+            }
             this.schema = schema;
             records = new ArrayList<>();
         }
