@@ -14,7 +14,7 @@ public class StringTableFactory {
         return soleInstance;
     }
 
-    public static String[] getDefaultHeader(int length) {
+    static String[] getDefaultHeader(int length) {
         String[] numberedHeader = new String[length];
         for (int i = 0; i < length; i++) {
             numberedHeader[i] = Integer.toString(i);

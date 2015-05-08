@@ -3,7 +3,7 @@ package hu.gvasko.stringtable;
 /**
  * Created by Gvasko on 2015.05.08..
  */
-class TableRawLineProcessor {
+class TableRawLineParser {
 
     private StringTableBuilder builder = null;
 
@@ -15,7 +15,7 @@ class TableRawLineProcessor {
     private String[] lastRecord = null;
 
 
-    public TableRawLineProcessor(int[] fieldLengths, boolean isFirstRowHeader, boolean isLastRowExcluded, boolean isEmptyRowExcluded) {
+    public TableRawLineParser(int[] fieldLengths, boolean isFirstRowHeader, boolean isLastRowExcluded, boolean isEmptyRowExcluded) {
         this.fieldLengths = fieldLengths;
         this.isFirstRowHeader = isFirstRowHeader;
         this.isLastRowExcluded = isLastRowExcluded;
@@ -27,11 +27,11 @@ class TableRawLineProcessor {
     }
 
     public StringTableBuilder getTableBuilder() {
-        finishProcessing();
+        finishParsing();
         return builder;
     }
 
-    public void processRawLine(String rawLine) {
+    public void parseRawLine(String rawLine) {
         if (isEmptyRowExcluded && "".equals(rawLine.trim())) {
             return;
         }
@@ -43,7 +43,7 @@ class TableRawLineProcessor {
             if (lastRecord != null) {
                 throw new IllegalStateException("lastRecord should be null");
             }
-            builder = getBuilderWith(toStringArray(rawLine, fieldLengths));
+            builder = getBuilderWithHeader(toStringArray(rawLine, fieldLengths));
         } else {
             if (lastRecord != null) {
                 builder.addRecord(lastRecord);
@@ -52,7 +52,7 @@ class TableRawLineProcessor {
         }
     }
 
-    private void finishProcessing() {
+    private void finishParsing() {
         if (builder == null) {
             builder = getBuilderWithNumberedHeader(fieldLengths.length);
         }
@@ -69,7 +69,7 @@ class TableRawLineProcessor {
         return DefaultStringTableImpl.newBuilder(StringTableFactory.getDefaultHeader(columnCount));
     }
 
-    private StringTableBuilder getBuilderWith(String[] schema) {
+    private StringTableBuilder getBuilderWithHeader(String[] schema) {
         return DefaultStringTableImpl.newBuilder(schema);
     }
 

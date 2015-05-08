@@ -13,9 +13,9 @@ import java.nio.file.Paths;
 class DefaultStringTableParserImpl implements StringTableParser {
 
     private BufferedReader reader;
-    private boolean firstRowIsHeader = false;
-    private boolean excludeLastRow = false;
-    private boolean excludeEmptyRows = false;
+    private boolean isFirstRowHeader = false;
+    private boolean isLastRowExcluded = false;
+    private boolean isEmptyRowExcluded = false;
 
     public DefaultStringTableParserImpl(URI fileLocation) throws IOException {
         reader = Files.newBufferedReader(Paths.get(fileLocation));
@@ -42,29 +42,29 @@ class DefaultStringTableParserImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry(int[] fieldLengths) throws IOException {
-        TableRawLineProcessor lineProcessor = new TableRawLineProcessor(fieldLengths, firstRowIsHeader, excludeLastRow, excludeEmptyRows);
+        TableRawLineParser lineParser = new TableRawLineParser(fieldLengths, isFirstRowHeader, isLastRowExcluded, isEmptyRowExcluded);
         String line;
         while ((line = reader.readLine()) != null) {
-            lineProcessor.processRawLine(line);
+            lineParser.parseRawLine(line);
         }
-        return lineProcessor.getTableBuilder().build();
+        return lineParser.getTableBuilder().build();
     }
 
     @Override
     public StringTableParser firstRowIsHeader() {
-        firstRowIsHeader = true;
+        isFirstRowHeader = true;
         return this;
     }
 
     @Override
     public StringTableParser excludeLastRow() {
-        excludeLastRow = true;
+        isLastRowExcluded = true;
         return this;
     }
 
     @Override
     public StringTableParser excludeEmptyRows() {
-        excludeEmptyRows = true;
+        isEmptyRowExcluded = true;
         return this;
     }
 
