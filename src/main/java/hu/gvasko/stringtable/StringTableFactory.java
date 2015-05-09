@@ -47,7 +47,7 @@ public class StringTableFactory {
         return line -> "".equals(line) || !"".equals(line.replace(line.charAt(0), ' ').trim());
     }
 
-    public Predicate<StringRecord> onlyNumbers(String column) {
+    public Predicate<StringRecord> onlyNumbersInColumn(String column) {
         return record -> record.get(column).matches("^[+-]?\\d+$");
     }
 

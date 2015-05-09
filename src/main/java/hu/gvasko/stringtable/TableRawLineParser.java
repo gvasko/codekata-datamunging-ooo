@@ -28,7 +28,7 @@ class TableRawLineParser {
         this.recordPredicates = recordPredicates;
 
         if (!isFirstRowHeader) {
-            builder = getBuilderWithNumberedHeader(fieldLengths.length);
+            createBuilderWithNumberedHeader();
         }
     }
 
@@ -38,56 +38,70 @@ class TableRawLineParser {
     }
 
     public void parseRawLine(String rawLine) {
-        for (Predicate<String> linePredicate : linePredicates) {
-            if (!linePredicate.test(rawLine.trim())) {
-                return;
-            }
+        if (!validateRawLine(rawLine)) {
+            return;
         }
 
         if (builder == null) {
-            if (!isFirstRowHeader) {
-                throw new IllegalStateException("first row should be header");
-            }
-            if (lastRecord != null) {
-                throw new IllegalStateException("lastRecord should be null");
-            }
-            builder = getBuilderWithHeader(toUniqueStringArray(toStringArray(rawLine, fieldLengths)));
+            createTableBuilderWithHeader(rawLine);
         } else {
             addLastRecord();
             setLastRecord(rawLine);
         }
     }
 
+    private void createTableBuilderWithHeader(String rawLine) {
+        if (!isFirstRowHeader) {
+            throw new IllegalStateException("first row should be header");
+        }
+        if (lastRecord != null) {
+            throw new IllegalStateException("lastRecord should be null");
+        }
+        builder = DefaultStringTableImpl.newBuilder(toUniqueStringArray(toStringArray(rawLine, fieldLengths)));
+    }
+
+    private void createBuilderWithNumberedHeader() {
+        builder = DefaultStringTableImpl.newBuilder(StringTableFactory.getDefaultHeader(fieldLengths.length));
+    }
+
+    private boolean validateRawLine(String rawLine) {
+        for (Predicate<String> linePredicate : linePredicates) {
+            if (!linePredicate.test(rawLine.trim())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void addLastRecord() {
         if (lastRecord == null) {
             return;
         }
-        StringRecord sRec = DefaultStringRecordImpl.newRecord(builder.getSchema(), lastRecord);
-        for (Predicate<StringRecord> recordPredicate : recordPredicates) {
-            if (!recordPredicate.test(sRec)) {
-                return;
-            }
+        if (!validateLastRecord()) {
+            return;
         }
         builder.addRecord(lastRecord);
     }
 
+    private boolean validateLastRecord() {
+        StringRecord tmpRec = DefaultStringRecordImpl.newRecord(builder.getSchema(), lastRecord);
+        for (Predicate<StringRecord> recordPredicate : recordPredicates) {
+            if (!recordPredicate.test(tmpRec)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void finishParsing() {
         if (builder == null) {
-            builder = getBuilderWithNumberedHeader(fieldLengths.length);
+            createBuilderWithNumberedHeader();
         }
         addLastRecord();
     }
 
     private void setLastRecord(String rawLine) {
         lastRecord = toStringArray(rawLine, fieldLengths);
-    }
-
-    private StringTableBuilder getBuilderWithNumberedHeader(int columnCount) {
-        return DefaultStringTableImpl.newBuilder(StringTableFactory.getDefaultHeader(columnCount));
-    }
-
-    private StringTableBuilder getBuilderWithHeader(String[] schema) {
-        return DefaultStringTableImpl.newBuilder(schema);
     }
 
     private static String[] toStringArray(String line, int... columnsLen) {

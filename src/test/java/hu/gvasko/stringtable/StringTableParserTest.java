@@ -24,7 +24,7 @@ public class StringTableParserTest {
     public void parseWith_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn() throws Exception {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
-            parser.addRecordFilter(factory.onlyNumbers(defaultSchema[0]));
+            parser.addRecordFilter(factory.onlyNumbersInColumn(defaultSchema[0]));
             StringTable table = parser.firstRowIsHeader().parse(defaultHeader);
             assertEachCellIsValid(table_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn, table, defaultSchema);
         }

@@ -50,7 +50,7 @@ public class DataMunging {
         URL datFile = this.getClass().getResource("weather.dat");
         try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
-            parser.addRecordFilter(factory.onlyNumbers(WEATHER_DAY_NAME));
+            parser.addRecordFilter(factory.onlyNumbersInColumn(WEATHER_DAY_NAME));
             StringTable table = parser.firstRowIsHeader().parse(
                     WEATHER_DAY_LEN, WEATHER_MAX_T_LEN, WEATHER_MIN_T_LEN
             );
