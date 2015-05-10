@@ -17,8 +17,8 @@ class DefaultStringTableParserImpl implements StringTableParser {
 
     private BufferedReader reader;
     private boolean isFirstRowHeader = false;
-    private List<Predicate<String>> linePredicates;
-    private List<Predicate<StringRecord>> recordPredicates;
+    private List<Predicate<String>> lineFilters;
+    private List<Predicate<StringRecord>> recordFilters;
 
     public DefaultStringTableParserImpl(URI fileLocation) throws IOException {
         this(Files.newBufferedReader(Paths.get(fileLocation)));
@@ -26,8 +26,8 @@ class DefaultStringTableParserImpl implements StringTableParser {
 
     public DefaultStringTableParserImpl(Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
-        linePredicates = new ArrayList<>();
-        recordPredicates = new ArrayList<>();
+        lineFilters = new ArrayList<>();
+        recordFilters = new ArrayList<>();
     }
 
     @Override
@@ -47,7 +47,7 @@ class DefaultStringTableParserImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry(int[] fieldLengths) throws IOException {
-        TableRawLineParser lineParser = new TableRawLineParser(fieldLengths, isFirstRowHeader, linePredicates, recordPredicates);
+        TableParserLogic lineParser = new DefaultTableParserLogicImpl(fieldLengths, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {
             lineParser.parseRawLine(line);
@@ -63,12 +63,12 @@ class DefaultStringTableParserImpl implements StringTableParser {
 
     @Override
     public void addLineFilter(Predicate<String> linePredicate) {
-        linePredicates.add(linePredicate);
+        lineFilters.add(linePredicate);
     }
 
     @Override
     public void addRecordFilter(Predicate<StringRecord> recordPredicate) {
-        recordPredicates.add(recordPredicate);
+        recordFilters.add(recordPredicate);
     }
 
     @Override

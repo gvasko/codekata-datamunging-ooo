@@ -8,6 +8,6 @@ import java.util.function.Predicate;
 public interface StringTableParser extends AutoCloseable {
     StringTable parse(int... fieldLengths);
     StringTableParser firstRowIsHeader();
-    void addLineFilter(Predicate<String> linePredicate);
-    void addRecordFilter(Predicate<StringRecord> recordPredicate);
+    void addLineFilter(Predicate<String> lineFilter);
+    void addRecordFilter(Predicate<StringRecord> recordFilter);
 }
