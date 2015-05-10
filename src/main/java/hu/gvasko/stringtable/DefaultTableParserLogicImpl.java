@@ -78,6 +78,10 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         return true;
     }
 
+    private void setLastRecord(String rawLine) {
+        lastRecord = recParser.parse(rawLine);
+    }
+
     private void addLastRecord() {
         if (lastRecord == null) {
             return;
@@ -103,10 +107,6 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
             createBuilderWithNumberedHeader();
         }
         addLastRecord();
-    }
-
-    private void setLastRecord(String rawLine) {
-        lastRecord = recParser.parse(rawLine);
     }
 
 }

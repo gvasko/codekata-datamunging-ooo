@@ -13,18 +13,18 @@ import java.util.function.Predicate;
 /**
  * Created by Gvasko on 2015.05.07..
  */
-class DefaultStringTableParserImpl implements StringTableParser {
+class DefaultTableParserContextImpl implements StringTableParser {
 
     private BufferedReader reader;
     private boolean isFirstRowHeader = false;
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
-    public DefaultStringTableParserImpl(URI fileLocation) throws IOException {
+    public DefaultTableParserContextImpl(URI fileLocation) throws IOException {
         this(Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    public DefaultStringTableParserImpl(Reader sharedReader) {
+    public DefaultTableParserContextImpl(Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();

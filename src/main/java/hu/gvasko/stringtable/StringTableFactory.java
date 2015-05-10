@@ -25,11 +25,11 @@ public class StringTableFactory {
     }
 
     public StringTableParser getFixWidthParser(URI uri) throws IOException {
-        return new DefaultStringTableParserImpl(uri);
+        return new DefaultTableParserContextImpl(uri);
     }
 
     public StringTableParser getFixWidthParser(Reader reader) {
-        return new DefaultStringTableParserImpl(reader);
+        return new DefaultTableParserContextImpl(reader);
     }
 
 
