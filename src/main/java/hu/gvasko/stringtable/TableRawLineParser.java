@@ -9,10 +9,10 @@ import java.util.function.Predicate;
 class TableRawLineParser {
 
     private StringTableBuilder builder = null;
+    private StringRecordParser recParser;
 
     private boolean isFirstRowHeader;
 
-    private int[] fieldLengths;
     private String[] lastRecord = null;
     private List<Predicate<String>> linePredicates;
     private List<Predicate<StringRecord>> recordPredicates;
@@ -22,7 +22,7 @@ class TableRawLineParser {
             boolean isFirstRowHeader,
             List<Predicate<String>> linePredicates,
             List<Predicate<StringRecord>> recordPredicates) {
-        this.fieldLengths = fieldLengths;
+        this.recParser = new FixWidthStringRecordParserImpl(fieldLengths);
         this.isFirstRowHeader = isFirstRowHeader;
         this.linePredicates = linePredicates;
         this.recordPredicates = recordPredicates;
@@ -57,11 +57,11 @@ class TableRawLineParser {
         if (lastRecord != null) {
             throw new IllegalStateException("lastRecord should be null");
         }
-        builder = DefaultStringTableImpl.newBuilder(toUniqueStringArray(toStringArray(rawLine, fieldLengths)));
+        builder = DefaultStringTableImpl.newBuilder(recParser.parseHeader(rawLine));
     }
 
     private void createBuilderWithNumberedHeader() {
-        builder = DefaultStringTableImpl.newBuilder(StringTableFactory.getDefaultHeader(fieldLengths.length));
+        builder = DefaultStringTableImpl.newBuilder(StringTableFactory.getDefaultHeader(recParser.getColumnCount()));
     }
 
     private boolean validateRawLine(String rawLine) {
@@ -101,41 +101,7 @@ class TableRawLineParser {
     }
 
     private void setLastRecord(String rawLine) {
-        lastRecord = toStringArray(rawLine, fieldLengths);
-    }
-
-    private static String[] toStringArray(String line, int... columnsLen) {
-        String[] strArr = new String[columnsLen.length];
-        int beginIndex = 0;
-        for (int i = 0; i < columnsLen.length; i++) {
-            int endIndex = Math.min(beginIndex + columnsLen[i], line.length());
-            strArr[i] = line.substring(beginIndex, endIndex).trim();
-            beginIndex = endIndex;
-        }
-        return strArr;
-    }
-
-    private static String[] toUniqueStringArray(String[] stringArray) {
-        // O(n^2), but it is designed for tables with a few columns only
-        String[] uniqueStringArray = new String[stringArray.length];
-        for (int i = 0; i < stringArray.length; i++) {
-            if (getCount(stringArray[i], stringArray) > 1) {
-                uniqueStringArray[i] = Integer.toString(i) + stringArray[i];
-            } else {
-                uniqueStringArray[i] = stringArray[i];
-            }
-        }
-        return uniqueStringArray;
-    }
-
-    private static int getCount(String ss, String[] stringArray) {
-        int counter = 0;
-        for (String s : stringArray) {
-            if (ss.equals(s)) {
-                counter++;
-            }
-        }
-        return counter;
+        lastRecord = recParser.parse(rawLine);
     }
 
 }
