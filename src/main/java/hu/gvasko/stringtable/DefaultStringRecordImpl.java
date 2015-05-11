@@ -1,6 +1,5 @@
 package hu.gvasko.stringtable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,20 +9,22 @@ import java.util.Map;
  */
 class DefaultStringRecordImpl implements  StringRecord {
 
-    static class Builder {
+    private static class BuilderImpl implements StringRecordBuilder {
 
         Map<String, String> stringMap;
 
-        Builder() {
+        BuilderImpl() {
             stringMap = new HashMap<>();
         }
 
-        Builder addField(String key, String value) {
+        @Override
+        public BuilderImpl addField(String key, String value) {
             stringMap.put(key, value);
             return this;
         }
 
-        DefaultStringRecordImpl build() {
+        @Override
+        public StringRecord build() {
             if (stringMap.isEmpty()) {
                 throw new IllegalStateException("Empty record cannot be created.");
             } else {
@@ -32,8 +33,8 @@ class DefaultStringRecordImpl implements  StringRecord {
         }
     }
 
-    static Builder newBuilder() {
-        return new Builder();
+    static StringRecordBuilder newBuilder() {
+        return new BuilderImpl();
     }
 
     static StringRecord newRecord(String[] schema, String[] values) {

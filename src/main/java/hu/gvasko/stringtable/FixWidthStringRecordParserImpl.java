@@ -18,11 +18,11 @@ class FixWidthStringRecordParserImpl implements StringRecordParser {
 
     @Override
     public String[] parseHeader(String rawLine) {
-        return toUniqueStringArray(toStringArray(rawLine, fieldLengths));
+        return ensureUniqueElements(parseRecord(rawLine));
     }
 
     @Override
-    public String[] parse(String rawLine) {
+    public String[] parseRecord(String rawLine) {
         return toStringArray(rawLine, fieldLengths);
     }
 
@@ -37,7 +37,7 @@ class FixWidthStringRecordParserImpl implements StringRecordParser {
         return strArr;
     }
 
-    private static String[] toUniqueStringArray(String[] stringArray) {
+    private static String[] ensureUniqueElements(String[] stringArray) {
         // O(n^2), but it is designed for tables with a few columns only
         String[] uniqueStringArray = new String[stringArray.length];
         for (int i = 0; i < stringArray.length; i++) {

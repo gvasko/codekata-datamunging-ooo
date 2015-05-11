@@ -3,6 +3,7 @@ package hu.gvasko.stringtable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Created by gvasko on 2015.05.07..
@@ -69,15 +70,11 @@ class DefaultStringTableImpl implements StringTable {
 
     @Override
     public List<StringRecord> getAllRecords() {
-        List<StringRecord> resultRecords = new ArrayList<>();
-        for (String[] rec : records) {
-            resultRecords.add(toStringRecord(rec));
-        }
-        return resultRecords;
+        return records.stream().map(this::toStringRecord).collect(Collectors.toList());
     }
 
     private StringRecord toStringRecord(String[] rec) {
-        DefaultStringRecordImpl.Builder recBuilder = DefaultStringRecordImpl.newBuilder();
+        StringRecordBuilder recBuilder = DefaultStringRecordImpl.newBuilder();
         for (int i = 0; i < schema.length; i++) {
             String field = schema[i];
             String value = getDecodedValue(field, rec[i]);

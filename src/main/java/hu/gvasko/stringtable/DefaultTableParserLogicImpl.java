@@ -79,7 +79,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private void setLastRecord(String rawLine) {
-        lastRecord = recParser.parse(rawLine);
+        lastRecord = recParser.parseRecord(rawLine);
     }
 
     private void addLastRecord() {

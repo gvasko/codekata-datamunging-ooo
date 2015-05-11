@@ -13,6 +13,5 @@ public interface StringTable {
 
     List<StringRecord> getAllRecords();
 
-    // how to process each field in the selected range
     void addStringDecoder(UnaryOperator<String> decoder, String... fields);
 }
