@@ -16,7 +16,6 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
 
     private boolean isFirstRowHeader;
 
-    private String[] lastRecord = null;
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
@@ -30,14 +29,18 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
 
-        if (!isFirstRowHeader) {
+        if (isFirstRowHeader) {
+            // create builder when first row is available
+        } else {
             createBuilderWithNumberedHeader();
         }
     }
 
     @Override
     public StringTableBuilder getTableBuilder() {
-        finishParsing();
+        if (builder == null) {
+            createBuilderWithNumberedHeader();
+        }
         return builder;
     }
 
@@ -50,17 +53,16 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         if (builder == null) {
             createTableBuilderWithHeader(rawLine);
         } else {
-            addLastRecord();
-            setLastRecord(rawLine);
+            String[] record = recParser.parseRecord(rawLine);
+            if (validateLastRecord(record)) {
+                builder.addRecord(record);
+            }
         }
     }
 
     private void createTableBuilderWithHeader(String rawLine) {
         if (!isFirstRowHeader) {
             throw new IllegalStateException("first row should be header");
-        }
-        if (lastRecord != null) {
-            throw new IllegalStateException("lastRecord should be null");
         }
         builder = DefaultStringTableImpl.newBuilder(recParser.parseHeader(rawLine));
     }
@@ -78,35 +80,14 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         return true;
     }
 
-    private void setLastRecord(String rawLine) {
-        lastRecord = recParser.parseRecord(rawLine);
-    }
-
-    private void addLastRecord() {
-        if (lastRecord == null) {
-            return;
-        }
-        if (!validateLastRecord()) {
-            return;
-        }
-        builder.addRecord(lastRecord);
-    }
-
-    private boolean validateLastRecord() {
-        StringRecord tmpRec = DefaultStringRecordImpl.newRecord(builder.getSchema(), lastRecord);
+    private boolean validateLastRecord(String[] record) {
+        StringRecord tmpRec = DefaultStringRecordImpl.newRecord(builder.getSchema(), record);
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;
             }
         }
         return true;
-    }
-
-    private void finishParsing() {
-        if (builder == null) {
-            createBuilderWithNumberedHeader();
-        }
-        addLastRecord();
     }
 
 }
