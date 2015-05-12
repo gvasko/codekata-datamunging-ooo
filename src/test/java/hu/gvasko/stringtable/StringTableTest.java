@@ -28,7 +28,7 @@ public class StringTableTest {
             String[] expectedRecord = abcTable[row];
             StringRecord actualRecord = table.getRecord(row);
             for (int col = 0; col < defaultSchema.length; col++) {
-                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                String message = getMessage(row, col);
                 Assert.assertEquals(message, expectedRecord[col], actualRecord.get(defaultSchema[col]));
             }
         }
@@ -43,7 +43,7 @@ public class StringTableTest {
             String[] expectedRecord = abcTable[row];
             StringRecord actualRecord = records.get(row);
             for (int col = 0; col < defaultSchema.length; col++) {
-                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                String message = getMessage(row, col);
                 Assert.assertEquals(message, expectedRecord[col], actualRecord.get(defaultSchema[col]));
             }
         }
@@ -55,13 +55,13 @@ public class StringTableTest {
         final String replacedValue = "replaced-value";
         final int testRow = 2;
         final int testCol = BBB_COLUMN;
-        table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
+        table.addStringDecoderToColumns(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
 
         for (int row = 0; row < table.getRowCount(); row++) {
             String[] expectedRecord = abcTable[row];
             StringRecord actualRecord = table.getRecord(row);
             for (int col = 0; col < defaultSchema.length; col++) {
-                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                String message = getMessage(row, col);
                 String expectedValue = expectedRecord[col];
                 if (row == testRow && col == testCol) {
                     expectedValue = replacedValue;
@@ -77,14 +77,14 @@ public class StringTableTest {
         final String replacedValue = "replaced-value";
         final int testRow = 2;
         final int testCol = BBB_COLUMN;
-        table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
+        table.addStringDecoderToColumns(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
 
         List<StringRecord> records = table.getAllRecords();
         for (int row = 0; row < records.size(); row++) {
             String[] expectedRecord = abcTable[row];
             StringRecord actualRecord = records.get(row);
             for (int col = 0; col < defaultSchema.length; col++) {
-                String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+                String message = getMessage(row, col);
                 String expectedValue = expectedRecord[col];
                 if (row == testRow && col == testCol) {
                     expectedValue = replacedValue;
@@ -94,14 +94,18 @@ public class StringTableTest {
         }
     }
 
+    private static String getMessage(int row, int col) {
+        return "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
+    }
+
     @Test
     public void multipleDecodersAreChained() {
         StringTable table = getAbcTable();
         final String replacedValue = "replaced-value";
         final int testRow = 2;
         final int testCol = BBB_COLUMN;
-        table.addStringDecoder(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
-        table.addStringDecoder(value -> value.replace("replaced", "new"), defaultSchema[testCol]);
+        table.addStringDecoderToColumns(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
+        table.addStringDecoderToColumns(value -> value.replace("replaced", "new"), defaultSchema[testCol]);
 
         Assert.assertEquals("new-value", table.getRecord(testRow).get(defaultSchema[testCol]));
     }
@@ -109,42 +113,42 @@ public class StringTableTest {
     @Test(expected = IllegalArgumentException.class)
     public void assigningDecoderToUndefinedFieldThrowsException() {
         StringTable table = getAbcTable();
-        table.addStringDecoder(value -> "", "invalid-column");
+        table.addStringDecoderToColumns(value -> "", "invalid-column");
     }
 
     @Test
     public void addingDecoderToEmptyTableIsAllowed() {
         StringTable table = getEmptyTable();
-        table.addStringDecoder(value -> "", defaultSchema[AAA_COLUMN]);
+        table.addStringDecoderToColumns(value -> "", defaultSchema[AAA_COLUMN]);
     }
 
     @Test(expected = NullPointerException.class)
     public void addingNullDecoderThrowsNPE() {
         StringTable table = getAbcTable();
-        table.addStringDecoder(null, defaultSchema[AAA_COLUMN]);
+        table.addStringDecoderToColumns(null, defaultSchema[AAA_COLUMN]);
     }
 
     @Test(expected = NullPointerException.class)
     public void addingNullDecoderToInvalidColumnThrowsNPE() {
         StringTable table = getAbcTable();
-        table.addStringDecoder(null, "invalid-column");
+        table.addStringDecoderToColumns(null, "invalid-column");
     }
 
     @Test(expected = NullPointerException.class)
     public void addingNullDecoderWithoutColumnThrowsNPE() {
         StringTable table = getAbcTable();
-        table.addStringDecoder(null);
+        table.addStringDecoderToColumns(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addingDecoderWithoutColumnThrowsException() {
         StringTable table = getAbcTable();
-        table.addStringDecoder(value -> "");
+        table.addStringDecoderToColumns(value -> "");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void schemaMustBeUnique() {
-        DefaultStringTableImpl.newBuilder(new String[] {"A","B","A"});
+        DefaultStringTableImpl.newBuilder(new String[]{"A", "B", "A"});
     }
 
     @Test

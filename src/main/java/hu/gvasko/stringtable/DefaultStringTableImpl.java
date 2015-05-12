@@ -91,7 +91,7 @@ class DefaultStringTableImpl implements StringTable {
     }
 
     @Override
-    public void addStringDecoder(UnaryOperator<String> decoder, String... fields) {
+    public void addStringDecoderToColumns(UnaryOperator<String> decoder, String... fields) {
         if (decoder == null) {
             throw new NullPointerException("Decoder is null.");
         }

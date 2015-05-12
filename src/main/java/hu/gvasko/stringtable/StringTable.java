@@ -13,5 +13,5 @@ public interface StringTable {
 
     List<StringRecord> getAllRecords();
 
-    void addStringDecoder(UnaryOperator<String> decoder, String... fields);
+    void addStringDecoderToColumns(UnaryOperator<String> decoder, String... fields);
 }

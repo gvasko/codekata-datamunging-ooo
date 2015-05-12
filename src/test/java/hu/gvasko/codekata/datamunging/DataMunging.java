@@ -8,6 +8,7 @@ import org.junit.Test;
 //import static org.hamcrest.Matchers.*;
 
 import java.net.URL;
+import java.util.Arrays;
 
 /**
  *
@@ -15,28 +16,56 @@ import java.net.URL;
  */
 public class DataMunging {
 
-    // Weather Columns
-    static final int WEATHER_DAY_LEN = 5;
-    static final int WEATHER_MAX_T_LEN = 6;
-    static final int WEATHER_MIN_T_LEN = 6;
-    static final String WEATHER_DAY_NAME = "Dy";
-    static final String WEATHER_MAX_T_NAME = "MxT";
-    static final String WEATHER_MIN_T_NAME = "MnT";
+    private enum WeatherColumns {
+        DAY("Dy", 5),
+        MAX_TEMP("MxT", 6),
+        MIN_TEMP("MnT", 6);
 
-    // Football Columns
-    static final int FOOTBALL_NUM_LEN = 7;
-    static final int FOOTBALL_TEAM_LEN = 16;
-    static final int FOOTBALL_P_LEN = 6;
-    static final int FOOTBALL_W_LEN = 4;
-    static final int FOOTBALL_L_LEN = 4;
-    static final int FOOTBALL_D_LEN = 6;
-    static final int FOOTBALL_F_LEN = 4;
-    static final int FOOTBALL_MINUS_LEN = 3;
-    static final int FOOTBALL_A_LEN = 6;
-    static final int FOOTBALL_PTS_LEN = 3;
-    static final String FOOTBALL_TEAM_NAME = "Team";
-    static final String FOOTBALL_GOALS_FOR_NAME = "F";
-    static final String FOOTBALL_GOALS_AGAINST_NAME = "A";
+        private String name;
+        private int len;
+
+        private WeatherColumns(String name, int len) {
+            this.name = name;
+            this.len = len;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getLen() {
+            return len;
+        }
+    }
+
+    private enum FootballColumns {
+        NUM("?", 7),
+        TEAM("Team", 16),
+        P("P", 6),
+        W("W", 4),
+        L("L", 4),
+        D("D", 6),
+        GOALS_FOR("F", 4),
+        MINUS("?", 3),
+        GOALS_AGAINST("A", 6),
+        PTS("Points", 3);
+
+        private String name;
+        private int len;
+
+        private FootballColumns(String name, int len) {
+            this.name = name;
+            this.len = len;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getLen() {
+            return len;
+        }
+    }
 
     private StringTableFactory factory;
 
@@ -50,18 +79,22 @@ public class DataMunging {
         URL datFile = this.getClass().getResource("weather.dat");
         try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
-            parser.addRecordFilter(factory.onlyNumbersInColumn(WEATHER_DAY_NAME));
+            parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherColumns.DAY.getName()));
             StringTable table = parser.firstRowIsHeader().parse(
-                    WEATHER_DAY_LEN, WEATHER_MAX_T_LEN, WEATHER_MIN_T_LEN
+                    Arrays.stream(WeatherColumns.values()).mapToInt(w -> w.getLen()).toArray()
             );
 
-            table.addStringDecoder(
+            table.addStringDecoderToColumns(
                     factory.getKeepIntegerOnlyOperator(),
-                    WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
+                    WeatherColumns.MAX_TEMP.getName(),
+                    WeatherColumns.MIN_TEMP.getName());
 
             String dayOfSmallestTemperatureSpread = "14";
-            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), WEATHER_MAX_T_NAME, WEATHER_MIN_T_NAME);
-            String actualDay = actualRecord.get(WEATHER_DAY_NAME);
+            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
+                    table.getAllRecords(),
+                    WeatherColumns.MAX_TEMP.getName(),
+                    WeatherColumns.MIN_TEMP.getName());
+            String actualDay = actualRecord.get(WeatherColumns.DAY.getName());
             Assert.assertEquals(dayOfSmallestTemperatureSpread, actualDay);
         }
     }
@@ -73,14 +106,15 @@ public class DataMunging {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
             StringTable table = parser.firstRowIsHeader().parse(
-                    FOOTBALL_NUM_LEN, FOOTBALL_TEAM_LEN, FOOTBALL_P_LEN, FOOTBALL_W_LEN,
-                    FOOTBALL_L_LEN, FOOTBALL_D_LEN, FOOTBALL_F_LEN, FOOTBALL_MINUS_LEN,
-                    FOOTBALL_A_LEN, FOOTBALL_PTS_LEN
+                    Arrays.stream(FootballColumns.values()).mapToInt(w -> w.getLen()).toArray()
             );
 
             String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
-            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(table.getAllRecords(), FOOTBALL_GOALS_FOR_NAME, FOOTBALL_GOALS_AGAINST_NAME);
-            String actualTeamName = actualRecord.get(FOOTBALL_TEAM_NAME);
+            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
+                    table.getAllRecords(),
+                    FootballColumns.GOALS_FOR.getName(),
+                    FootballColumns.GOALS_AGAINST.getName());
+            String actualTeamName = actualRecord.get(FootballColumns.TEAM.getName());
             Assert.assertEquals(nameOfTeamWithSmallestGoalDifference, actualTeamName);
         }
     }
