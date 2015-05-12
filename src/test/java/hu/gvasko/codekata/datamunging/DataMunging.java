@@ -4,6 +4,7 @@ import hu.gvasko.stringtable.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+// TODO: unfortunately hamcrest is not available in Idea & Gradle project
 //import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.hamcrest.Matchers.*;
 
@@ -24,7 +25,7 @@ public class DataMunging {
         private String name;
         private int len;
 
-        private WeatherColumns(String name, int len) {
+        WeatherColumns(String name, int len) {
             this.name = name;
             this.len = len;
         }
@@ -53,7 +54,7 @@ public class DataMunging {
         private String name;
         private int len;
 
-        private FootballColumns(String name, int len) {
+        FootballColumns(String name, int len) {
             this.name = name;
             this.len = len;
         }
@@ -81,11 +82,11 @@ public class DataMunging {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherColumns.DAY.getName()));
             StringTable table = parser.firstRowIsHeader().parse(
-                    Arrays.stream(WeatherColumns.values()).mapToInt(w -> w.getLen()).toArray()
+                    Arrays.stream(WeatherColumns.values()).mapToInt(WeatherColumns::getLen).toArray()
             );
 
             table.addStringDecoderToColumns(
-                    factory.getKeepIntegerOnlyOperator(),
+                    factory.keepIntegersOnly(),
                     WeatherColumns.MAX_TEMP.getName(),
                     WeatherColumns.MIN_TEMP.getName());
 
@@ -106,7 +107,7 @@ public class DataMunging {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
             StringTable table = parser.firstRowIsHeader().parse(
-                    Arrays.stream(FootballColumns.values()).mapToInt(w -> w.getLen()).toArray()
+                    Arrays.stream(FootballColumns.values()).mapToInt(FootballColumns::getLen).toArray()
             );
 
             String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";

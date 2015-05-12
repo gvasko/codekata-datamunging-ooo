@@ -35,8 +35,16 @@ public class StringTableFactory {
 
     // TODO: move to somewhere else?
 
-    public UnaryOperator<String> getKeepIntegerOnlyOperator() {
-        return new KeepIntegerOnly();
+    public UnaryOperator<String> keepIntegersOnly() {
+        return s -> {
+            StringBuilder sb = new StringBuilder();
+            for (char c : s.toCharArray()) {
+                if (Character.isDigit(c)) {
+                    sb.append(c);
+                }
+            }
+            return sb.toString();
+        };
     }
 
     public Predicate<String> skipEmptyLines() {
