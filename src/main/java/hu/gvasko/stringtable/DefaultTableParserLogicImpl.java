@@ -19,15 +19,19 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
+    private StringTableBuilderFactory tableBuilderFactory;
+
     public DefaultTableParserLogicImpl(
             int[] fieldLengths,
             boolean isFirstRowHeader,
             List<Predicate<String>> lineFilters,
-            List<Predicate<StringRecord>> recordFilters) {
+            List<Predicate<StringRecord>> recordFilters,
+            StringTableBuilderFactory sharedTableBuilderFactory) {
         this.recParser = new FixWidthStringRecordParserImpl(fieldLengths);
         this.isFirstRowHeader = isFirstRowHeader;
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
+        this.tableBuilderFactory = sharedTableBuilderFactory;
 
         if (isFirstRowHeader) {
             // create builder when first row is available
@@ -64,11 +68,11 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         if (!isFirstRowHeader) {
             throw new IllegalStateException("first row should be header");
         }
-        builder = DefaultStringTableImpl.newBuilder(recParser.parseHeader(rawLine));
+        builder = tableBuilderFactory.createNew(recParser.parseHeader(rawLine));
     }
 
     private void createBuilderWithNumberedHeader() {
-        builder = DefaultStringTableImpl.newBuilder(StringTableFactory.getDefaultHeader(recParser.getColumnCount()));
+        builder = tableBuilderFactory.createNew(StringTableFactory.getDefaultHeader(recParser.getColumnCount()));
     }
 
     private boolean validateRawLine(String rawLine) {

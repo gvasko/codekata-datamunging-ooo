@@ -46,7 +46,8 @@ public class StringRecordTest {
 
     @Test(expected = IllegalStateException.class)
     public void emptyRecordCannotBeCreatedThrowsException() {
-        DefaultStringRecordImpl.newBuilder().build();
+        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
+        stringTableFactory.newStringRecordBuilder().build();
     }
 
 }

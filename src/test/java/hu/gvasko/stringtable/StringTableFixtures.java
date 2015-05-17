@@ -19,11 +19,13 @@ public final class StringTableFixtures {
     };
 
     public static StringTable getEmptyTable() {
-        return DefaultStringTableImpl.newBuilder(defaultSchema).build();
+        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
+        return stringTableFactory.newStringTableBuilderFactory().createNew(defaultSchema).build();
     }
 
     public static StringTable getAbcTable() {
-        StringTableBuilder builder = DefaultStringTableImpl.newBuilder(defaultSchema);
+        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
+        StringTableBuilder builder = stringTableFactory.newStringTableBuilderFactory().createNew(defaultSchema);
 
         for (int i = 0; i < abcTable.length; i++) {
             builder.addRecord(abcTable[i][AAA_COLUMN], abcTable[i][BBB_COLUMN], abcTable[i][CCC_COLUMN]);

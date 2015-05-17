@@ -1,5 +1,7 @@
 package hu.gvasko.stringtable;
 
+import com.google.inject.Inject;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ class DefaultStringRecordImpl implements  StringRecord {
 
         Map<String, String> stringMap;
 
+        @Inject
         BuilderImpl() {
             stringMap = new HashMap<>();
         }
@@ -33,8 +36,15 @@ class DefaultStringRecordImpl implements  StringRecord {
         }
     }
 
-    static StringRecordBuilder newBuilder() {
-        return new BuilderImpl();
+//    static StringRecordBuilder newBuilder() {
+//        return new BuilderImpl();
+//    }
+
+    static class BuilderFactoryImpl implements StringRecordBuilderFactory {
+        @Override
+        public StringRecordBuilder createNew() {
+            return new BuilderImpl();
+        }
     }
 
     static StringRecord newRecord(String[] schema, String[] values) {
@@ -60,6 +70,7 @@ class DefaultStringRecordImpl implements  StringRecord {
         fields = sharedFields;
     }
 
+    @Override
     public String get(String field) {
         if (field == null) {
             throw new NullPointerException();

@@ -1,5 +1,9 @@
 package hu.gvasko.stringtable;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
@@ -22,6 +26,12 @@ public class StringTableFactory {
             numberedHeader[i] = Integer.toString(i);
         }
         return numberedHeader;
+    }
+
+    private Injector injector;
+
+    protected StringTableFactory() {
+        injector = Guice.createInjector(getStringTableModule());
     }
 
     public StringTableParser getFixWidthParser(URI uri) throws IOException {
@@ -57,6 +67,34 @@ public class StringTableFactory {
 
     public Predicate<StringRecord> onlyNumbersInColumn(String column) {
         return record -> record.get(column).matches("^[+-]?\\d+$");
+    }
+
+    StringRecordBuilder newStringRecordBuilder() {
+        return newStringRecordBuilderFactory().createNew();
+    }
+
+    StringRecordBuilderFactory newStringRecordBuilderFactory() {
+        return injector.getInstance(StringRecordBuilderFactory.class);
+    }
+
+    StringTableBuilder newStringTableBuilder(String... schema) {
+        return newStringTableBuilderFactory().createNew(schema);
+    }
+
+    StringTableBuilderFactory newStringTableBuilderFactory() {
+        return injector.getInstance(StringTableBuilderFactory.class);
+    }
+
+    private AbstractModule getStringTableModule() {
+        AbstractModule module = new AbstractModule() {
+            @Override
+            protected void configure() {
+                // ONLY FACTORIES???
+                bind(StringRecordBuilderFactory.class).to(DefaultStringRecordImpl.BuilderFactoryImpl.class);
+                bind(StringTableBuilderFactory.class).to(DefaultStringTableImpl.BuilderFactoryImpl.class);
+            }
+        };
+        return module;
     }
 
 }

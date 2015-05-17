@@ -47,7 +47,7 @@ class DefaultTableParserContextImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry(int[] fieldLengths) throws IOException {
-        TableParserLogic lineParser = new DefaultTableParserLogicImpl(fieldLengths, isFirstRowHeader, lineFilters, recordFilters);
+        TableParserLogic lineParser = new DefaultTableParserLogicImpl(fieldLengths, isFirstRowHeader, lineFilters, recordFilters, new DefaultStringTableImpl.BuilderFactoryImpl(new DefaultStringRecordImpl.BuilderFactoryImpl()));
         String line;
         while ((line = reader.readLine()) != null) {
             lineParser.parseRawLine(line);

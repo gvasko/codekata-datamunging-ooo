@@ -1,5 +1,7 @@
 package hu.gvasko.stringtable;
 
+import com.google.inject.Inject;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -13,14 +15,16 @@ class DefaultStringTableImpl implements StringTable {
     private static class BuilderImpl implements StringTableBuilder {
         private String[] schema;
         private List<String[]> records;
+        private StringRecordBuilderFactory sRecBuilderFactory;
 
-        BuilderImpl(String... schema) {
-            Set<String> uniqueSchema = new HashSet<>(Arrays.asList(schema));
-            if (uniqueSchema.size() != schema.length) {
+        BuilderImpl(StringRecordBuilderFactory sharedSRecBuilderFactory, String... sharedSchema) {
+            Set<String> uniqueSchema = new HashSet<>(Arrays.asList(sharedSchema));
+            if (uniqueSchema.size() != sharedSchema.length) {
                 throw new IllegalArgumentException("Duplicated attribute in the schema");
             }
-            this.schema = schema;
+            schema = sharedSchema;
             records = new ArrayList<>();
+            sRecBuilderFactory = sharedSRecBuilderFactory;
         }
 
         @Override
@@ -39,23 +43,40 @@ class DefaultStringTableImpl implements StringTable {
 
         @Override
         public StringTable build() {
-            return new DefaultStringTableImpl(schema, records);
+            return new DefaultStringTableImpl(sRecBuilderFactory, schema, records);
         }
 
     }
 
-    static StringTableBuilder newBuilder(String... schema) {
-        return new BuilderImpl(schema);
+    // TODO: delete method
+//    static StringTableBuilder newBuilder(StringRecordBuilderFactory sharedSRecBuilderFactory, String... schema) {
+//        return new BuilderImpl(sharedSRecBuilderFactory, schema);
+//    }
+
+    static class BuilderFactoryImpl implements StringTableBuilderFactory {
+        private StringRecordBuilderFactory sRecBuilderFactory;
+
+        @Inject
+        public BuilderFactoryImpl(StringRecordBuilderFactory sRecBuilderFactory) {
+            this.sRecBuilderFactory = sRecBuilderFactory;
+        }
+
+        @Override
+        public StringTableBuilder createNew(String... schema) {
+            return new BuilderImpl(sRecBuilderFactory, schema);
+        }
     }
 
     private String[] schema;
     private List<String[]> records;
     private Map<String,Function<String,String>> fieldDecoders;
+    private StringRecordBuilderFactory sRecBuilderFactory;
 
-    DefaultStringTableImpl(String[] sharedSchema, List<String[]> sharedRecords) {
+    DefaultStringTableImpl(StringRecordBuilderFactory sharedSRecBuilderFactory, String[] sharedSchema, List<String[]> sharedRecords) {
         schema = sharedSchema;
         records = sharedRecords;
         fieldDecoders = new HashMap<>();
+        sRecBuilderFactory = sharedSRecBuilderFactory;
     }
 
     @Override
@@ -74,7 +95,7 @@ class DefaultStringTableImpl implements StringTable {
     }
 
     private StringRecord toStringRecord(String[] rec) {
-        StringRecordBuilder recBuilder = DefaultStringRecordImpl.newBuilder();
+        StringRecordBuilder recBuilder = sRecBuilderFactory.createNew();
         for (int i = 0; i < schema.length; i++) {
             String field = schema[i];
             String value = getDecodedValue(field, rec[i]);

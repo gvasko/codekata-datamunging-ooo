@@ -140,7 +140,8 @@ public class StringTableTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void schemaMustBeUnique() {
-        DefaultStringTableImpl.newBuilder(new String[]{"A", "B", "A"});
+        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
+        stringTableFactory.newStringTableBuilderFactory().createNew(new String[]{"A", "B", "A"});
     }
 
     @Test
