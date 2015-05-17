@@ -60,6 +60,11 @@ class DefaultStringTableImpl implements StringTable {
         public StringTableBuilder createNew(String... schema) {
             return new BuilderImpl(sRecBuilderFactory, schema);
         }
+
+        @Override
+        public StringRecordBuilderFactory getRecordBuilderFactory() {
+            return sRecBuilderFactory;
+        }
     }
 
     private String[] schema;
@@ -67,7 +72,7 @@ class DefaultStringTableImpl implements StringTable {
     private Map<String,Function<String,String>> fieldDecoders;
     private StringRecordBuilderFactory sRecBuilderFactory;
 
-    DefaultStringTableImpl(StringRecordBuilderFactory sharedSRecBuilderFactory, String[] sharedSchema, List<String[]> sharedRecords) {
+    private DefaultStringTableImpl(StringRecordBuilderFactory sharedSRecBuilderFactory, String[] sharedSchema, List<String[]> sharedRecords) {
         schema = sharedSchema;
         records = sharedRecords;
         fieldDecoders = new HashMap<>();

@@ -35,16 +35,6 @@ public class StringTableFactory {
         injector = Guice.createInjector(getStringTableModule());
     }
 
-    // TODO: replace method with dep inj
-    public StringTableParser getFixWidthParser(URI uri) throws IOException {
-        return new DefaultTableParserContextImpl(newTableParserLogicFactory(), uri);
-    }
-
-    public StringTableParser getFixWidthParser(Reader reader) {
-        return new DefaultTableParserContextImpl(newTableParserLogicFactory(), reader);
-    }
-
-
     // TODO: move to somewhere else?
 
     public UnaryOperator<String> keepIntegersOnly() {
@@ -99,6 +89,18 @@ public class StringTableFactory {
         return injector.getInstance(TableParserLogicFactory.class);
     }
 
+    public StringTableParser newStringTableParser(URI uri) throws IOException {
+        return newStringTableParserFactory().createNew(uri);
+    }
+
+    public StringTableParser newStringTableParser(Reader reader) {
+        return newStringTableParserFactory().createNew(reader);
+    }
+
+    StringTableParserFactory newStringTableParserFactory() {
+        return injector.getInstance(StringTableParserFactory.class);
+    }
+
     private AbstractModule getStringTableModule() {
         AbstractModule module = new AbstractModule() {
             @Override
@@ -107,9 +109,7 @@ public class StringTableFactory {
                 bind(StringRecordBuilderFactory.class).to(DefaultStringRecordImpl.BuilderFactoryImpl.class);
                 bind(StringTableBuilderFactory.class).to(DefaultStringTableImpl.BuilderFactoryImpl.class);
                 bind(TableParserLogicFactory.class).to(DefaultTableParserLogicImpl.FactoryImpl.class);
-
-                // TODO: Seems like parameters
-                //bind(StringRecordParserFactory.class).to()
+                bind(StringTableParserFactory.class).to(DefaultTableParserContextImpl.FactoryImpl.class);
             }
         };
         return module;

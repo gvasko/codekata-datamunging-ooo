@@ -5,6 +5,7 @@ package hu.gvasko.stringtable;
  */
 interface StringRecordBuilder {
     StringRecordBuilder addField(String key, String value);
+    StringRecordBuilder addFields(String[] schema, String[] values);
 
     StringRecord build();
 }

@@ -102,7 +102,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private boolean validateLastRecord(String[] record) {
-        StringRecord tmpRec = DefaultStringRecordImpl.newRecord(builder.getSchema(), record);
+        StringRecord tmpRec = tableBuilderFactory.getRecordBuilderFactory().createNew().addFields(builder.getSchema(), record).build();
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;

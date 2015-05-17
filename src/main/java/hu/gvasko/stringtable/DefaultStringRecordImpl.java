@@ -27,6 +27,21 @@ class DefaultStringRecordImpl implements  StringRecord {
         }
 
         @Override
+        public StringRecordBuilder addFields(String[] schema, String[] values) {
+            if (schema.length != values.length) {
+                throw new IllegalArgumentException("Invalid values according to the schema.");
+            }
+            if (schema.length == 0) {
+                throw new IllegalStateException("Empty record cannot be created.");
+            }
+
+            for (int i = 0; i < schema.length; i++) {
+                stringMap.put(schema[i], values[i]);
+            }
+            return this;
+        }
+
+        @Override
         public StringRecord build() {
             if (stringMap.isEmpty()) {
                 throw new IllegalStateException("Empty record cannot be created.");
@@ -47,26 +62,10 @@ class DefaultStringRecordImpl implements  StringRecord {
         }
     }
 
-    static StringRecord newRecord(String[] schema, String[] values) {
-        if (schema.length != values.length) {
-            throw new IllegalArgumentException("Invalid values according to the schema.");
-        }
-        if (schema.length == 0) {
-            throw new IllegalStateException("Empty record cannot be created.");
-        }
-
-        Map<String, String> stringMap = new HashMap<>();
-        for (int i = 0; i < schema.length; i++) {
-            stringMap.put(schema[i], values[i]);
-        }
-
-        return new DefaultStringRecordImpl(stringMap);
-    }
-
     private List<String> fieldOrder;
     private Map<String, String> fields;
 
-    DefaultStringRecordImpl(Map<String, String> sharedFields) {
+    private DefaultStringRecordImpl(Map<String, String> sharedFields) {
         fields = sharedFields;
     }
 

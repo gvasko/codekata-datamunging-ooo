@@ -1,5 +1,7 @@
 package hu.gvasko.stringtable;
 
+import com.google.inject.Inject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -15,6 +17,26 @@ import java.util.function.Predicate;
  */
 class DefaultTableParserContextImpl implements StringTableParser {
 
+    static class FactoryImpl implements StringTableParserFactory {
+
+        private TableParserLogicFactory logicFactory;
+
+        @Inject
+        public FactoryImpl(TableParserLogicFactory logicFactory) {
+            this.logicFactory = logicFactory;
+        }
+
+        @Override
+        public StringTableParser createNew(URI uri) throws IOException {
+            return new DefaultTableParserContextImpl(logicFactory, uri);
+        }
+
+        @Override
+        public StringTableParser createNew(Reader reader) {
+            return new DefaultTableParserContextImpl(logicFactory, reader);
+        }
+    }
+
     private BufferedReader reader;
     private boolean isFirstRowHeader = false;
     private List<Predicate<String>> lineFilters;
@@ -22,11 +44,11 @@ class DefaultTableParserContextImpl implements StringTableParser {
 
     private TableParserLogicFactory logicFactory;
 
-    DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, URI fileLocation) throws IOException {
+    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, URI fileLocation) throws IOException {
         this(sharedLogicFactory, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, Reader sharedReader) {
+    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();

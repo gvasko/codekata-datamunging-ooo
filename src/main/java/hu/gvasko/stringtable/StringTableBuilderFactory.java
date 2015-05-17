@@ -5,4 +5,5 @@ package hu.gvasko.stringtable;
  */
 interface StringTableBuilderFactory {
     StringTableBuilder createNew(String... schema);
+    StringRecordBuilderFactory getRecordBuilderFactory();
 }
