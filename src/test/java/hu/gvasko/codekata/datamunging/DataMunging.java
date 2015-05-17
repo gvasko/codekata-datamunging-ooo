@@ -37,6 +37,10 @@ public class DataMunging {
         public int getLen() {
             return len;
         }
+
+        public static int[] getLenArray() {
+            return Arrays.stream(values()).mapToInt(WeatherColumns::getLen).toArray();
+        }
     }
 
     private enum FootballColumns {
@@ -66,6 +70,10 @@ public class DataMunging {
         public int getLen() {
             return len;
         }
+
+        public static int[] getLenArray() {
+            return Arrays.stream(values()).mapToInt(FootballColumns::getLen).toArray();
+        }
     }
 
     private StringTableFactory factory;
@@ -81,9 +89,7 @@ public class DataMunging {
         try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherColumns.DAY.getName()));
-            StringTable table = parser.firstRowIsHeader().parse(
-                    Arrays.stream(WeatherColumns.values()).mapToInt(WeatherColumns::getLen).toArray()
-            );
+            StringTable table = parser.firstRowIsHeader().parse(WeatherColumns.getLenArray());
 
             table.addStringDecoderToColumns(
                     factory.keepIntegersOnly(),
@@ -106,9 +112,7 @@ public class DataMunging {
         try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
-            StringTable table = parser.firstRowIsHeader().parse(
-                    Arrays.stream(FootballColumns.values()).mapToInt(FootballColumns::getLen).toArray()
-            );
+            StringTable table = parser.firstRowIsHeader().parse(FootballColumns.getLenArray());
 
             String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
             StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
