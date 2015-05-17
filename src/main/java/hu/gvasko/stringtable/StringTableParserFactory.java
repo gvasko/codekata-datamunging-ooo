@@ -8,7 +8,7 @@ import java.net.URI;
  * Created by gvasko on 2015.05.17..
  */
 interface StringTableParserFactory {
-    StringTableParser createNew(URI uri) throws IOException;
-    StringTableParser createNew(Reader reader);
+    StringTableParser createNew(StringRecordParser recordParser, URI uri) throws IOException;
+    StringTableParser createNew(StringRecordParser recordParser, Reader reader);
 
 }

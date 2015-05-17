@@ -89,12 +89,12 @@ public class StringTableFactory {
         return injector.getInstance(TableParserLogicFactory.class);
     }
 
-    public StringTableParser newStringTableParser(URI uri) throws IOException {
-        return newStringTableParserFactory().createNew(uri);
+    public StringTableParser newStringTableParser(StringRecordParser recordParser, URI uri) throws IOException {
+        return newStringTableParserFactory().createNew(recordParser, uri);
     }
 
-    public StringTableParser newStringTableParser(Reader reader) {
-        return newStringTableParserFactory().createNew(reader);
+    public StringTableParser newStringTableParser(StringRecordParser recordParser, Reader reader) {
+        return newStringTableParserFactory().createNew(recordParser, reader);
     }
 
     StringTableParserFactory newStringTableParserFactory() {

@@ -22,18 +22,18 @@ class DefaultTableParserContextImpl implements StringTableParser {
         private TableParserLogicFactory logicFactory;
 
         @Inject
-        public FactoryImpl(TableParserLogicFactory logicFactory) {
+        FactoryImpl(TableParserLogicFactory logicFactory) {
             this.logicFactory = logicFactory;
         }
 
         @Override
-        public StringTableParser createNew(URI uri) throws IOException {
-            return new DefaultTableParserContextImpl(logicFactory, uri);
+        public StringTableParser createNew(StringRecordParser recordParser, URI uri) throws IOException {
+            return new DefaultTableParserContextImpl(logicFactory, recordParser, uri);
         }
 
         @Override
-        public StringTableParser createNew(Reader reader) {
-            return new DefaultTableParserContextImpl(logicFactory, reader);
+        public StringTableParser createNew(StringRecordParser recordParser, Reader reader) {
+            return new DefaultTableParserContextImpl(logicFactory, recordParser, reader);
         }
     }
 
@@ -43,22 +43,24 @@ class DefaultTableParserContextImpl implements StringTableParser {
     private List<Predicate<StringRecord>> recordFilters;
 
     private TableParserLogicFactory logicFactory;
+    private StringRecordParser recordParser;
 
-    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, URI fileLocation) throws IOException {
-        this(sharedLogicFactory, Files.newBufferedReader(Paths.get(fileLocation)));
+    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
+        this(sharedLogicFactory, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, Reader sharedReader) {
+    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();
         logicFactory = sharedLogicFactory;
+        recordParser = sharedRecordParser;
     }
 
     @Override
-    public StringTable parse(StringRecordParser recordParser) {
+    public StringTable parse() {
         try {
-            return parseWithoutTry(recordParser);
+            return parseWithoutTry();
         } catch (IOException exReadLine) {
             RuntimeException ex = new RuntimeException("Parse exception", exReadLine);
             try {
@@ -71,7 +73,7 @@ class DefaultTableParserContextImpl implements StringTableParser {
         }
     }
 
-    private StringTable parseWithoutTry(StringRecordParser recordParser) throws IOException {
+    private StringTable parseWithoutTry() throws IOException {
         TableParserLogic lineParser = logicFactory.createNew(recordParser, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {

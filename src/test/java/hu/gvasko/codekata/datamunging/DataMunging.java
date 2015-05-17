@@ -86,10 +86,11 @@ public class DataMunging {
     @Test
     public void testDayWithSmallestTemperatureSpread() throws Exception {
         URL datFile = this.getClass().getResource("weather.dat");
-        try (StringTableParser parser = factory.newStringTableParser(datFile.toURI())) {
+        StringRecordParser recordParser = factory.getFixWidthRecordParser(WeatherColumns.getLenArray());
+        try (StringTableParser parser = factory.newStringTableParser(recordParser, datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherColumns.DAY.getName()));
-            StringTable table = parser.firstRowIsHeader().parse(factory.getFixWidthRecordParser(WeatherColumns.getLenArray()));
+            StringTable table = parser.firstRowIsHeader().parse();
 
             table.addStringDecoderToColumns(
                     factory.keepIntegersOnly(),
@@ -109,10 +110,11 @@ public class DataMunging {
     @Test
     public void testNameOfTeamWithSmallestGoalDifference() throws Exception {
         URL datFile = this.getClass().getResource("football.dat");
-        try (StringTableParser parser = factory.newStringTableParser(datFile.toURI())) {
+        StringRecordParser recordParser = factory.getFixWidthRecordParser(FootballColumns.getLenArray());
+        try (StringTableParser parser = factory.newStringTableParser(recordParser, datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
-            StringTable table = parser.firstRowIsHeader().parse(factory.getFixWidthRecordParser(FootballColumns.getLenArray()));
+            StringTable table = parser.firstRowIsHeader().parse();
 
             String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
             StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(

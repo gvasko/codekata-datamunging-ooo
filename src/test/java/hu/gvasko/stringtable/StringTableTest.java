@@ -147,8 +147,8 @@ public class StringTableTest {
     @Test
     public void singleRowTable() {
         StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        StringTableParser tableParser = stringTableFactory.newStringTableParser(new StringReader("A B C "));
-        StringTable singleRowTable = tableParser.parse(stringTableFactory.getFixWidthRecordParser(2, 2, 2));
+        StringTableParser tableParser = stringTableFactory.newStringTableParser(stringTableFactory.getFixWidthRecordParser(2, 2, 2), new StringReader("A B C "));
+        StringTable singleRowTable = tableParser.parse();
         Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
         StringRecord theRecord = singleRowTable.getRecord(0);
         Assert.assertEquals("element 0", "A", theRecord.get("0"));

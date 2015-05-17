@@ -51,10 +51,6 @@ class DefaultStringRecordImpl implements  StringRecord {
         }
     }
 
-//    static StringRecordBuilder newBuilder() {
-//        return new BuilderImpl();
-//    }
-
     static class BuilderFactoryImpl implements StringRecordBuilderFactory {
         @Override
         public StringRecordBuilder createNew() {
