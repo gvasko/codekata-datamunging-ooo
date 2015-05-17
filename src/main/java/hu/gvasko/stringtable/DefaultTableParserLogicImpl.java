@@ -1,5 +1,7 @@
 package hu.gvasko.stringtable;
 
+import com.google.inject.Inject;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -11,6 +13,21 @@ import java.util.function.Predicate;
  */
 class DefaultTableParserLogicImpl implements TableParserLogic {
 
+    static class FactoryImpl implements TableParserLogicFactory {
+
+        private StringTableBuilderFactory tableBuilderFactory;
+
+        @Inject
+        public FactoryImpl(StringTableBuilderFactory tableBuilderFactory) {
+            this.tableBuilderFactory = tableBuilderFactory;
+        }
+
+        @Override
+        public TableParserLogic createNew(int[] sharedFieldLengths, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
+            return new DefaultTableParserLogicImpl(sharedFieldLengths, isFirstRowHeader, sharedLineFilters, sharedRecordFilters, tableBuilderFactory);
+        }
+    }
+
     private StringTableBuilder builder = null;
     private StringRecordParser recParser;
 
@@ -21,7 +38,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
 
     private StringTableBuilderFactory tableBuilderFactory;
 
-    public DefaultTableParserLogicImpl(
+    private DefaultTableParserLogicImpl(
             int[] fieldLengths,
             boolean isFirstRowHeader,
             List<Predicate<String>> lineFilters,

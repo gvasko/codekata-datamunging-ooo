@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -34,12 +35,13 @@ public class StringTableFactory {
         injector = Guice.createInjector(getStringTableModule());
     }
 
+    // TODO: replace method with dep inj
     public StringTableParser getFixWidthParser(URI uri) throws IOException {
-        return new DefaultTableParserContextImpl(uri);
+        return new DefaultTableParserContextImpl(newTableParserLogicFactory(), uri);
     }
 
     public StringTableParser getFixWidthParser(Reader reader) {
-        return new DefaultTableParserContextImpl(reader);
+        return new DefaultTableParserContextImpl(newTableParserLogicFactory(), reader);
     }
 
 
@@ -85,6 +87,14 @@ public class StringTableFactory {
         return injector.getInstance(StringTableBuilderFactory.class);
     }
 
+    TableParserLogic newTableParserLogic(int[] sharedFieldLengths, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
+        return newTableParserLogicFactory().createNew(sharedFieldLengths, isFirstRowHeader, sharedLineFilters, sharedRecordFilters);
+    }
+
+    TableParserLogicFactory newTableParserLogicFactory() {
+        return injector.getInstance(TableParserLogicFactory.class);
+    }
+
     private AbstractModule getStringTableModule() {
         AbstractModule module = new AbstractModule() {
             @Override
@@ -92,6 +102,7 @@ public class StringTableFactory {
                 // ONLY FACTORIES???
                 bind(StringRecordBuilderFactory.class).to(DefaultStringRecordImpl.BuilderFactoryImpl.class);
                 bind(StringTableBuilderFactory.class).to(DefaultStringTableImpl.BuilderFactoryImpl.class);
+                bind(TableParserLogicFactory.class).to(DefaultTableParserLogicImpl.FactoryImpl.class);
             }
         };
         return module;

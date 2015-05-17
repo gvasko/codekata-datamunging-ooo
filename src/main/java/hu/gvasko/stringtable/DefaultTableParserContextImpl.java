@@ -20,14 +20,17 @@ class DefaultTableParserContextImpl implements StringTableParser {
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
-    public DefaultTableParserContextImpl(URI fileLocation) throws IOException {
-        this(Files.newBufferedReader(Paths.get(fileLocation)));
+    private TableParserLogicFactory logicFactory;
+
+    public DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, URI fileLocation) throws IOException {
+        this(sharedLogicFactory, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    public DefaultTableParserContextImpl(Reader sharedReader) {
+    public DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();
+        logicFactory = sharedLogicFactory;
     }
 
     @Override
@@ -47,7 +50,7 @@ class DefaultTableParserContextImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry(int[] fieldLengths) throws IOException {
-        TableParserLogic lineParser = new DefaultTableParserLogicImpl(fieldLengths, isFirstRowHeader, lineFilters, recordFilters, new DefaultStringTableImpl.BuilderFactoryImpl(new DefaultStringRecordImpl.BuilderFactoryImpl()));
+        TableParserLogic lineParser = logicFactory.createNew(fieldLengths, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {
             lineParser.parseRawLine(line);

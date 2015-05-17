@@ -48,11 +48,6 @@ class DefaultStringTableImpl implements StringTable {
 
     }
 
-    // TODO: delete method
-//    static StringTableBuilder newBuilder(StringRecordBuilderFactory sharedSRecBuilderFactory, String... schema) {
-//        return new BuilderImpl(sharedSRecBuilderFactory, schema);
-//    }
-
     static class BuilderFactoryImpl implements StringTableBuilderFactory {
         private StringRecordBuilderFactory sRecBuilderFactory;
 
