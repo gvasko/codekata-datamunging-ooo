@@ -7,5 +7,5 @@ import java.util.function.Predicate;
  * Created by gvasko on 2015.05.17..
  */
 interface TableParserLogicFactory {
-    TableParserLogic createNew(int[] sharedFieldLengths, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters);
+    TableParserLogic createNew(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters);
 }

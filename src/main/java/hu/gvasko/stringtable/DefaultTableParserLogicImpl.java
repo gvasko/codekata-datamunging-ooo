@@ -23,8 +23,8 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         }
 
         @Override
-        public TableParserLogic createNew(int[] sharedFieldLengths, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
-            return new DefaultTableParserLogicImpl(sharedFieldLengths, isFirstRowHeader, sharedLineFilters, sharedRecordFilters, tableBuilderFactory);
+        public TableParserLogic createNew(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
+            return new DefaultTableParserLogicImpl(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters, tableBuilderFactory);
         }
     }
 
@@ -39,15 +39,15 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     private StringTableBuilderFactory tableBuilderFactory;
 
     private DefaultTableParserLogicImpl(
-            int[] fieldLengths,
+            StringRecordParser sharedRecParser,
             boolean isFirstRowHeader,
             List<Predicate<String>> lineFilters,
             List<Predicate<StringRecord>> recordFilters,
             StringTableBuilderFactory sharedTableBuilderFactory) {
-        this.recParser = new FixWidthStringRecordParserImpl(fieldLengths);
         this.isFirstRowHeader = isFirstRowHeader;
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
+        this.recParser = sharedRecParser;
         this.tableBuilderFactory = sharedTableBuilderFactory;
 
         if (isFirstRowHeader) {

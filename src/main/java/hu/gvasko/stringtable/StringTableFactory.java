@@ -71,6 +71,10 @@ public class StringTableFactory {
         return record -> record.get(column).matches("^[+-]?\\d+$");
     }
 
+    public StringRecordParser getFixWidthRecordParser(int... fieldLengths) {
+        return new FixWidthStringRecordParserImpl(fieldLengths);
+    }
+
     StringRecordBuilder newStringRecordBuilder() {
         return newStringRecordBuilderFactory().createNew();
     }
@@ -87,8 +91,8 @@ public class StringTableFactory {
         return injector.getInstance(StringTableBuilderFactory.class);
     }
 
-    TableParserLogic newTableParserLogic(int[] sharedFieldLengths, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
-        return newTableParserLogicFactory().createNew(sharedFieldLengths, isFirstRowHeader, sharedLineFilters, sharedRecordFilters);
+    TableParserLogic newTableParserLogic(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
+        return newTableParserLogicFactory().createNew(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters);
     }
 
     TableParserLogicFactory newTableParserLogicFactory() {
@@ -99,10 +103,13 @@ public class StringTableFactory {
         AbstractModule module = new AbstractModule() {
             @Override
             protected void configure() {
-                // ONLY FACTORIES???
+                // TODO: ONLY FACTORIES???
                 bind(StringRecordBuilderFactory.class).to(DefaultStringRecordImpl.BuilderFactoryImpl.class);
                 bind(StringTableBuilderFactory.class).to(DefaultStringTableImpl.BuilderFactoryImpl.class);
                 bind(TableParserLogicFactory.class).to(DefaultTableParserLogicImpl.FactoryImpl.class);
+
+                // TODO: Seems like parameters
+                //bind(StringRecordParserFactory.class).to()
             }
         };
         return module;

@@ -89,7 +89,7 @@ public class DataMunging {
         try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherColumns.DAY.getName()));
-            StringTable table = parser.firstRowIsHeader().parse(WeatherColumns.getLenArray());
+            StringTable table = parser.firstRowIsHeader().parse(factory.getFixWidthRecordParser(WeatherColumns.getLenArray()));
 
             table.addStringDecoderToColumns(
                     factory.keepIntegersOnly(),
@@ -112,7 +112,7 @@ public class DataMunging {
         try (StringTableParser parser = factory.getFixWidthParser(datFile.toURI())) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
-            StringTable table = parser.firstRowIsHeader().parse(FootballColumns.getLenArray());
+            StringTable table = parser.firstRowIsHeader().parse(factory.getFixWidthRecordParser(FootballColumns.getLenArray()));
 
             String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
             StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(

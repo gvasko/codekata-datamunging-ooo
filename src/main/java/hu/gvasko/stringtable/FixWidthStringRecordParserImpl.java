@@ -7,7 +7,7 @@ class FixWidthStringRecordParserImpl implements StringRecordParser {
 
     private int[] fieldLengths;
 
-    public FixWidthStringRecordParserImpl(int[] fieldLengths) {
+    FixWidthStringRecordParserImpl(int[] fieldLengths) {
         this.fieldLengths = fieldLengths;
     }
 

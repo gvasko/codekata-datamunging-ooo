@@ -25,7 +25,7 @@ public class StringTableParserTest {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addRecordFilter(factory.onlyNumbersInColumn(defaultSchema[0]));
-            StringTable table = parser.firstRowIsHeader().parse(defaultHeader);
+            StringTable table = parser.firstRowIsHeader().parse(defaultRecordParser);
             assertEachCellIsValid(table_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn, table, defaultSchema);
         }
     }
@@ -35,7 +35,7 @@ public class StringTableParserTest {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
-            StringTable table = parser.parse(defaultHeader);
+            StringTable table = parser.parse(defaultRecordParser);
             assertEachCellIsValid(table_skipEmptyLines_skipSplitterLines, table, numberedSchema);
         }
     }
@@ -44,7 +44,7 @@ public class StringTableParserTest {
     public void parseWith_skipEmptyLines() throws Exception {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
-            StringTable table = parser.parse(defaultHeader);
+            StringTable table = parser.parse(defaultRecordParser);
             assertEachCellIsValid(table_skipEmptyLines, table, numberedSchema);
         }
     }
@@ -52,7 +52,7 @@ public class StringTableParserTest {
     @Test
     public void parseWith_fullTable() throws Exception {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(defaultText))) {
-            StringTable table = parser.parse(defaultHeader);
+            StringTable table = parser.parse(defaultRecordParser);
             assertEachCellIsValid(table_full, table, numberedSchema);
         }
     }
@@ -60,7 +60,7 @@ public class StringTableParserTest {
     @Test
     public void parseEmptyText() throws Exception {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(emptyText))) {
-            StringTable emptyTable = parser.parse(defaultHeader);
+            StringTable emptyTable = parser.parse(defaultRecordParser);
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
     }
@@ -69,7 +69,7 @@ public class StringTableParserTest {
     public void parseSpaces() throws Exception {
         try (StringTableParser parser = factory.getFixWidthParser(new StringReader(spaceText))) {
             parser.addLineFilter(factory.skipEmptyLines());
-            StringTable emptyTable = parser.parse(defaultHeader);
+            StringTable emptyTable = parser.parse(defaultRecordParser);
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
     }
