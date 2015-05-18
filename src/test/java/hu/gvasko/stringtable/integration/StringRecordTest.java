@@ -1,5 +1,7 @@
-package hu.gvasko.stringtable;
+package hu.gvasko.stringtable.integration;
 
+import hu.gvasko.stringtable.StringRecord;
+import hu.gvasko.stringtable.StringTableFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,12 +44,6 @@ public class StringRecordTest {
         Assert.assertEquals(NUMBER0_VALUE, rec.get(NUMBER0_KEY));
         Assert.assertEquals(NUMBER1_VALUE, rec.get(NUMBER1_KEY));
         Assert.assertEquals(NUMBER10_VALUE, rec.get(NUMBER10_KEY));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void emptyRecordCannotBeCreatedThrowsException() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        stringTableFactory.newStringRecordBuilder().build();
     }
 
 }
