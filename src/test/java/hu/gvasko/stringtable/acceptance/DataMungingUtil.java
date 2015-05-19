@@ -1,4 +1,4 @@
-package hu.gvasko.codekata.datamunging;
+package hu.gvasko.stringtable.acceptance;
 
 import hu.gvasko.stringtable.StringRecord;
 

@@ -4,8 +4,10 @@ import hu.gvasko.stringtable.StringRecord;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.stringtable.StringTableFactory;
 import hu.gvasko.stringtable.StringTableParser;
+import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.StringReader;
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import static hu.gvasko.stringtable.StringTableFixtures.*;
 /**
  * Created by gvasko on 2015.05.07..
  */
+@Category(IntegrationTest.class)
 public class StringTableTest {
 
     interface RecordSupplier {

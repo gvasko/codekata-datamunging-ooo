@@ -1,9 +1,11 @@
-package hu.gvasko.codekata.datamunging;
+package hu.gvasko.stringtable.acceptance;
 
 import hu.gvasko.stringtable.*;
+import hu.gvasko.testutils.categories.AcceptanceTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 // TODO: unfortunately hamcrest is not available in Idea & Gradle project
 //import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.hamcrest.Matchers.*;
@@ -15,6 +17,7 @@ import java.util.Arrays;
  *
  * Created by gvasko on 2015.05.06..
  */
+@Category(AcceptanceTest.class)
 public class DataMunging {
 
     private enum WeatherColumns {

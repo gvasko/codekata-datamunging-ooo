@@ -1,14 +1,17 @@
 package hu.gvasko.stringtable;
 
+import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.function.UnaryOperator;
 
 /**
  * Created by gvasko on 2015.05.07..
  */
+@Category(UnitTest.class)
 public class KeepIntegerOnlyTest {
 
     private UnaryOperator<String> op;
