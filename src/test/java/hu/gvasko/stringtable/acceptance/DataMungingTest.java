@@ -26,43 +26,69 @@ public class DataMungingTest {
     }
 
     @Test
-    public void testDayWithSmallestTemperatureSpread() throws Exception {
+    public void testDayWithSmallestTemperatureSpread_fixWidthText() throws Exception {
         StringRecordParser recordParser = factory.getFixWidthRecordParser(WeatherFixture.widthsAsArray());
         try (StringTableParser parser = factory.newStringTableParser(recordParser, WeatherFixture.getDatFile())) {
-            parser.addLineFilter(factory.skipEmptyLines());
-            parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
-            StringTable table = parser.firstRowIsHeader().parse();
-
-            table.addStringDecoderToColumns(
-                    factory.keepIntegersOnly(),
-                    WeatherFixture.MAX_TEMP.columnName(),
-                    WeatherFixture.MIN_TEMP.columnName());
-
-            String dayOfSmallestTemperatureSpread = "14";
-            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
-                    table.getAllRecords(),
-                    WeatherFixture.MAX_TEMP.columnName(),
-                    WeatherFixture.MIN_TEMP.columnName());
-            String actualDay = actualRecord.get(WeatherFixture.DAY.columnName());
-            Assert.assertEquals(dayOfSmallestTemperatureSpread, actualDay);
+            assertThatDayWithSmallestTemperatureSpreadIsOK(parser);
         }
     }
 
     @Test
-    public void testNameOfTeamWithSmallestGoalDifference() throws Exception {
+    public void testDayWithSmallestTemperatureSpread_CSV() throws Exception {
+        StringRecordParser recordParser = factory.getCommaSeparatedRecordParser(WeatherFixture.columnCount());
+        try (StringTableParser parser = factory.newStringTableParser(recordParser, WeatherFixture.getCSVFile())) {
+            assertThatDayWithSmallestTemperatureSpreadIsOK(parser);
+        }
+    }
+
+    private void assertThatDayWithSmallestTemperatureSpreadIsOK(StringTableParser parser) {
+        parser.addLineFilter(factory.skipEmptyLines());
+        parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
+        StringTable table = parser.firstRowIsHeader().parse();
+
+        table.addStringDecoderToColumns(
+                factory.keepIntegersOnly(),
+                WeatherFixture.MAX_TEMP.columnName(),
+                WeatherFixture.MIN_TEMP.columnName());
+
+        StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
+                table.getAllRecords(),
+                WeatherFixture.MAX_TEMP.columnName(),
+                WeatherFixture.MIN_TEMP.columnName());
+
+        String dayOfSmallestTemperatureSpread = "14";
+        String actualDay = actualRecord.get(WeatherFixture.DAY.columnName());
+        Assert.assertEquals(dayOfSmallestTemperatureSpread, actualDay);
+    }
+
+    @Test
+    public void testNameOfTeamWithSmallestGoalDifference_fixWidthText() throws Exception {
         StringRecordParser recordParser = factory.getFixWidthRecordParser(FootballFixture.widthsAsArray());
         try (StringTableParser parser = factory.newStringTableParser(recordParser, FootballFixture.getDatFile())) {
-            parser.addLineFilter(factory.skipEmptyLines());
-            parser.addLineFilter(factory.skipSplitterLines());
-            StringTable table = parser.firstRowIsHeader().parse();
-
-            String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
-            StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
-                    table.getAllRecords(),
-                    FootballFixture.GOALS_FOR.columnName(),
-                    FootballFixture.GOALS_AGAINST.columnName());
-            String actualTeamName = actualRecord.get(FootballFixture.TEAM.columnName());
-            Assert.assertEquals(nameOfTeamWithSmallestGoalDifference, actualTeamName);
+            assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(parser);
         }
+    }
+
+    @Test
+    public void testNameOfTeamWithSmallestGoalDifference_CSV() throws Exception {
+        StringRecordParser recordParser = factory.getCommaSeparatedRecordParser(FootballFixture.columnCount());
+        try (StringTableParser parser = factory.newStringTableParser(recordParser, FootballFixture.getCSVFile())) {
+            assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(parser);
+        }
+    }
+
+    private void assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(StringTableParser parser) {
+        parser.addLineFilter(factory.skipEmptyLines());
+        parser.addLineFilter(factory.skipSplitterLines());
+        StringTable table = parser.firstRowIsHeader().parse();
+
+        StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
+                table.getAllRecords(),
+                FootballFixture.GOALS_FOR.columnName(),
+                FootballFixture.GOALS_AGAINST.columnName());
+
+        String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
+        String actualTeamName = actualRecord.get(FootballFixture.TEAM.columnName());
+        Assert.assertEquals(nameOfTeamWithSmallestGoalDifference, actualTeamName);
     }
 }

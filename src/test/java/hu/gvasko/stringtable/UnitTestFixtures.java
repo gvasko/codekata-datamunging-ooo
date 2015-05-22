@@ -1,7 +1,5 @@
 package hu.gvasko.stringtable;
 
-import com.google.inject.AbstractModule;
-
 /**
  * Created by gvasko on 2015.05.22..
  */
@@ -12,7 +10,7 @@ public final class UnitTestFixtures {
     }
 
     public static StringRecordParser getFixWidthRecordParser(int[] fieldLengths) {
-        return new FixWidthStringRecordParserImpl(fieldLengths);
+        return new FixWidthTextParserImpl(fieldLengths);
     }
 
     public static StringRecordBuilder getStringRecordBuilder(StringRecordFactory testDoubleRecordFactory) {

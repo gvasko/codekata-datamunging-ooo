@@ -27,6 +27,10 @@ enum WeatherFixture {
         return len;
     }
 
+    public static int columnCount() {
+        return values().length;
+    }
+
     public static int[] widthsAsArray() {
         return Arrays.stream(values()).mapToInt(WeatherFixture::columnWidth).toArray();
     }

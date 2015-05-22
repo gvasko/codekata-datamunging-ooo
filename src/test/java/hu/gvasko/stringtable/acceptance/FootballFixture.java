@@ -34,6 +34,10 @@ enum FootballFixture {
         return len;
     }
 
+    public static int columnCount() {
+        return values().length;
+    }
+
     public static int[] widthsAsArray() {
         return Arrays.stream(values()).mapToInt(FootballFixture::columnWidth).toArray();
     }

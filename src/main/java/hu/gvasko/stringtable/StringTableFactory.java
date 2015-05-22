@@ -62,7 +62,11 @@ public class StringTableFactory {
     }
 
     public StringRecordParser getFixWidthRecordParser(int... fieldLengths) {
-        return new FixWidthStringRecordParserImpl(fieldLengths);
+        return new FixWidthTextParserImpl(fieldLengths);
+    }
+
+    public StringRecordParser getCommaSeparatedRecordParser(int columnCount) {
+        return new CommaSeparatedValuesParserImpl(columnCount);
     }
 
     StringRecordBuilder newStringRecordBuilder() {

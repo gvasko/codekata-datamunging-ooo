@@ -3,11 +3,11 @@ package hu.gvasko.stringtable;
 /**
  * Created by gvasko on 2015.05.10..
  */
-class FixWidthStringRecordParserImpl implements StringRecordParser {
+class FixWidthTextParserImpl implements StringRecordParser {
 
     private int[] fieldLengths;
 
-    FixWidthStringRecordParserImpl(int[] fieldLengths) {
+    FixWidthTextParserImpl(int[] fieldLengths) {
         this.fieldLengths = fieldLengths;
     }
 
