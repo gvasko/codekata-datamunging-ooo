@@ -5,6 +5,5 @@ package hu.gvasko.stringtable;
  */
 public interface StringRecordParser {
     int getColumnCount();
-    String[] parseHeader(String rawLine);
     String[] parseRecord(String rawLine);
 }

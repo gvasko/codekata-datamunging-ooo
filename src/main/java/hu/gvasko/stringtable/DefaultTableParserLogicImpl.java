@@ -85,7 +85,11 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         if (!isFirstRowHeader) {
             throw new IllegalStateException("first row should be header");
         }
-        builder = tableBuilderFactory.createNew(recParser.parseHeader(rawLine));
+        builder = tableBuilderFactory.createNew(parseHeader(rawLine));
+    }
+
+    private String[] parseHeader(String rawLine) {
+        return ensureUniqueElements(recParser.parseRecord(rawLine));
     }
 
     private void createBuilderWithNumberedHeader() {
@@ -109,6 +113,29 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
             }
         }
         return true;
+    }
+
+    private static String[] ensureUniqueElements(String[] stringArray) {
+        // O(n^2), but it is designed for tables with a few columns only
+        String[] uniqueStringArray = new String[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            if (getCount(stringArray[i], stringArray) > 1) {
+                uniqueStringArray[i] = Integer.toString(i) + stringArray[i];
+            } else {
+                uniqueStringArray[i] = stringArray[i];
+            }
+        }
+        return uniqueStringArray;
+    }
+
+    private static int getCount(String ss, String[] stringArray) {
+        int counter = 0;
+        for (String s : stringArray) {
+            if (ss.equals(s)) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
 }
