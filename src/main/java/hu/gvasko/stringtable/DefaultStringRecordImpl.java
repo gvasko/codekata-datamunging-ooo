@@ -2,7 +2,6 @@ package hu.gvasko.stringtable;
 
 import com.google.inject.Inject;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,50 +10,16 @@ import java.util.Map;
  */
 class DefaultStringRecordImpl implements  StringRecord {
 
-    private static class BuilderImpl implements StringRecordBuilder {
-
-        Map<String, String> stringMap;
+    static class FactoryImpl implements StringRecordFactory {
 
         @Inject
-        BuilderImpl() {
-            stringMap = new HashMap<>();
+        public FactoryImpl() {
+
         }
 
         @Override
-        public BuilderImpl addField(String key, String value) {
-            stringMap.put(key, value);
-            return this;
-        }
-
-        @Override
-        public StringRecordBuilder addFields(String[] schema, String[] values) {
-            if (schema.length != values.length) {
-                throw new IllegalArgumentException("Invalid values according to the schema.");
-            }
-            if (schema.length == 0) {
-                throw new IllegalStateException("Empty record cannot be created.");
-            }
-
-            for (int i = 0; i < schema.length; i++) {
-                stringMap.put(schema[i], values[i]);
-            }
-            return this;
-        }
-
-        @Override
-        public StringRecord build() {
-            if (stringMap.isEmpty()) {
-                throw new IllegalStateException("Empty record cannot be created.");
-            } else {
-                return new DefaultStringRecordImpl(stringMap);
-            }
-        }
-    }
-
-    static class BuilderFactoryImpl implements StringRecordBuilderFactory {
-        @Override
-        public StringRecordBuilder createNew() {
-            return new BuilderImpl();
+        public StringRecord createNew(Map<String, String> stringMap) {
+            return new DefaultStringRecordImpl(stringMap);
         }
     }
 

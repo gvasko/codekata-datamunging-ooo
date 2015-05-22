@@ -106,7 +106,8 @@ public class StringTableFactory {
             @Override
             protected void configure() {
                 // TODO: ONLY FACTORIES???
-                bind(StringRecordBuilderFactory.class).to(DefaultStringRecordImpl.BuilderFactoryImpl.class);
+                bind(StringRecordFactory.class).to(DefaultStringRecordImpl.FactoryImpl.class);
+                bind(StringRecordBuilderFactory.class).to(DefaultStringRecordBuilderImpl.FactoryImpl.class);
                 bind(StringTableBuilderFactory.class).to(DefaultStringTableImpl.BuilderFactoryImpl.class);
                 bind(TableParserLogicFactory.class).to(DefaultTableParserLogicImpl.FactoryImpl.class);
                 bind(StringTableParserFactory.class).to(DefaultTableParserContextImpl.FactoryImpl.class);

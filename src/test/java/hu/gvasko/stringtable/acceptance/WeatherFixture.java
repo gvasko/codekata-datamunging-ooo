@@ -34,4 +34,8 @@ enum WeatherFixture {
     public static URI getDatFile() throws Exception {
         return WeatherFixture.class.getResource("weather.dat").toURI();
     }
+
+    public static URI getCSVFile() throws Exception {
+        return WeatherFixture.class.getResource("weather.csv").toURI();
+    }
 }

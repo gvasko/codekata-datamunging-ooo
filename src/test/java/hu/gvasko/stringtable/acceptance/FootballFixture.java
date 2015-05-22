@@ -41,4 +41,8 @@ enum FootballFixture {
     public static URI getDatFile() throws Exception {
         return WeatherFixture.class.getResource("football.dat").toURI();
     }
+
+    public static URI getCSVFile() throws Exception {
+        return WeatherFixture.class.getResource("football.csv").toURI();
+    }
 }
