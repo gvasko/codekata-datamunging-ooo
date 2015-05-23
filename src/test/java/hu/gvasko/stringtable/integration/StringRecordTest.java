@@ -1,7 +1,6 @@
 package hu.gvasko.stringtable.integration;
 
 import hu.gvasko.stringtable.StringRecord;
-import hu.gvasko.stringtable.StringTableFactory;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;

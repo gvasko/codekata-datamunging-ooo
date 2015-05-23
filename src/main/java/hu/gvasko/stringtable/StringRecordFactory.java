@@ -5,6 +5,6 @@ import java.util.Map;
 /**
  * Created by gvasko on 2015.05.22..
  */
-public interface StringRecordFactory {
+interface StringRecordFactory {
     StringRecord createNew(Map<String, String> stringMap);
 }

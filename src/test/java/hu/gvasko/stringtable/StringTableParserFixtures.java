@@ -6,9 +6,9 @@ package hu.gvasko.stringtable;
 public class StringTableParserFixtures {
 
     public static final String[] defaultSchema = { "Aaa", "Bbb", "Ccc" };
-    public static final String[] numberedSchema = StringTableFactory.getDefaultHeader(defaultSchema.length);
+    public static final String[] numberedSchema = DefaultFactory.getDefaultHeader(defaultSchema.length);
     public static final int[] defaultHeader = { 5, 5, 5 };
-    public static final StringRecordParser defaultRecordParser = StringTableFactory.getInstance().getFixWidthRecordParser(defaultHeader);
+    public static final StringRecordParser defaultRecordParser = DefaultFactory.getInstance().getFixWidthRecordParser(defaultHeader);
 
     public static final String emptyText = "";
     public static final String spaceText = "   ";

@@ -93,7 +93,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private void createBuilderWithNumberedHeader() {
-        builder = tableBuilderFactory.createNew(StringTableFactory.getDefaultHeader(recParser.getColumnCount()));
+        builder = tableBuilderFactory.createNew(DefaultFactory.getDefaultHeader(recParser.getColumnCount()));
     }
 
     private boolean validateRawLine(String rawLine) {
@@ -106,7 +106,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private boolean validateLastRecord(String[] record) {
-        StringRecord tmpRec = tableBuilderFactory.getRecordBuilderFactory().createNew().addFields(builder.getSchema(), record).build();
+        StringRecord tmpRec = tableBuilderFactory.getTableFactory().getRecordBuilderFactory().createNew().addFields(builder.getSchema(), record).build();
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;

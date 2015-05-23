@@ -2,7 +2,7 @@ package hu.gvasko.stringtable.integration;
 
 import hu.gvasko.stringtable.StringRecord;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.StringTableFactory;
+import hu.gvasko.stringtable.DefaultFactory;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
@@ -147,8 +147,8 @@ public class StringTableTest {
 
     @Test
     public void singleRowTable() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        StringTableParser tableParser = stringTableFactory.newStringTableParser(stringTableFactory.getFixWidthRecordParser(2, 2, 2), new StringReader("A B C "));
+        DefaultFactory defaultFactory = DefaultFactory.getInstance();
+        StringTableParser tableParser = defaultFactory.newStringTableParser(defaultFactory.getFixWidthRecordParser(2, 2, 2), new StringReader("A B C "));
         StringTable singleRowTable = tableParser.parse();
         Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
         StringRecord theRecord = singleRowTable.getRecord(0);

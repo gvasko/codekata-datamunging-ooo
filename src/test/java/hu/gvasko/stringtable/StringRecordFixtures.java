@@ -23,21 +23,21 @@ public final class StringRecordFixtures {
     public static final String NUMBER10_VALUE = "ten";
 
     public static StringRecord getSingleFieldRecord() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        return stringTableFactory.newStringRecordBuilder().addField(SINGLE_KEY, SINGLE_VALUE).build();
+        DefaultFactory defaultFactory = DefaultFactory.getInstance();
+        return defaultFactory.newStringRecordBuilder().addField(SINGLE_KEY, SINGLE_VALUE).build();
     }
 
     public static StringRecord getTrioFieldsRecord() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        return stringTableFactory.newStringRecordBuilder()
+        DefaultFactory defaultFactory = DefaultFactory.getInstance();
+        return defaultFactory.newStringRecordBuilder()
                 .addField(TRIO1_KEY, TRIO1_VALUE)
                 .addField(TRIO2_KEY, TRIO2_VALUE)
                 .addField(TRIO3_KEY, TRIO3_VALUE).build();
     }
 
     public static StringRecord getNumberBasedRecords() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        return stringTableFactory.newStringRecordBuilder()
+        DefaultFactory defaultFactory = DefaultFactory.getInstance();
+        return defaultFactory.newStringRecordBuilder()
                 .addField(NUMBER0_KEY, NUMBER0_VALUE)
                 .addField(NUMBER1_KEY, NUMBER1_VALUE)
                 .addField(NUMBER10_KEY, NUMBER10_VALUE).build();

@@ -18,11 +18,11 @@ import org.junit.experimental.categories.Category;
 @Category(AcceptanceTest.class)
 public class DataMungingTest {
 
-    private StringTableFactory factory;
+    private DefaultFactory factory;
 
     @Before
     public void setUp() {
-        factory = StringTableFactory.getInstance();
+        factory = DefaultFactory.getInstance();
     }
 
     @Test

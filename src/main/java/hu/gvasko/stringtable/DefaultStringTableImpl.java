@@ -12,58 +12,23 @@ import java.util.stream.Collectors;
  */
 class DefaultStringTableImpl implements StringTable {
 
-    private static class BuilderImpl implements StringTableBuilder {
-        private String[] schema;
-        private List<String[]> records;
-        private StringRecordBuilderFactory sRecBuilderFactory;
+    static class FactoryImpl implements StringTableFactory {
 
-        BuilderImpl(StringRecordBuilderFactory sharedSRecBuilderFactory, String... sharedSchema) {
-            Set<String> uniqueSchema = new HashSet<>(Arrays.asList(sharedSchema));
-            if (uniqueSchema.size() != sharedSchema.length) {
-                throw new IllegalArgumentException("Duplicated attribute in the schema");
-            }
-            schema = sharedSchema;
-            records = new ArrayList<>();
-            sRecBuilderFactory = sharedSRecBuilderFactory;
-        }
-
-        @Override
-        public String[] getSchema() {
-            return Arrays.copyOf(schema, schema.length);
-        }
-
-        @Override
-        public StringTableBuilder addRecord(String... fields) {
-            if (schema.length != fields.length) {
-                throw new RuntimeException("Unexpected record.");
-            }
-            records.add(fields);
-            return this;
-        }
-
-        @Override
-        public StringTable build() {
-            return new DefaultStringTableImpl(sRecBuilderFactory, schema, records);
-        }
-
-    }
-
-    static class BuilderFactoryImpl implements StringTableBuilderFactory {
-        private StringRecordBuilderFactory sRecBuilderFactory;
+        private StringRecordBuilderFactory recBuilderFactory;
 
         @Inject
-        public BuilderFactoryImpl(StringRecordBuilderFactory sRecBuilderFactory) {
-            this.sRecBuilderFactory = sRecBuilderFactory;
+        public FactoryImpl(StringRecordBuilderFactory recBuilderFactory) {
+            this.recBuilderFactory = recBuilderFactory;
         }
 
         @Override
-        public StringTableBuilder createNew(String... schema) {
-            return new BuilderImpl(sRecBuilderFactory, schema);
+        public StringTable createNew(String[] sharedSchema, List<String[]> sharedRecords) {
+            return new DefaultStringTableImpl(recBuilderFactory, sharedSchema, sharedRecords);
         }
 
         @Override
         public StringRecordBuilderFactory getRecordBuilderFactory() {
-            return sRecBuilderFactory;
+            return recBuilderFactory;
         }
     }
 

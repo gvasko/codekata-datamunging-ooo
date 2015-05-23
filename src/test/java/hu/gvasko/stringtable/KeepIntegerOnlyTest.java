@@ -18,7 +18,7 @@ public class KeepIntegerOnlyTest {
 
     @Before
     public void setUp() {
-        op = StringTableFactory.getInstance().keepIntegersOnly();
+        op = DefaultFactory.getInstance().keepIntegersOnly();
     }
 
     @Test

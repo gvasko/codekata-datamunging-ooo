@@ -14,14 +14,14 @@ public class Dummy {
 
     @Test(expected = IllegalStateException.class)
     public void emptyRecordCannotBeCreatedThrowsException() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        stringTableFactory.newStringRecordBuilder().build();
+        DefaultFactory defaultFactory = DefaultFactory.getInstance();
+        defaultFactory.newStringRecordBuilder().build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void schemaMustBeUnique() {
-        StringTableFactory stringTableFactory = StringTableFactory.getInstance();
-        stringTableFactory.newStringTableBuilderFactory().createNew(new String[]{"A", "B", "A"});
+        DefaultFactory defaultFactory = DefaultFactory.getInstance();
+        defaultFactory.newStringTableBuilderFactory().createNew(new String[]{"A", "B", "A"});
     }
 
 

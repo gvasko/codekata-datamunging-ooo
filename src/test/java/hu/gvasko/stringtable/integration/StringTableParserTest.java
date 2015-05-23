@@ -2,7 +2,7 @@ package hu.gvasko.stringtable.integration;
 
 import hu.gvasko.stringtable.StringRecord;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.StringTableFactory;
+import hu.gvasko.stringtable.DefaultFactory;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
@@ -20,11 +20,11 @@ import static hu.gvasko.stringtable.StringTableParserFixtures.*;
 @Category(IntegrationTest.class)
 public class StringTableParserTest {
 
-    private StringTableFactory factory;
+    private DefaultFactory factory;
 
     @Before
     public void setUp() {
-        factory = StringTableFactory.getInstance();
+        factory = DefaultFactory.getInstance();
     }
 
     @Test
