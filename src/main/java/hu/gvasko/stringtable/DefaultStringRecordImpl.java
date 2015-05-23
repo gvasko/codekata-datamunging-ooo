@@ -40,7 +40,7 @@ class DefaultStringRecordImpl implements  StringRecord {
             return fields.get(field);
         }
 
-        throw new RuntimeException("Field does not exist: " +field);
+        throw new IllegalArgumentException("Field does not exist: " +field);
     }
 
     @Override
@@ -52,6 +52,8 @@ class DefaultStringRecordImpl implements  StringRecord {
             if (!first) {
                 sb.append(',');
             }
+            sb.append(field);
+            sb.append(':');
             sb.append(fields.get(field));
             first = false;
         }
