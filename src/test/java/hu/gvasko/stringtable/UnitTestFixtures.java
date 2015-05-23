@@ -22,4 +22,8 @@ public final class UnitTestFixtures {
     public static StringRecord getStringRecord(Map<String, String> stringMap) {
         return new DefaultStringRecordImpl.FactoryImpl().createNew(stringMap);
     }
+
+    public static StringTableBuilder getStringTableBuilder(StringTableFactory testDoubleTableFactory, String... schema) {
+        return new DefaultStringTableBuilderImpl.FactoryImpl(testDoubleTableFactory).createNew(schema);
+    }
 }

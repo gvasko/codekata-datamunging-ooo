@@ -31,6 +31,7 @@ public class StringRecordBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void when_ZeroFieldIsAdded_then_DoesNotCreateRecord_ThrowsException() {
         try {
             recBuilder.build();
@@ -43,6 +44,7 @@ public class StringRecordBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void when_DuplicateColumnNameAdded_then_DoesNotCreateRecord_ThrowsException() {
         try {
             recBuilder.addField("AA", "a");
@@ -59,27 +61,27 @@ public class StringRecordBuilderTest {
     public void when_FieldsAddedNormally_then_CreatesRecordUsingAllPassedFields() {
         addDefaultFieldsABC();
         recBuilder.build();
-        verify(spyRecFactory).createNew(getDefaultExpectedMapABC());
+        verify(spyRecFactory).createNew(eq(getDefaultExpectedMapABC()));
     }
 
-    private void given_BuilderHasAlreadyCreatedRecord() {
+    private void andGiven_BuilderHasAlreadyCreatedRecord() {
         addDefaultFieldsABC();
         recBuilder.build();
     }
 
     @Test
     public void when_BuilderIsCalledAgain_then_CreatesRecordUsingAllPreviouslyAndNewlyPassedFields() {
-        given_BuilderHasAlreadyCreatedRecord();
+        andGiven_BuilderHasAlreadyCreatedRecord();
 
         Map<String, String> expectedMap = getDefaultExpectedMapABC();
 
-        verify(spyRecFactory).createNew(expectedMap);
+        verify(spyRecFactory).createNew(eq(expectedMap));
 
         recBuilder.addField("DD", "dd");
         recBuilder.build();
 
         expectedMap.put("DD", "dd");
-        verify(spyRecFactory, times(2)).createNew(expectedMap);
+        verify(spyRecFactory, times(2)).createNew(eq(expectedMap));
     }
 
     @Test
@@ -87,17 +89,18 @@ public class StringRecordBuilderTest {
         addDefaultFieldsABC();
         recBuilder.addFields(new String[0], new String[0]);
         recBuilder.build();
-        verify(spyRecFactory).createNew(getDefaultExpectedMapABC());
+        verify(spyRecFactory).createNew(eq(getDefaultExpectedMapABC()));
     }
 
     @Test
     public void when_MultipleFieldsAddedNormally_then_CreatesRecordUsingAllPassedFields() {
         recBuilder.addFields(new String[] {"AA", "BB", "CC"}, new String[] {"aa", "bb", "cc"});
         recBuilder.build();
-        verify(spyRecFactory).createNew(getDefaultExpectedMapABC());
+        verify(spyRecFactory).createNew(eq(getDefaultExpectedMapABC()));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void when_MultipleFieldsAddDuplicate_then_DoesNotCreateRecord_ThrowsException() {
         try {
             recBuilder.addFields(new String[]{"AA", "AA"}, new String[]{"a", "aa"});
@@ -110,6 +113,7 @@ public class StringRecordBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void when_MultipleFieldsInconsistent_then_DoesNotCreateRecord_ThrowsException() {
         try {
             recBuilder.addFields(new String[]{"AA", "BB"}, new String[]{"aa", "bb", "cc"});

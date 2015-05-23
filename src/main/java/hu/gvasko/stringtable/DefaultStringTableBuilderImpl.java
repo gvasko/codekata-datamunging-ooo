@@ -32,7 +32,7 @@ class DefaultStringTableBuilderImpl implements StringTableBuilder {
     private List<String[]> records;
     private StringTableFactory tableFactory;
 
-    DefaultStringTableBuilderImpl(StringTableFactory sharedTableFactory, String... sharedSchema) {
+    private DefaultStringTableBuilderImpl(StringTableFactory sharedTableFactory, String... sharedSchema) {
         Set<String> uniqueSchema = new HashSet<>(Arrays.asList(sharedSchema));
         if (uniqueSchema.size() != sharedSchema.length) {
             throw new IllegalArgumentException("Duplicated attribute in the schema");
@@ -50,7 +50,7 @@ class DefaultStringTableBuilderImpl implements StringTableBuilder {
     @Override
     public StringTableBuilder addRecord(String... fields) {
         if (schema.length != fields.length) {
-            throw new RuntimeException("Unexpected record.");
+            throw new IllegalArgumentException("Unexpected record.");
         }
         records.add(fields);
         return this;
