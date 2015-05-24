@@ -6,7 +6,7 @@ package hu.gvasko.stringtable;
 class CommaSeparatedValuesParserImpl implements StringRecordParser {
 
     private final int columnCount;
-    private final String commaRegex = "\\,";
+    private static final String commaRegex = "\\,";
 
     public CommaSeparatedValuesParserImpl(int columnCount) {
         this.columnCount = columnCount;

@@ -23,7 +23,6 @@ class DefaultStringRecordImpl implements  StringRecord {
         }
     }
 
-    private List<String> fieldOrder;
     private Map<String, String> fields;
 
     private DefaultStringRecordImpl(Map<String, String> sharedFields) {

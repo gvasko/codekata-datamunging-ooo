@@ -5,13 +5,21 @@ package hu.gvasko.stringtable;
  */
 public class StringTableParserFixtures {
 
-    public static final String[] defaultSchema = { "Aaa", "Bbb", "Ccc" };
-    public static final String[] numberedSchema = DefaultFactory.getDefaultHeader(defaultSchema.length);
-    public static final int[] defaultHeader = { 5, 5, 5 };
-    public static final StringRecordParser defaultRecordParser = DefaultFactory.getInstance().getFixWidthRecordParser(defaultHeader);
-
     public static final String emptyText = "";
+
     public static final String spaceText = "   ";
+    private static int[] defaultHeader = { 5, 5, 5 };
+
+    public static String[] getDefaultSchema() {
+        return new String[] { "Aaa", "Bbb", "Ccc" };
+    }
+    public static String[] getNumberedSchema() {
+        return DefaultFactory.getDefaultHeader(defaultHeader.length);
+    }
+
+    public static final StringRecordParser getDefaultRecordParser() {
+        return DefaultFactory.getInstance().getFixWidthRecordParser(defaultHeader);
+    }
 
     public static final String defaultText = ""
             + " Aaa  Bbb  Ccc \n"
@@ -24,39 +32,47 @@ public class StringTableParserFixtures {
             + "         \n";        // two empty rows at the end
 
 
-    public static final String[][] table_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn = {
-            { "0", "b0", "c0" },
-            { "1", "b1", "c1" },
-            { "2", "", "c2" },
-            { "3", "b3", "" }
-    };
+    public static String[][] getTable_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn() {
+        return new String[][] {
+                { "0", "b0", "c0" },
+                { "1", "b1", "c1" },
+                { "2", "", "c2" },
+                { "3", "b3", "" }
+        };
+    }
 
-    public static final String[][] table_skipEmptyLines_skipSplitterLines = {
-            { "Aaa", "Bbb", "Ccc" },
-            { "0", "b0", "c0" },
-            { "1", "b1", "c1" },
-            { "2", "", "c2" },
-            { "3", "b3", "" }
-    };
+    public static String[][] getTable_skipEmptyLines_skipSplitterLines() {
+        return new String[][] {
+                { "Aaa", "Bbb", "Ccc" },
+                { "0", "b0", "c0" },
+                { "1", "b1", "c1" },
+                { "2", "", "c2" },
+                { "3", "b3", "" }
+        };
+    }
 
-    public static final String[][] table_skipEmptyLines = {
-            { "Aaa", "Bbb", "Ccc" },
-            { "0", "b0", "c0" },
-            { "1", "b1", "c1" },
-            { "2", "", "c2" },
-            { "3", "b3", "" },
-            { "-----", "-----", "-----" }
-    };
+    public static String[][] getTable_skipEmptyLines() {
+        return new String[][] {
+                { "Aaa", "Bbb", "Ccc" },
+                { "0", "b0", "c0" },
+                { "1", "b1", "c1" },
+                { "2", "", "c2" },
+                { "3", "b3", "" },
+                { "-----", "-----", "-----" }
+        };
+    }
 
-    public static final String[][] table_full = {
-            { "Aaa", "Bbb", "Ccc" },
-            { "", "", "" },
-            { "0", "b0", "c0" },
-            { "1", "b1", "c1" },
-            { "2", "", "c2" },
-            { "3", "b3", "" },
-            { "-----", "-----", "-----" },
-            { "", "", "" }
-    };
+    public static String[][] getTable_full() {
+        return new String[][] {
+                { "Aaa", "Bbb", "Ccc" },
+                { "", "", "" },
+                { "0", "b0", "c0" },
+                { "1", "b1", "c1" },
+                { "2", "", "c2" },
+                { "3", "b3", "" },
+                { "-----", "-----", "-----" },
+                { "", "", "" }
+        };
+    }
 
 }

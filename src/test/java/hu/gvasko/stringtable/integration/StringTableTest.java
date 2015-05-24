@@ -6,6 +6,7 @@ import hu.gvasko.stringtable.DefaultFactory;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -28,6 +29,15 @@ public class StringTableTest {
 
     interface RawRecordSupplier {
         String[] getRecordAtRow(int row);
+    }
+
+    private String[] defaultSchema;
+    private String[][] abcTable;
+
+    @Before
+    public void setUp() {
+        defaultSchema = getDefaultSchema();
+        abcTable = getAbcArrays();
     }
 
     @Test
@@ -82,7 +92,7 @@ public class StringTableTest {
         return tmp;
     }
 
-    private static void assertRowsEquals(StringTable table, RawRecordSupplier expectedRecSupplier, RecordSupplier actualRecSupplier) {
+    private void assertRowsEquals(StringTable table, RawRecordSupplier expectedRecSupplier, RecordSupplier actualRecSupplier) {
         for (int row = 0; row < table.getRowCount(); row++) {
             String[] expectedRecord = expectedRecSupplier.getRecordAtRow(row);
             StringRecord actualRecord = actualRecSupplier.getRecordAtRow(row);
@@ -93,7 +103,7 @@ public class StringTableTest {
         }
     }
 
-    private static String getMessage(int row, int col) {
+    private String getMessage(int row, int col) {
         return "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
     }
 

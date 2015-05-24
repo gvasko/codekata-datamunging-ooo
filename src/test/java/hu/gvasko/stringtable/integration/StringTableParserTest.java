@@ -21,52 +21,54 @@ import static hu.gvasko.stringtable.StringTableParserFixtures.*;
 public class StringTableParserTest {
 
     private DefaultFactory factory;
+    private String[] defaultSchema;
 
     @Before
     public void setUp() {
         factory = DefaultFactory.getInstance();
+        defaultSchema = getDefaultSchema();
     }
 
     @Test
     public void parseWith_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(defaultRecordParser, new StringReader(defaultText))) {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addRecordFilter(factory.onlyNumbersInColumn(defaultSchema[0]));
             StringTable table = parser.firstRowIsHeader().parse();
-            assertEachCellIsValid(table_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn, table, defaultSchema);
+            assertEachCellIsValid(getTable_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn(), table, defaultSchema);
         }
     }
 
     @Test
     public void parseWith_skipEmptyLines_skipSplitterLines() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(defaultRecordParser, new StringReader(defaultText))) {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             parser.addLineFilter(factory.skipSplitterLines());
             StringTable table = parser.parse();
-            assertEachCellIsValid(table_skipEmptyLines_skipSplitterLines, table, numberedSchema);
+            assertEachCellIsValid(getTable_skipEmptyLines_skipSplitterLines(), table, getNumberedSchema());
         }
     }
 
     @Test
     public void parseWith_skipEmptyLines() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(defaultRecordParser, new StringReader(defaultText))) {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             StringTable table = parser.parse();
-            assertEachCellIsValid(table_skipEmptyLines, table, numberedSchema);
+            assertEachCellIsValid(getTable_skipEmptyLines(), table, getNumberedSchema());
         }
     }
 
     @Test
     public void parseWith_fullTable() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(defaultRecordParser, new StringReader(defaultText))) {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
             StringTable table = parser.parse();
-            assertEachCellIsValid(table_full, table, numberedSchema);
+            assertEachCellIsValid(getTable_full(), table, getNumberedSchema());
         }
     }
 
     @Test
     public void parseEmptyText() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(defaultRecordParser, new StringReader(emptyText))) {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
             StringTable emptyTable = parser.parse();
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
@@ -74,7 +76,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseSpaces() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(defaultRecordParser, new StringReader(spaceText))) {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(spaceText))) {
             parser.addLineFilter(factory.skipEmptyLines());
             StringTable emptyTable = parser.parse();
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());

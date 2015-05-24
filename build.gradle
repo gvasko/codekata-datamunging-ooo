@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'findbugs'
 
 sourceCompatibility = 1.8
 version = '1.0'
@@ -19,3 +20,11 @@ test {
         events "passed", "skipped", "failed"
     }
 }
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
