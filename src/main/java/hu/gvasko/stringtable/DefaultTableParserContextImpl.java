@@ -62,14 +62,7 @@ class DefaultTableParserContextImpl implements StringTableParser {
         try {
             return parseWithoutTry();
         } catch (IOException exReadLine) {
-            RuntimeException ex = new RuntimeException("Parse exception", exReadLine);
-            try {
-                close();
-            }
-            catch (Exception exClose) {
-                ex.addSuppressed(exClose);
-            }
-            throw ex;
+            throw new RuntimeException("Parse exception", exReadLine);
         }
     }
 
@@ -100,6 +93,7 @@ class DefaultTableParserContextImpl implements StringTableParser {
 
     @Override
     public void close() throws Exception {
+        // TODO: what if this happens during exception throwing?
         if (reader != null) {
             reader.close();
         }

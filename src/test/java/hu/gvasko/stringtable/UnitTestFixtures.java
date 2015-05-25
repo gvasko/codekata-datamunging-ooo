@@ -1,5 +1,6 @@
 package hu.gvasko.stringtable;
 
+import java.io.Reader;
 import java.util.Map;
 
 /**
@@ -25,5 +26,12 @@ public final class UnitTestFixtures {
 
     public static StringTableBuilder getStringTableBuilder(StringTableFactory testDoubleTableFactory, String... schema) {
         return new DefaultStringTableBuilderImpl.FactoryImpl(testDoubleTableFactory).createNew(schema);
+    }
+
+    public static StringTableParser getStringTableParser(
+            TableParserLogicFactory testDoubleLogicFactory,
+            StringRecordParser testDoubleRecParser,
+            Reader testDoubleReader) {
+        return new DefaultTableParserContextImpl.FactoryImpl(testDoubleLogicFactory).createNew(testDoubleRecParser, testDoubleReader);
     }
 }

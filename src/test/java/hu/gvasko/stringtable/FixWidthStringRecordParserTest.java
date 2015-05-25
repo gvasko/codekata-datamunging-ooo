@@ -30,22 +30,22 @@ public class FixWidthStringRecordParserTest {
 
     @Test
     public void when_LastColumnMissing_then_UseEmptyString() {
-        final String[] arrayOfEmptyStrings = {"aaa", "bbbb", ""};
+        final String[] record = {"aaa", "bbbb", ""};
         Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(arrayOfEmptyStrings, recParser.parseRecord("aaabbbb"));
+        Assert.assertArrayEquals(record, recParser.parseRecord("aaabbbb"));
     }
 
     @Test
     public void when_SpacesAreAround_then_FieldValuesAreTrimmed() {
-        final String[] arrayOfEmptyStrings = {"a", "b", "c"};
+        final String[] record = {"a", "b", "c"};
         Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(arrayOfEmptyStrings, recParser.parseRecord(" a  b    c  "));
+        Assert.assertArrayEquals(record, recParser.parseRecord(" a  b    c  "));
     }
 
     @Test
     public void when_LineIsLongerThanExpected_then_TailIsSkipped() {
-        final String[] arrayOfEmptyStrings = {"aaa", "bbbb", "ccccc"};
+        final String[] record = {"aaa", "bbbb", "ccccc"};
         Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(arrayOfEmptyStrings, recParser.parseRecord("aaabbbbcccccdddddd"));
+        Assert.assertArrayEquals(record, recParser.parseRecord("aaabbbbcccccdddddd"));
     }
 }
