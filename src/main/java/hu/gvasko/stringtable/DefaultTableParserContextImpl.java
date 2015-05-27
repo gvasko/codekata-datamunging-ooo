@@ -67,12 +67,12 @@ class DefaultTableParserContextImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry() throws IOException {
-        TableParserLogic lineParser = logicFactory.createNew(recordParser, isFirstRowHeader, lineFilters, recordFilters);
+        TableParserLogic tableParser = logicFactory.createNew(recordParser, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {
-            lineParser.parseRawLine(line);
+            tableParser.parseRawLine(line);
         }
-        return lineParser.getTableBuilder().build();
+        return tableParser.getTableBuilder().build();
     }
 
     @Override
@@ -93,7 +93,6 @@ class DefaultTableParserContextImpl implements StringTableParser {
 
     @Override
     public void close() throws Exception {
-        // TODO: what if this happens during exception throwing?
         if (reader != null) {
             reader.close();
         }

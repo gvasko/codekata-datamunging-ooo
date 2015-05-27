@@ -3,6 +3,7 @@ package hu.gvasko.stringtable;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Created by gvasko on 2015.05.22..
@@ -42,5 +43,9 @@ public final class UnitTestFixtures {
 
     public static StringTable getStringTable(StringRecordBuilderFactory testDoubleRecBuilderFactory, String[] schema, List<String[]> records) {
         return new DefaultStringTableImpl.FactoryImpl(testDoubleRecBuilderFactory).createNew(schema, records);
+    }
+
+    public static TableParserLogic getTableParserLogic(StringTableBuilderFactory testDoubleTableBuilderFactory, StringRecordParser testDoubleRecParser, boolean isFirstRowHeader, List<Predicate<String>> lineFilters, List<Predicate<StringRecord>> recordFilters) {
+        return new DefaultTableParserLogicImpl.FactoryImpl(testDoubleTableBuilderFactory).createNew(testDoubleRecParser, isFirstRowHeader, lineFilters, recordFilters);
     }
 }
