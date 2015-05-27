@@ -23,6 +23,12 @@ class DefaultStringTableImpl implements StringTable {
 
         @Override
         public StringTable createNew(String[] sharedSchema, List<String[]> sharedRecords) {
+            for (int i = 0; i < sharedRecords.size(); i++) {
+                String[] rec = sharedRecords.get(i);
+                if (sharedSchema.length != rec.length) {
+                    throw new IllegalArgumentException("Record #" + Integer.toString(i) + " [" + String.join(",", rec) + "] does not fulfill schema [" + String.join(",", sharedSchema) + "]");
+                }
+            }
             return new DefaultStringTableImpl(recBuilderFactory, sharedSchema, sharedRecords);
         }
 
