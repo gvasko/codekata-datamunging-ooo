@@ -1,14 +1,15 @@
 package hu.gvasko.stringtable;
 
 /**
+ * Comma Separated Values - Parser
  * Created by gvasko on 2015.05.22..
  */
-class CommaSeparatedValuesParserImpl implements StringRecordParser {
+class CSVParserImpl implements StringRecordParser {
 
     private final int columnCount;
     private static final String commaRegex = "\\,";
 
-    public CommaSeparatedValuesParserImpl(int columnCount) {
+    public CSVParserImpl(int columnCount) {
         this.columnCount = columnCount;
     }
 
@@ -19,7 +20,8 @@ class CommaSeparatedValuesParserImpl implements StringRecordParser {
 
     @Override
     public String[] parseRecord(String rawLine) {
-        String[] values = rawLine.split(commaRegex);
+        String safeLine = " " + rawLine + " ";
+        String[] values = safeLine.split(commaRegex);
 
         if (columnCount > values.length) {
             throw new IllegalArgumentException("Minimal number of columns is " + columnCount + ". Raw line contains different number of columns: " + rawLine);

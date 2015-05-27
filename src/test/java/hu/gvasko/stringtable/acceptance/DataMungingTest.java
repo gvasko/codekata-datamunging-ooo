@@ -35,7 +35,7 @@ public class DataMungingTest {
 
     @Test
     public void testDayWithSmallestTemperatureSpread_CSV() throws Exception {
-        StringRecordParser recordParser = factory.getCommaSeparatedRecordParser(WeatherFixture.columnCount());
+        StringRecordParser recordParser = factory.getCSVRecordParser(WeatherFixture.columnCount());
         try (StringTableParser parser = factory.newStringTableParser(recordParser, WeatherFixture.getCSVFile())) {
             assertThatDayWithSmallestTemperatureSpreadIsOK(parser);
         }
@@ -71,7 +71,7 @@ public class DataMungingTest {
 
     @Test
     public void testNameOfTeamWithSmallestGoalDifference_CSV() throws Exception {
-        StringRecordParser recordParser = factory.getCommaSeparatedRecordParser(FootballFixture.columnCount());
+        StringRecordParser recordParser = factory.getCSVRecordParser(FootballFixture.columnCount());
         try (StringTableParser parser = factory.newStringTableParser(recordParser, FootballFixture.getCSVFile())) {
             assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(parser);
         }

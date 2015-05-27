@@ -17,6 +17,10 @@ public final class UnitTestFixtures {
         return new FixWidthTextParserImpl(fieldLengths);
     }
 
+    public static StringRecordParser getCSVParser(int fieldCount) {
+        return new CSVParserImpl(fieldCount);
+    }
+
     public static StringRecordBuilder getStringRecordBuilder(StringRecordFactory testDoubleRecordFactory) {
         return new DefaultStringRecordBuilderImpl.FactoryImpl(testDoubleRecordFactory).createNew();
     }

@@ -65,8 +65,8 @@ public class DefaultFactory {
         return new FixWidthTextParserImpl(fieldLengths);
     }
 
-    public StringRecordParser getCommaSeparatedRecordParser(int columnCount) {
-        return new CommaSeparatedValuesParserImpl(columnCount);
+    public StringRecordParser getCSVRecordParser(int columnCount) {
+        return new CSVParserImpl(columnCount);
     }
 
     StringRecordBuilder newStringRecordBuilder() {
