@@ -48,5 +48,11 @@ public class CSVParserTest {
         Assert.assertArrayEquals(record, recParser.parseRecord("aaa,bbbb,ccccc,dddddd"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void when_LineIsShorterThanExpected_then_ThrowsException() {
+        final String[] record = {"aaa", "bbbb", "ccccc"};
+        recParser.parseRecord("aaa,bbbb");
+    }
+
 
 }
