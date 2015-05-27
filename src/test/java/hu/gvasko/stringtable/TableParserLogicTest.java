@@ -13,17 +13,17 @@ import java.util.function.Predicate;
 @Category(UnitTest.class)
 public class TableParserLogicTest {
 
-    private TableParserLogic sutTableParserLogic;
-    private StringTableBuilderFactory testDoubleTableBuilderFactory;
-    private StringRecordParser testDoubleRecParser;
-    private boolean isFirstRowHeader;
-    private List<Predicate<String>> lineFilters;
-    private List<Predicate<StringRecord>> recordFilters;
-
-    @Before
-    public void given() {
-
-    }
+//    private TableParserLogic sutTableParserLogic;
+//    private StringTableBuilderFactory testDoubleTableBuilderFactory;
+//    private StringRecordParser testDoubleRecParser;
+//    private boolean isFirstRowHeader;
+//    private List<Predicate<String>> lineFilters;
+//    private List<Predicate<StringRecord>> recordFilters;
+//
+//    @Before
+//    public void given() {
+//
+//    }
 
 
 

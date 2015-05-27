@@ -12,7 +12,7 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class CSVParserTest {
 
-    private final int testColumns = 3;
+    private static final int testColumns = 3;
     private StringRecordParser recParser;
 
     @Before
@@ -50,7 +50,6 @@ public class CSVParserTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void when_LineIsShorterThanExpected_then_ThrowsException() {
-        final String[] record = {"aaa", "bbbb", "ccccc"};
         recParser.parseRecord("aaa,bbbb");
     }
 
