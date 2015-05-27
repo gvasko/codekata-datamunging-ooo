@@ -1,6 +1,7 @@
 package hu.gvasko.stringtable;
 
 import java.io.Reader;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,5 +34,9 @@ public final class UnitTestFixtures {
             StringRecordParser testDoubleRecParser,
             Reader testDoubleReader) {
         return new DefaultTableParserContextImpl.FactoryImpl(testDoubleLogicFactory).createNew(testDoubleRecParser, testDoubleReader);
+    }
+
+    public static StringTable getStringTable(StringRecordBuilderFactory testDoubleRecBuilderFactory, String[] schema, List<String[]> records) {
+        return new DefaultStringTableImpl.FactoryImpl(testDoubleRecBuilderFactory).createNew(schema, records);
     }
 }
