@@ -91,6 +91,26 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     @Override
+    public void setLineFilters(List<Predicate<String>> lineFilters) {
+        this.lineFilters = lineFilters;
+    }
+
+    @Override
+    public void addLineFilter(Predicate<String> lineFilter) {
+        this.lineFilters.add(lineFilter);
+    }
+
+    @Override
+    public void setRecordFilters(List<Predicate<StringRecord>> recordFilters) {
+        this.recordFilters = recordFilters;
+    }
+
+    @Override
+    public void addRecordFilter(Predicate<StringRecord> recordFilter) {
+        this.recordFilters.add(recordFilter);
+    }
+
+    @Override
     public void parseRawLine(String rawLine) {
         if (!validateRawLine(rawLine)) {
             return;

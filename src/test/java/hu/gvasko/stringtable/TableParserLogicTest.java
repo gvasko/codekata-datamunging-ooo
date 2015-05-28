@@ -71,6 +71,35 @@ public class TableParserLogicTest {
         verify(spyRecParser, never()).parseRecord(anyString());
     }
 
+    @Test
+    public void when_NotExplicitlySet_then_FirstRowIsNotHeader() {
+        Assert.assertFalse("first row is not header by default", sutTableParserLogic.isFirstRowHeader());
+    }
+
+    @Test
+    public void when_LineFilters_then_LinesOmitted() {
+        String[] text = andGiven_ABCTable();
+        sutTableParserLogic.addLineFilter(line -> !"ghi".equals(line));
+        parseText(text);
+        int expectedRecordCount = text.length - 1;
+        verify(spyTableBuilder, times(expectedRecordCount)).addRecord(anyVararg());
+    }
+
+//    @Test
+//    public void when_RecordFilters_then_RecordsOmitted() {
+//        // TODO: how to do?
+//    }
+//
+//    @Test
+//    public void when_BothFilters_then_LineFiltersFirst() {
+//        // TODO: depends on the previous
+//    }
+//
+//  when_HeaderHadDuplicateValues_then_EnsuresUniqueValues
+
+
+
+
     private String[] andGiven_ABCTable() {
         return new String[] {
                 "ABC",
