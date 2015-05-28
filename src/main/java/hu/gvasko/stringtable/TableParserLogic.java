@@ -6,5 +6,8 @@ package hu.gvasko.stringtable;
 interface TableParserLogic {
     StringTable getTable();
 
+    boolean isFirstRowHeader();
+    void setFirstRowHeader(boolean f);
+
     void parseRawLine(String rawLine);
 }

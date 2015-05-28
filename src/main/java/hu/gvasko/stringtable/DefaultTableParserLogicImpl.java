@@ -2,6 +2,7 @@ package hu.gvasko.stringtable;
 
 import com.google.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -23,6 +24,11 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         }
 
         @Override
+        public TableParserLogic createNew(StringRecordParser sharedRecParser) {
+            return new DefaultTableParserLogicImpl(sharedRecParser, tableBuilderFactory);
+        }
+
+        @Override
         public TableParserLogic createNew(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
             return new DefaultTableParserLogicImpl(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters, tableBuilderFactory);
         }
@@ -31,7 +37,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     private StringTableBuilder builder = null;
     private StringRecordParser recParser;
 
-    private boolean isFirstRowHeader;
+    private Boolean isFirstRowHeaderObj;
 
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
@@ -44,7 +50,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
             List<Predicate<String>> lineFilters,
             List<Predicate<StringRecord>> recordFilters,
             StringTableBuilderFactory sharedTableBuilderFactory) {
-        this.isFirstRowHeader = isFirstRowHeader;
+        this.isFirstRowHeaderObj = isFirstRowHeader;
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
         this.recParser = sharedRecParser;
@@ -57,12 +63,37 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         }
     }
 
+    private DefaultTableParserLogicImpl(
+            StringRecordParser sharedRecParser,
+            StringTableBuilderFactory sharedTableBuilderFactory) {
+        this.isFirstRowHeaderObj = null;
+        this.lineFilters = new ArrayList<>();
+        this.recordFilters = new ArrayList<>();
+        this.recParser = sharedRecParser;
+        this.tableBuilderFactory = sharedTableBuilderFactory;
+    }
+
     @Override
     public StringTable getTable() {
         if (builder == null) {
             createBuilderWithNumberedHeader();
         }
         return builder.build();
+    }
+
+    @Override
+    public boolean isFirstRowHeader() {
+        if (isFirstRowHeaderObj == null) {
+            isFirstRowHeaderObj = Boolean.FALSE;
+        }
+        return isFirstRowHeaderObj;
+    }
+
+    @Override
+    public void setFirstRowHeader(boolean f) {
+        if (isFirstRowHeaderObj == null) {
+            isFirstRowHeaderObj = f;
+        }
     }
 
     @Override
@@ -82,7 +113,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private void createTableBuilderWithHeader(String rawLine) {
-        if (!isFirstRowHeader) {
+        if (!isFirstRowHeader()) {
             throw new IllegalStateException("first row should be header");
         }
         builder = tableBuilderFactory.createNew(parseHeader(rawLine));
