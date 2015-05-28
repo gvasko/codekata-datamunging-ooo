@@ -74,6 +74,13 @@ public class StringTableParserTest {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void parseEmptyTextIfFirstRowIsHeader() throws Exception {
+        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
+            parser.firstRowIsHeader().parse();
+        }
+    }
+
     @Test
     public void parseSpaces() throws Exception {
         try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(spaceText))) {

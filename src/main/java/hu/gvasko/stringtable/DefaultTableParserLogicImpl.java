@@ -3,8 +3,9 @@ package hu.gvasko.stringtable;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Queue;
 import java.util.function.Predicate;
 
 /**
@@ -35,48 +36,10 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         }
     }
 
-    private static class SetOnceGuard<T> {
-        private T object;
-        private T defaultObject;
-        private Consumer<T> consumer;
-
-        SetOnceGuard(T def, Consumer<T> cons) {
-            object = null;
-            defaultObject = def;
-            consumer = cons;
-        }
-
-        T getObject() {
-            forceInit();
-            return object;
-        }
-
-        void forceInit() {
-            if (object == null) {
-                setAndFire(defaultObject);
-            }
-        }
-
-        void setObject(T obj) {
-            if (object == null) {
-                setAndFire(obj);
-            }
-        }
-
-        private void setAndFire(T obj) {
-            object = obj;
-            consumer.accept(obj);
-        }
-    }
-
-    private static class FirstUseGuard {
-
-    }
-
-    private SetOnceGuard setOnceGuard;
-    private StringTableBuilder builder = null;
+    private StringTableBuilder _builder = null;
     private StringRecordParser recParser;
-
+    private Boolean _firstRowHeader = null;
+    private Queue<String> lineBuffer;
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
@@ -84,44 +47,47 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
 
     private DefaultTableParserLogicImpl(
             StringRecordParser sharedRecParser,
-            boolean isFirstRowHeader,
+            boolean firstRowHeader,
             List<Predicate<String>> lineFilters,
             List<Predicate<StringRecord>> recordFilters,
             StringTableBuilderFactory sharedTableBuilderFactory) {
-        this.setOnceGuard = new SetOnceGuard(isFirstRowHeader);
+        this.recParser = sharedRecParser;
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
-        this.recParser = sharedRecParser;
         this.tableBuilderFactory = sharedTableBuilderFactory;
+        setFirstRowHeader(firstRowHeader);
+        this.lineBuffer = new LinkedList<>();
     }
 
     private DefaultTableParserLogicImpl(
             StringRecordParser sharedRecParser,
             StringTableBuilderFactory sharedTableBuilderFactory) {
-        this.setOnceGuard = new SetOnceGuard();
         this.lineFilters = new ArrayList<>();
         this.recordFilters = new ArrayList<>();
         this.recParser = sharedRecParser;
         this.tableBuilderFactory = sharedTableBuilderFactory;
+        this.lineBuffer = new LinkedList<>();
     }
 
     @Override
     public StringTable getTable() {
-        setOnceGuard.getTableBuilder().build();
-        if ( == null) {
-            createBuilderWithNumberedHeader();
-        }
-        return builder.build();
+        parseLineBuffer_lazy();
+        return getBuilder_lazy().build();
     }
 
     @Override
     public boolean isFirstRowHeader() {
-        return setOnceGuard.isFirstRowHeader();
+        if (_firstRowHeader == null) {
+            _firstRowHeader = Boolean.FALSE;
+        }
+        return _firstRowHeader;
     }
 
     @Override
     public void setFirstRowHeader(boolean f) {
-        setOnceGuard.setObject(f);
+        if (_firstRowHeader == null) {
+            _firstRowHeader = f;
+        }
     }
 
     @Override
@@ -129,30 +95,51 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         if (!validateRawLine(rawLine)) {
             return;
         }
+        lineBuffer.add(rawLine);
+        parseLineBuffer_lazy();
+    }
 
-        if (setOnceGuard.getTableBuilder() == null) {
-            createTableBuilderWithHeader(rawLine);
-        } else {
-            String[] record = recParser.parseRecord(rawLine);
+    private void parseLineBuffer_lazy() {
+        StringTableBuilder builder = getBuilder_lazy();
+        while (!lineBuffer.isEmpty()) {
+            String[] record = recParser.parseRecord(lineBuffer.remove());
             if (validateRecord(record)) {
                 builder.addRecord(record);
             }
         }
     }
 
-    private void createTableBuilderWithHeader(String rawLine) {
-        if (!isFirstRowHeader()) {
-            throw new IllegalStateException("first row should be header");
+    private StringTableBuilder getBuilder_lazy() {
+        if (_builder != null) {
+            return _builder;
         }
-        builder = tableBuilderFactory.createNewTableBuilder(parseHeader(rawLine));
+
+        if (isFirstRowHeader()) {
+            if (lineBuffer.isEmpty()) {
+                throw new IllegalArgumentException("Missing table header");
+            }
+            _builder = createTableBuilderWithHeader(lineBuffer.remove());
+        } else {
+            _builder = createBuilderWithNumberedHeader();
+        }
+
+        if (_builder == null) {
+            throw new IllegalStateException("Table builder cannot be null.");
+        }
+
+        return _builder;
+    }
+
+    private StringTableBuilder createTableBuilderWithHeader(String rawLine) {
+        return tableBuilderFactory.createNewTableBuilder(parseHeader(rawLine));
     }
 
     private String[] parseHeader(String rawLine) {
         return ensureUniqueElements(recParser.parseRecord(rawLine));
     }
 
-    private void createBuilderWithNumberedHeader() {
-        builder = tableBuilderFactory.createNewTableBuilder(DefaultFactory.getDefaultHeader(recParser.getColumnCount()));
+    private StringTableBuilder createBuilderWithNumberedHeader() {
+        return tableBuilderFactory.createNewTableBuilder(DefaultFactory.getDefaultHeader(recParser.getColumnCount()));
     }
 
     private boolean validateRawLine(String rawLine) {
@@ -165,8 +152,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private boolean validateRecord(String[] record) {
-        // TODO: it's too much
-        StringRecord tmpRec = tableBuilderFactory.createNewRecordBuilder().addFields(builder.getSchema(), record).build();
+        StringRecord tmpRec = tableBuilderFactory.createNewRecordBuilder().addFields(getBuilder_lazy().getSchema(), record).build();
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;

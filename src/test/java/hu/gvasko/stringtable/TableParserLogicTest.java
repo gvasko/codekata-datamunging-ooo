@@ -33,12 +33,6 @@ public class TableParserLogicTest {
     }
 
     @Test
-    public void when_NoLineToParse_then_CreatesEmptyTable() {
-        sutTableParserLogic.getTable();
-        verify(spyRecParser, never()).parseRecord(anyString());
-    }
-
-    @Test
     public void when_SetFirstRowHeaderTwice_then_SecondInvocationIsIgnored_inOrderTo_avoidIllegalState() {
         sutTableParserLogic.setFirstRowHeader(true);
         Assert.assertTrue("first invocation", sutTableParserLogic.isFirstRowHeader());
@@ -62,6 +56,19 @@ public class TableParserLogicTest {
         parseText(text);
         int expectedRecordCount = text.length;
         verify(spyTableBuilder, times(expectedRecordCount)).addRecord(anyVararg());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void when_FirstRowIsHeader_and_NoRows_then_ThrowsException() {
+        sutTableParserLogic.setFirstRowHeader(true);
+        sutTableParserLogic.getTable();
+    }
+
+    @Test
+    public void when_FirstRowIsNotHeader_and_NoRows_then_ReturnsEmptyTable() {
+        sutTableParserLogic.setFirstRowHeader(false);
+        sutTableParserLogic.getTable();
+        verify(spyRecParser, never()).parseRecord(anyString());
     }
 
     private String[] andGiven_ABCTable() {
