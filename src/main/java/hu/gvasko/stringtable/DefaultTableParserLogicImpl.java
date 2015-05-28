@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -34,10 +35,47 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         }
     }
 
+    private static class SetOnceGuard<T> {
+        private T object;
+        private T defaultObject;
+        private Consumer<T> consumer;
+
+        SetOnceGuard(T def, Consumer<T> cons) {
+            object = null;
+            defaultObject = def;
+            consumer = cons;
+        }
+
+        T getObject() {
+            forceInit();
+            return object;
+        }
+
+        void forceInit() {
+            if (object == null) {
+                setAndFire(defaultObject);
+            }
+        }
+
+        void setObject(T obj) {
+            if (object == null) {
+                setAndFire(obj);
+            }
+        }
+
+        private void setAndFire(T obj) {
+            object = obj;
+            consumer.accept(obj);
+        }
+    }
+
+    private static class FirstUseGuard {
+
+    }
+
+    private SetOnceGuard setOnceGuard;
     private StringTableBuilder builder = null;
     private StringRecordParser recParser;
-
-    private Boolean isFirstRowHeaderObj;
 
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
@@ -50,23 +88,17 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
             List<Predicate<String>> lineFilters,
             List<Predicate<StringRecord>> recordFilters,
             StringTableBuilderFactory sharedTableBuilderFactory) {
-        this.isFirstRowHeaderObj = isFirstRowHeader;
+        this.setOnceGuard = new SetOnceGuard(isFirstRowHeader);
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
         this.recParser = sharedRecParser;
         this.tableBuilderFactory = sharedTableBuilderFactory;
-
-        if (isFirstRowHeader) {
-            // create builder when first row is available
-        } else {
-            createBuilderWithNumberedHeader();
-        }
     }
 
     private DefaultTableParserLogicImpl(
             StringRecordParser sharedRecParser,
             StringTableBuilderFactory sharedTableBuilderFactory) {
-        this.isFirstRowHeaderObj = null;
+        this.setOnceGuard = new SetOnceGuard();
         this.lineFilters = new ArrayList<>();
         this.recordFilters = new ArrayList<>();
         this.recParser = sharedRecParser;
@@ -75,7 +107,8 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
 
     @Override
     public StringTable getTable() {
-        if (builder == null) {
+        setOnceGuard.getTableBuilder().build();
+        if ( == null) {
             createBuilderWithNumberedHeader();
         }
         return builder.build();
@@ -83,17 +116,12 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
 
     @Override
     public boolean isFirstRowHeader() {
-        if (isFirstRowHeaderObj == null) {
-            isFirstRowHeaderObj = Boolean.FALSE;
-        }
-        return isFirstRowHeaderObj;
+        return setOnceGuard.isFirstRowHeader();
     }
 
     @Override
     public void setFirstRowHeader(boolean f) {
-        if (isFirstRowHeaderObj == null) {
-            isFirstRowHeaderObj = f;
-        }
+        setOnceGuard.setObject(f);
     }
 
     @Override
@@ -102,11 +130,11 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
             return;
         }
 
-        if (builder == null) {
+        if (setOnceGuard.getTableBuilder() == null) {
             createTableBuilderWithHeader(rawLine);
         } else {
             String[] record = recParser.parseRecord(rawLine);
-            if (validateLastRecord(record)) {
+            if (validateRecord(record)) {
                 builder.addRecord(record);
             }
         }
@@ -116,7 +144,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         if (!isFirstRowHeader()) {
             throw new IllegalStateException("first row should be header");
         }
-        builder = tableBuilderFactory.createNew(parseHeader(rawLine));
+        builder = tableBuilderFactory.createNewTableBuilder(parseHeader(rawLine));
     }
 
     private String[] parseHeader(String rawLine) {
@@ -124,7 +152,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private void createBuilderWithNumberedHeader() {
-        builder = tableBuilderFactory.createNew(DefaultFactory.getDefaultHeader(recParser.getColumnCount()));
+        builder = tableBuilderFactory.createNewTableBuilder(DefaultFactory.getDefaultHeader(recParser.getColumnCount()));
     }
 
     private boolean validateRawLine(String rawLine) {
@@ -136,8 +164,9 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
         return true;
     }
 
-    private boolean validateLastRecord(String[] record) {
-        StringRecord tmpRec = tableBuilderFactory.getTableFactory().getRecordBuilderFactory().createNew().addFields(builder.getSchema(), record).build();
+    private boolean validateRecord(String[] record) {
+        // TODO: it's too much
+        StringRecord tmpRec = tableBuilderFactory.createNewRecordBuilder().addFields(builder.getSchema(), record).build();
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;
@@ -148,6 +177,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
 
     private static String[] ensureUniqueElements(String[] stringArray) {
         // O(n^2), but it is designed for tables with a few columns only
+
         String[] uniqueStringArray = new String[stringArray.length];
         for (int i = 0; i < stringArray.length; i++) {
             if (getCount(stringArray[i], stringArray) > 1) {

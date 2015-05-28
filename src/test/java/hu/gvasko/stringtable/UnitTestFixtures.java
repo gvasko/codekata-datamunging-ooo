@@ -31,7 +31,7 @@ public final class UnitTestFixtures {
     }
 
     public static StringTableBuilder getStringTableBuilder(StringTableFactory testDoubleTableFactory, String... schema) {
-        return new DefaultStringTableBuilderImpl.FactoryImpl(testDoubleTableFactory).createNew(schema);
+        return new DefaultStringTableBuilderImpl.FactoryImpl(testDoubleTableFactory).createNewTableBuilder(schema);
     }
 
     public static StringTableParser getStringTableParser(
@@ -43,6 +43,10 @@ public final class UnitTestFixtures {
 
     public static StringTable getStringTable(StringRecordBuilderFactory testDoubleRecBuilderFactory, String[] schema, List<String[]> records) {
         return new DefaultStringTableImpl.FactoryImpl(testDoubleRecBuilderFactory).createNew(schema, records);
+    }
+
+    public static TableParserLogic getTableParserLogic(StringTableBuilderFactory testDoubleTableBuilderFactory, StringRecordParser testDoubleRecParser) {
+        return new DefaultTableParserLogicImpl.FactoryImpl(testDoubleTableBuilderFactory).createNew(testDoubleRecParser);
     }
 
     public static TableParserLogic getTableParserLogic(StringTableBuilderFactory testDoubleTableBuilderFactory, StringRecordParser testDoubleRecParser, boolean isFirstRowHeader, List<Predicate<String>> lineFilters, List<Predicate<StringRecord>> recordFilters) {

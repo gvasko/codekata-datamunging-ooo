@@ -25,12 +25,12 @@ public final class StringTableFixtures {
 
     public static StringTable getEmptyTable() {
         DefaultFactory defaultFactory = DefaultFactory.getInstance();
-        return defaultFactory.newStringTableBuilderFactory().createNew(getDefaultSchema()).build();
+        return defaultFactory.newStringTableBuilderFactory().createNewTableBuilder(getDefaultSchema()).build();
     }
 
     public static StringTable getAbcTable() {
         DefaultFactory defaultFactory = DefaultFactory.getInstance();
-        StringTableBuilder builder = defaultFactory.newStringTableBuilderFactory().createNew(getDefaultSchema());
+        StringTableBuilder builder = defaultFactory.newStringTableBuilderFactory().createNewTableBuilder(getDefaultSchema());
 
         String[][] abcTable = getAbcArrays();
         for (int i = 0; i < abcTable.length; i++) {

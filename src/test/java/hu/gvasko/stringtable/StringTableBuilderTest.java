@@ -105,11 +105,6 @@ public class StringTableBuilderTest {
         Assert.assertArrayEquals("Third record", rec3, recordList.get(2));
     }
 
-    @Test
-    public void test_IfTheGivenTableFactoryIsReturned() {
-        Assert.assertSame("TableFactory", spyTableFactory, new DefaultStringTableBuilderImpl.FactoryImpl(spyTableFactory).getTableFactory());
-    }
-
     @SuppressWarnings("unchecked")
     private List<String[]> getCapturedRecords(int callCount) {
         ArgumentCaptor<List> recordCaptor = ArgumentCaptor.forClass(List.class);

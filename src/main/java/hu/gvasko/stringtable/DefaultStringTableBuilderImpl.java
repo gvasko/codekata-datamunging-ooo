@@ -10,22 +10,23 @@ import java.util.*;
 class DefaultStringTableBuilderImpl implements StringTableBuilder {
 
     static class FactoryImpl implements StringTableBuilderFactory {
-        private StringTableFactory sRecBuilderFactory;
+        private StringTableFactory tableFactory;
 
         @Inject
-        public FactoryImpl(StringTableFactory sRecBuilderFactory) {
-            this.sRecBuilderFactory = sRecBuilderFactory;
+        public FactoryImpl(StringTableFactory tableFactory) {
+            this.tableFactory = tableFactory;
         }
 
         @Override
-        public StringTableBuilder createNew(String... schema) {
-            return new DefaultStringTableBuilderImpl(sRecBuilderFactory, schema);
+        public StringTableBuilder createNewTableBuilder(String... schema) {
+            return new DefaultStringTableBuilderImpl(tableFactory, schema);
         }
 
         @Override
-        public StringTableFactory getTableFactory() {
-            return sRecBuilderFactory;
+        public StringRecordBuilder createNewRecordBuilder() {
+            return tableFactory.getRecordBuilderFactory().createNew();
         }
+
     }
 
     private String[] schema;

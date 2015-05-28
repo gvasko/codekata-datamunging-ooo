@@ -78,7 +78,7 @@ public class DefaultFactory {
     }
 
     StringTableBuilder newStringTableBuilder(String... schema) {
-        return newStringTableBuilderFactory().createNew(schema);
+        return newStringTableBuilderFactory().createNewTableBuilder(schema);
     }
 
     StringTableBuilderFactory newStringTableBuilderFactory() {
