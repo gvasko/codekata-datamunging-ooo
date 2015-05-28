@@ -44,7 +44,7 @@ public class StringTableParserContextTest {
     public void given() {
         spyTableParserLogicFactory = mock(TableParserLogicFactory.class);
         spyParserLogic = mock(TableParserLogic.class);
-        when(spyParserLogic.getTableBuilder()).thenReturn(mock(StringTableBuilder.class));
+        when(spyParserLogic.getTable()).thenReturn(mock(StringTable.class));
         when(spyTableParserLogicFactory.createNew(any(), anyBoolean(), anyList(), anyList())).thenReturn(spyParserLogic);
         dummyRecParser = mock(StringRecordParser.class);
         fakeReader = spy(new StringReader(TEXT));

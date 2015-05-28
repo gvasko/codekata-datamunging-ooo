@@ -72,7 +72,7 @@ class DefaultTableParserContextImpl implements StringTableParser {
         while ((line = reader.readLine()) != null) {
             tableParser.parseRawLine(line);
         }
-        return tableParser.getTableBuilder().build();
+        return tableParser.getTable();
     }
 
     @Override

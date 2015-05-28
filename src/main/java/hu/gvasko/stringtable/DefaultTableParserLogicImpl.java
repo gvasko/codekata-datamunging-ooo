@@ -58,11 +58,11 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     @Override
-    public StringTableBuilder getTableBuilder() {
+    public StringTable getTable() {
         if (builder == null) {
             createBuilderWithNumberedHeader();
         }
-        return builder;
+        return builder.build();
     }
 
     @Override
