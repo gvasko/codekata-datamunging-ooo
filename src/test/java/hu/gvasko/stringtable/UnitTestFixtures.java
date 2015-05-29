@@ -38,7 +38,7 @@ public final class UnitTestFixtures {
             TableParserLogicFactory testDoubleLogicFactory,
             StringRecordParser testDoubleRecParser,
             Reader testDoubleReader) {
-        return new DefaultTableParserContextImpl.FactoryImpl(testDoubleLogicFactory).createNew(testDoubleRecParser, testDoubleReader);
+        return new DefaultTableParserLineReaderImpl.FactoryImpl(testDoubleLogicFactory).createNew(testDoubleRecParser, testDoubleReader);
     }
 
     public static StringTable getStringTable(StringRecordBuilderFactory testDoubleRecBuilderFactory, String[] schema, List<String[]> records) {

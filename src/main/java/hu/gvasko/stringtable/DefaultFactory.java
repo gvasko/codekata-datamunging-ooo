@@ -115,7 +115,7 @@ public class DefaultFactory {
                 bind(StringTableFactory.class).to(DefaultStringTableImpl.FactoryImpl.class);
                 bind(StringTableBuilderFactory.class).to(DefaultStringTableBuilderImpl.FactoryImpl.class);
                 bind(TableParserLogicFactory.class).to(DefaultTableParserLogicImpl.FactoryImpl.class);
-                bind(StringTableParserFactory.class).to(DefaultTableParserContextImpl.FactoryImpl.class);
+                bind(StringTableParserFactory.class).to(DefaultTableParserLineReaderImpl.FactoryImpl.class);
             }
         };
         return module;

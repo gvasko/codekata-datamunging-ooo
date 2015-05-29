@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 /**
  * Created by Gvasko on 2015.05.07..
  */
-class DefaultTableParserContextImpl implements StringTableParser {
+class DefaultTableParserLineReaderImpl implements StringTableParser {
 
     static class FactoryImpl implements StringTableParserFactory {
 
@@ -28,12 +28,12 @@ class DefaultTableParserContextImpl implements StringTableParser {
 
         @Override
         public StringTableParser createNew(StringRecordParser recordParser, URI uri) throws IOException {
-            return new DefaultTableParserContextImpl(logicFactory, recordParser, uri);
+            return new DefaultTableParserLineReaderImpl(logicFactory, recordParser, uri);
         }
 
         @Override
         public StringTableParser createNew(StringRecordParser recordParser, Reader reader) {
-            return new DefaultTableParserContextImpl(logicFactory, recordParser, reader);
+            return new DefaultTableParserLineReaderImpl(logicFactory, recordParser, reader);
         }
     }
 
@@ -45,11 +45,11 @@ class DefaultTableParserContextImpl implements StringTableParser {
     private TableParserLogicFactory logicFactory;
     private StringRecordParser recordParser;
 
-    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
+    private DefaultTableParserLineReaderImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
         this(sharedLogicFactory, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    private DefaultTableParserContextImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {
+    private DefaultTableParserLineReaderImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();
@@ -67,12 +67,12 @@ class DefaultTableParserContextImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry() throws IOException {
-        TableParserLogic tableParser = logicFactory.createNew(recordParser, isFirstRowHeader, lineFilters, recordFilters);
+        TableParserLogic tableParserLogic = logicFactory.createNew(recordParser, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {
-            tableParser.parseRawLine(line);
+            tableParserLogic.parseRawLine(line);
         }
-        return tableParser.getTable();
+        return tableParserLogic.getTable();
     }
 
     @Override
