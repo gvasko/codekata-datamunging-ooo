@@ -1,5 +1,7 @@
 package hu.gvasko.stringtable;
 
+import hu.gvasko.stringrecord.StringRecord;
+
 import java.util.function.Predicate;
 
 /**

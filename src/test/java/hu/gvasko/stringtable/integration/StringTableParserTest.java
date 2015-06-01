@@ -1,8 +1,9 @@
 package hu.gvasko.stringtable.integration;
 
-import hu.gvasko.stringtable.StringRecord;
+import hu.gvasko.stringrecord.StringRecord;
+import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.DefaultFactory;
+import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
@@ -12,7 +13,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.StringReader;
 
-import static hu.gvasko.stringtable.StringTableParserFixtures.*;
+import static hu.gvasko.stringtable.defaultimpl.StringTableParserFixtures.*;
 
 /**
  * Created by Gvasko on 2015.05.08..
@@ -20,12 +21,12 @@ import static hu.gvasko.stringtable.StringTableParserFixtures.*;
 @Category(IntegrationTest.class)
 public class StringTableParserTest {
 
-    private DefaultFactory factory;
+    private DefaultMainTableFactoryImpl factory;
     private String[] defaultSchema;
 
     @Before
     public void setUp() {
-        factory = DefaultFactory.getInstance();
+        factory = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule());
         defaultSchema = getDefaultSchema();
     }
 

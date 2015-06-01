@@ -1,9 +1,11 @@
 package hu.gvasko.stringtable.integration;
 
-import hu.gvasko.stringtable.StringRecord;
+import hu.gvasko.stringrecord.StringRecord;
+import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.DefaultFactory;
+import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
 import hu.gvasko.stringtable.StringTableParser;
+import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,7 +16,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
-import static hu.gvasko.stringtable.StringTableFixtures.*;
+import static hu.gvasko.stringtable.integration.StringTableFixtures.*;
 
 
 /**
@@ -157,8 +159,7 @@ public class StringTableTest {
 
     @Test
     public void singleRowTable() {
-        DefaultFactory defaultFactory = DefaultFactory.getInstance();
-        StringTableParser tableParser = defaultFactory.newStringTableParser(defaultFactory.getFixWidthRecordParser(2, 2, 2), new StringReader("A B C "));
+        StringTableParser tableParser = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule()).newStringTableParser(new FixWidthTextParserImpl(2, 2, 2), new StringReader("A B C "));
         StringTable singleRowTable = tableParser.parse();
         Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
         StringRecord theRecord = singleRowTable.getRecord(0);

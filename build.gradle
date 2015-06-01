@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'findbugs'
+apply plugin: 'jdepend'
 
 sourceCompatibility = 1.8
 version = '1.0'
@@ -28,3 +29,9 @@ tasks.withType(FindBugs) {
     }
 }
 
+tasks.withType(JDepend) {
+    reports {
+        xml.enabled = false
+        text.enabled = true
+    }
+}

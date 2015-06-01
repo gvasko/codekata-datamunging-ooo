@@ -1,6 +1,6 @@
 package hu.gvasko.stringtable.acceptance;
 
-import hu.gvasko.stringtable.StringRecord;
+import hu.gvasko.stringrecord.StringRecord;
 
 import java.util.List;
 

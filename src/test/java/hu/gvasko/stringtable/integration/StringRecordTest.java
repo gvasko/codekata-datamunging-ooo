@@ -1,12 +1,12 @@
 package hu.gvasko.stringtable.integration;
 
-import hu.gvasko.stringtable.StringRecord;
+import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static hu.gvasko.stringtable.StringRecordFixtures.*;
+import static hu.gvasko.stringtable.integration.StringRecordFixtures.*;
 
 /**
  * Created by gvasko on 2015.05.07..
