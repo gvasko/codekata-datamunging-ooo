@@ -1,4 +1,4 @@
-package hu.gvasko.stringtable.integration;
+package hu.gvasko.stringrecord.integration;
 
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
