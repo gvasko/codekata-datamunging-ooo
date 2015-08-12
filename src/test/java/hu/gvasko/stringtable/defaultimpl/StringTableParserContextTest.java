@@ -34,7 +34,7 @@ public class StringTableParserContextTest {
 
     private StringTableParser sutTableParser;
     private TableParserLogic spyParserLogic;
-    private TableParserLogicConstructorDelegate spyTableParserLogicConstructorDelegate;
+    private TableParserLogicConstructorDelegate spyTableParserLogicCtor;
     private StringRecordParser dummyRecParser;
     private Reader fakeReader;
 
@@ -46,14 +46,14 @@ public class StringTableParserContextTest {
     @Before
     @SuppressWarnings("unchecked")
     public void given() {
-        spyTableParserLogicConstructorDelegate = mock(TableParserLogicConstructorDelegate.class);
+        spyTableParserLogicCtor = mock(TableParserLogicConstructorDelegate.class);
         spyParserLogic = mock(TableParserLogic.class);
         when(spyParserLogic.getTable()).thenReturn(mock(StringTable.class));
-        when(spyTableParserLogicConstructorDelegate.call(any(), anyBoolean(), anyList(), anyList())).thenReturn(spyParserLogic);
+        when(spyTableParserLogicCtor.call(any(), anyBoolean(), anyList(), anyList())).thenReturn(spyParserLogic);
         dummyRecParser = mock(StringRecordParser.class);
         fakeReader = spy(new StringReader(TEXT));
 
-        sutTableParser = new DefaultTableParserLineReaderImpl.ConstructorDelegateImpl(spyTableParserLogicConstructorDelegate).call(dummyRecParser, fakeReader);
+        sutTableParser = new DefaultTableParserLineReaderImpl.ConstructorDelegateImpl(spyTableParserLogicCtor).call(dummyRecParser, fakeReader);
 
         passedFirstRowIsHeader = null;
     }
@@ -144,7 +144,7 @@ public class StringTableParserContextTest {
         ArgumentCaptor<Boolean> headerCaptor = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<List> lineFilterCaptor = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<List> recordFilterCaptor = ArgumentCaptor.forClass(List.class);
-        verify(spyTableParserLogicConstructorDelegate).call(eq(dummyRecParser), headerCaptor.capture(), lineFilterCaptor.capture(), recordFilterCaptor.capture());
+        verify(spyTableParserLogicCtor).call(eq(dummyRecParser), headerCaptor.capture(), lineFilterCaptor.capture(), recordFilterCaptor.capture());
         passedFirstRowIsHeader = headerCaptor.getValue();
         passedLineFilters = lineFilterCaptor.getValue();
         passedRecordFilters = recordFilterCaptor.getValue();
