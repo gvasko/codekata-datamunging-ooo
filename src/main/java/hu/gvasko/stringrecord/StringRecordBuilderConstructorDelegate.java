@@ -8,5 +8,5 @@ import java.util.function.Supplier;
 /**
  * Created by gvasko on 2015.05.17..
  */
-public interface StringRecordBuilderConstructor extends DefaultConstructorDelegate<StringRecordBuilder> {
+public interface StringRecordBuilderConstructorDelegate extends DefaultConstructorDelegate<StringRecordBuilder> {
 }

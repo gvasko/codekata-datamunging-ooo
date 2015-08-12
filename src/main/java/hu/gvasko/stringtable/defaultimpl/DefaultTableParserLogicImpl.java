@@ -18,23 +18,23 @@ import java.util.function.Predicate;
  */
 class DefaultTableParserLogicImpl implements TableParserLogic {
 
-    static class FactoryImpl implements TableParserLogicFactory {
+    static class ConstructorDelegateImpl implements TableParserLogicConstructorDelegate {
 
-        private StringTableBuilderFactory tableBuilderFactory;
+        private StringTableBuilderConstructorDelegate tableBuilderCtor;
 
         @Inject
-        public FactoryImpl(StringTableBuilderFactory tableBuilderFactory) {
-            this.tableBuilderFactory = tableBuilderFactory;
+        public ConstructorDelegateImpl(StringTableBuilderConstructorDelegate tableBuilderCtor) {
+            this.tableBuilderCtor = tableBuilderCtor;
         }
 
         @Override
-        public TableParserLogic createNew(StringRecordParser sharedRecParser) {
-            return new DefaultTableParserLogicImpl(sharedRecParser, tableBuilderFactory);
+        public TableParserLogic call(StringRecordParser sharedRecParser) {
+            return new DefaultTableParserLogicImpl(sharedRecParser, tableBuilderCtor);
         }
 
         @Override
-        public TableParserLogic createNew(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
-            return new DefaultTableParserLogicImpl(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters, tableBuilderFactory);
+        public TableParserLogic call(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
+            return new DefaultTableParserLogicImpl(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters, tableBuilderCtor);
         }
     }
 
@@ -45,29 +45,29 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
-    private StringTableBuilderFactory tableBuilderFactory;
+    private StringTableBuilderConstructorDelegate tableBuilderCtor;
 
     private DefaultTableParserLogicImpl(
             StringRecordParser sharedRecParser,
             boolean firstRowHeader,
             List<Predicate<String>> lineFilters,
             List<Predicate<StringRecord>> recordFilters,
-            StringTableBuilderFactory sharedTableBuilderFactory) {
+            StringTableBuilderConstructorDelegate sharedTableBuilderCtor) {
         this.recParser = sharedRecParser;
         this.lineFilters = lineFilters;
         this.recordFilters = recordFilters;
-        this.tableBuilderFactory = sharedTableBuilderFactory;
+        this.tableBuilderCtor = sharedTableBuilderCtor;
         setFirstRowHeader(firstRowHeader);
         this.lineBuffer = new LinkedList<>();
     }
 
     private DefaultTableParserLogicImpl(
             StringRecordParser sharedRecParser,
-            StringTableBuilderFactory sharedTableBuilderFactory) {
+            StringTableBuilderConstructorDelegate sharedTableBuilderCtor) {
         this.lineFilters = new ArrayList<>();
         this.recordFilters = new ArrayList<>();
         this.recParser = sharedRecParser;
-        this.tableBuilderFactory = sharedTableBuilderFactory;
+        this.tableBuilderCtor = sharedTableBuilderCtor;
         this.lineBuffer = new LinkedList<>();
     }
 
@@ -153,7 +153,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private StringTableBuilder createTableBuilderWithHeader(String rawLine) {
-        return tableBuilderFactory.createNewTableBuilder(parseHeader(rawLine));
+        return tableBuilderCtor.call(parseHeader(rawLine));
     }
 
     private String[] parseHeader(String rawLine) {
@@ -161,7 +161,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private StringTableBuilder createBuilderWithNumberedHeader() {
-        return tableBuilderFactory.createNewTableBuilder(DefaultMainTableFactoryImpl.getDefaultHeader(recParser.getColumnCount()));
+        return tableBuilderCtor.call(DefaultMainTableFactoryImpl.getDefaultHeader(recParser.getColumnCount()));
     }
 
     private boolean validateRawLine(String rawLine) {
@@ -174,7 +174,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private boolean validateRecord(String[] record) {
-        StringRecord tmpRec = tableBuilderFactory.createNewRecordBuilder().addFields(getBuilder_lazy().getSchema(), record).build();
+        StringRecord tmpRec = tableBuilderCtor.call().addFields(getBuilder_lazy().getSchema(), record).build();
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;

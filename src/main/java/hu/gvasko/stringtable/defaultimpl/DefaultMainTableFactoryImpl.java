@@ -30,11 +30,11 @@ public class DefaultMainTableFactoryImpl implements MainTableFactory {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                // TODO: ONLY FACTORIES???
-                bind(StringTableFactory.class).to(DefaultStringTableImpl.FactoryImpl.class);
-                bind(StringTableBuilderFactory.class).to(DefaultStringTableBuilderImpl.FactoryImpl.class);
-                bind(TableParserLogicFactory.class).to(DefaultTableParserLogicImpl.FactoryImpl.class);
-                bind(StringTableParserFactory.class).to(DefaultTableParserLineReaderImpl.FactoryImpl.class);
+                // TODO: ONLY CTORS???
+                bind(StringTableConstructorDelegate.class).to(DefaultStringTableImpl.ConstructorDelegateImpl.class);
+                bind(StringTableBuilderConstructorDelegate.class).to(DefaultStringTableBuilderImpl.ConstructorDelegateImpl.class);
+                bind(TableParserLogicConstructorDelegate.class).to(DefaultTableParserLogicImpl.ConstructorDelegateImpl.class);
+                bind(StringTableParserConstructorDelegate.class).to(DefaultTableParserLineReaderImpl.ConstructorDelegateImpl.class);
             }
         };
     }
@@ -71,33 +71,33 @@ public class DefaultMainTableFactoryImpl implements MainTableFactory {
 
     @Override
     public StringTableBuilder newStringTableBuilder(String... schema) {
-        return newStringTableBuilderFactory().createNewTableBuilder(schema);
+        return getStringTableBuilderCtor().call(schema);
     }
 
-    StringTableBuilderFactory newStringTableBuilderFactory() {
-        return injector.getInstance(StringTableBuilderFactory.class);
+    StringTableBuilderConstructorDelegate getStringTableBuilderCtor() {
+        return injector.getInstance(StringTableBuilderConstructorDelegate.class);
     }
 
     TableParserLogic newTableParserLogic(StringRecordParser sharedRecParser, boolean isFirstRowHeader, List<Predicate<String>> sharedLineFilters, List<Predicate<StringRecord>> sharedRecordFilters) {
-        return newTableParserLogicFactory().createNew(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters);
+        return getTableParserLogicCtor().call(sharedRecParser, isFirstRowHeader, sharedLineFilters, sharedRecordFilters);
     }
 
-    TableParserLogicFactory newTableParserLogicFactory() {
-        return injector.getInstance(TableParserLogicFactory.class);
+    TableParserLogicConstructorDelegate getTableParserLogicCtor() {
+        return injector.getInstance(TableParserLogicConstructorDelegate.class);
     }
 
     @Override
     public StringTableParser newStringTableParser(StringRecordParser recordParser, URI uri) throws IOException {
-        return newStringTableParserFactory().createNew(recordParser, uri);
+        return getStringTableParserCtor().call(recordParser, uri);
     }
 
     @Override
     public StringTableParser newStringTableParser(StringRecordParser recordParser, Reader reader) {
-        return newStringTableParserFactory().createNew(recordParser, reader);
+        return getStringTableParserCtor().call(recordParser, reader);
     }
 
-    StringTableParserFactory newStringTableParserFactory() {
-        return injector.getInstance(StringTableParserFactory.class);
+    StringTableParserConstructorDelegate getStringTableParserCtor() {
+        return injector.getInstance(StringTableParserConstructorDelegate.class);
     }
 
     static String[] getDefaultHeader(int length) {

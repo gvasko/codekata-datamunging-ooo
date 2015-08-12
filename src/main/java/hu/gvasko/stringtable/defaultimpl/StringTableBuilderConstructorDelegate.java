@@ -6,7 +6,7 @@ import hu.gvasko.stringtable.StringTableBuilder;
 /**
  * Created by gvasko on 2015.05.17..
  */
-interface StringTableBuilderFactory {
-    StringTableBuilder createNewTableBuilder(String... schema);
-    StringRecordBuilder createNewRecordBuilder();
+interface StringTableBuilderConstructorDelegate {
+    StringTableBuilder call(String... schema);
+    StringRecordBuilder call();
 }

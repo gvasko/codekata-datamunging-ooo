@@ -28,7 +28,7 @@ public class StringRecordBuilderTest {
         // "capture the indirect output calls made to another component
         // by the system under test (SUT) for later verification by the test"
         spyRecCtor = mock(StringRecordConstructorDelegate.class);
-        recBuilder = new DefaultStringRecordBuilderImpl.ConstructorImpl(spyRecCtor).call();
+        recBuilder = new DefaultStringRecordBuilderImpl.ConstructorDelegateImpl(spyRecCtor).call();
     }
 
     @Test

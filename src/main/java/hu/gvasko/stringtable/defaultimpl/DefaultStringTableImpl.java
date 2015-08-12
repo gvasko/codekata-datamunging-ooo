@@ -3,7 +3,7 @@ package hu.gvasko.stringtable.defaultimpl;
 import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
 import hu.gvasko.stringtable.StringTable;
 
 import java.util.*;
@@ -16,42 +16,42 @@ import java.util.stream.Collectors;
  */
 class DefaultStringTableImpl implements StringTable {
 
-    static class FactoryImpl implements StringTableFactory {
+    static class ConstructorDelegateImpl implements StringTableConstructorDelegate {
 
-        private StringRecordBuilderConstructor recBuilderFactory;
+        private StringRecordBuilderConstructorDelegate recBuilderCtor;
 
         @Inject
-        public FactoryImpl(StringRecordBuilderConstructor recBuilderFactory) {
-            this.recBuilderFactory = recBuilderFactory;
+        public ConstructorDelegateImpl(StringRecordBuilderConstructorDelegate recBuilderCtor) {
+            this.recBuilderCtor = recBuilderCtor;
         }
 
         @Override
-        public StringTable createNew(String[] sharedSchema, List<String[]> sharedRecords) {
+        public StringTable call(String[] sharedSchema, List<String[]> sharedRecords) {
             for (int i = 0; i < sharedRecords.size(); i++) {
                 String[] rec = sharedRecords.get(i);
                 if (sharedSchema.length != rec.length) {
                     throw new IllegalArgumentException("Record #" + Integer.toString(i) + " [" + String.join(",", rec) + "] does not fulfill schema [" + String.join(",", sharedSchema) + "]");
                 }
             }
-            return new DefaultStringTableImpl(recBuilderFactory, sharedSchema, sharedRecords);
+            return new DefaultStringTableImpl(recBuilderCtor, sharedSchema, sharedRecords);
         }
 
         @Override
-        public StringRecordBuilderConstructor getRecordBuilderConstructorDelegate() {
-            return recBuilderFactory;
+        public StringRecordBuilderConstructorDelegate getRecordBuilderConstructorDelegate() {
+            return recBuilderCtor;
         }
     }
 
     private String[] schema;
     private List<String[]> records;
     private Map<String,Function<String,String>> fieldDecoders;
-    private StringRecordBuilderConstructor recordBuilderCtor;
+    private StringRecordBuilderConstructorDelegate recordBuilderCtor;
 
-    private DefaultStringTableImpl(StringRecordBuilderConstructor sharedSRecBuilderFactory, String[] sharedSchema, List<String[]> sharedRecords) {
+    private DefaultStringTableImpl(StringRecordBuilderConstructorDelegate sharedRecBuilderCtor, String[] sharedSchema, List<String[]> sharedRecords) {
         schema = sharedSchema;
         records = sharedRecords;
         fieldDecoders = new HashMap<>();
-        recordBuilderCtor = sharedSRecBuilderFactory;
+        recordBuilderCtor = sharedRecBuilderCtor;
     }
 
     @Override

@@ -12,38 +12,38 @@ import java.util.*;
  */
 class DefaultStringTableBuilderImpl implements StringTableBuilder {
 
-    static class FactoryImpl implements StringTableBuilderFactory {
-        private StringTableFactory tableFactory;
+    static class ConstructorDelegateImpl implements StringTableBuilderConstructorDelegate {
+        private StringTableConstructorDelegate tableCtor;
 
         @Inject
-        public FactoryImpl(StringTableFactory tableFactory) {
-            this.tableFactory = tableFactory;
+        public ConstructorDelegateImpl(StringTableConstructorDelegate tableCtor) {
+            this.tableCtor = tableCtor;
         }
 
         @Override
-        public StringTableBuilder createNewTableBuilder(String... schema) {
-            return new DefaultStringTableBuilderImpl(tableFactory, schema);
+        public StringTableBuilder call(String... schema) {
+            return new DefaultStringTableBuilderImpl(tableCtor, schema);
         }
 
         @Override
-        public StringRecordBuilder createNewRecordBuilder() {
-            return tableFactory.getRecordBuilderConstructorDelegate().call();
+        public StringRecordBuilder call() {
+            return tableCtor.getRecordBuilderConstructorDelegate().call();
         }
 
     }
 
     private String[] schema;
     private List<String[]> records;
-    private StringTableFactory tableFactory;
+    private StringTableConstructorDelegate tableCtor;
 
-    private DefaultStringTableBuilderImpl(StringTableFactory sharedTableFactory, String... sharedSchema) {
+    private DefaultStringTableBuilderImpl(StringTableConstructorDelegate sharedTableCtor, String... sharedSchema) {
         Set<String> uniqueSchema = new HashSet<>(Arrays.asList(sharedSchema));
         if (uniqueSchema.size() != sharedSchema.length) {
             throw new IllegalArgumentException("Duplicated attribute in the schema");
         }
         schema = sharedSchema;
         records = new ArrayList<>();
-        tableFactory = sharedTableFactory;
+        tableCtor = sharedTableCtor;
     }
 
     @Override
@@ -62,7 +62,7 @@ class DefaultStringTableBuilderImpl implements StringTableBuilder {
 
     @Override
     public StringTable build() {
-        return tableFactory.createNew(schema, records);
+        return tableCtor.call(schema, records);
     }
 
 }

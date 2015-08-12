@@ -5,7 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import hu.gvasko.stringrecord.MainRecordFactory;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
 
 /**
  * Created by gvasko on 2015.06.01..
@@ -27,7 +27,7 @@ public class DefaultMainRecordFactoryImpl implements MainRecordFactory {
                 // TODO: ONLY FACTORIES???
                 // TODO: is guice really necessary here?
                 bind(StringRecordConstructorDelegate.class).to(DefaultStringRecordImpl.ConstructorImpl.class);
-                bind(StringRecordBuilderConstructor.class).to(DefaultStringRecordBuilderImpl.ConstructorImpl.class);
+                bind(StringRecordBuilderConstructorDelegate.class).to(DefaultStringRecordBuilderImpl.ConstructorDelegateImpl.class);
             }
         };
     }
@@ -37,8 +37,8 @@ public class DefaultMainRecordFactoryImpl implements MainRecordFactory {
     }
 
     @Override
-    public StringRecordBuilderConstructor getStringRecordBuilderConstructor() {
-        return injector.getInstance(StringRecordBuilderConstructor.class);
+    public StringRecordBuilderConstructorDelegate getStringRecordBuilderConstructor() {
+        return injector.getInstance(StringRecordBuilderConstructorDelegate.class);
     }
 
 }

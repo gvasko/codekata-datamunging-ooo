@@ -29,11 +29,11 @@ public class TableParserLogicTest {
         StringRecordBuilder stubRecBuilder = mock(StringRecordBuilder.class);
         when(stubRecBuilder.addFields(anyVararg(), anyVararg())).thenReturn(stubRecBuilder);
         when(stubRecBuilder.build()).thenReturn(mock(StringRecord.class));
-        StringTableBuilderFactory stubTableBuilderFactory = mock(StringTableBuilderFactory.class);
-        when(stubTableBuilderFactory.createNewRecordBuilder()).thenReturn(stubRecBuilder);
+        StringTableBuilderConstructorDelegate stubTableBuilderFactory = mock(StringTableBuilderConstructorDelegate.class);
+        when(stubTableBuilderFactory.call()).thenReturn(stubRecBuilder);
         spyTableBuilder = mock(StringTableBuilder.class);
-        when(stubTableBuilderFactory.createNewTableBuilder(anyVararg())).thenReturn(spyTableBuilder);
-        sutTableParserLogic = new DefaultTableParserLogicImpl.FactoryImpl(stubTableBuilderFactory).createNew(spyRecParser);
+        when(stubTableBuilderFactory.call(anyVararg())).thenReturn(spyTableBuilder);
+        sutTableParserLogic = new DefaultTableParserLogicImpl.ConstructorDelegateImpl(stubTableBuilderFactory).call(spyRecParser);
     }
 
     @Test

@@ -3,7 +3,7 @@ package hu.gvasko.stringrecord.defaultimpl;
 import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,18 +13,18 @@ import java.util.Map;
  */
 class DefaultStringRecordBuilderImpl implements StringRecordBuilder {
 
-    static class ConstructorImpl implements StringRecordBuilderConstructor {
+    static class ConstructorDelegateImpl implements StringRecordBuilderConstructorDelegate {
 
-        private StringRecordConstructorDelegate recordFactory;
+        private StringRecordConstructorDelegate recordCtor;
 
         @Inject
-        public ConstructorImpl(StringRecordConstructorDelegate recordFactory) {
-            this.recordFactory = recordFactory;
+        public ConstructorDelegateImpl(StringRecordConstructorDelegate recordCtor) {
+            this.recordCtor = recordCtor;
         }
 
         @Override
         public StringRecordBuilder call() {
-            return new DefaultStringRecordBuilderImpl(recordFactory);
+            return new DefaultStringRecordBuilderImpl(recordCtor);
         }
     }
 

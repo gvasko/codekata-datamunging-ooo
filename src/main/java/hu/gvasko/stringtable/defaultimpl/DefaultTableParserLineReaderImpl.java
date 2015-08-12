@@ -19,23 +19,23 @@ import java.util.function.Predicate;
  */
 class DefaultTableParserLineReaderImpl implements StringTableParser {
 
-    static class FactoryImpl implements StringTableParserFactory {
+    static class ConstructorDelegateImpl implements StringTableParserConstructorDelegate {
 
-        private TableParserLogicFactory logicFactory;
+        private TableParserLogicConstructorDelegate logicCtor;
 
         @Inject
-        FactoryImpl(TableParserLogicFactory logicFactory) {
-            this.logicFactory = logicFactory;
+        ConstructorDelegateImpl(TableParserLogicConstructorDelegate logicCtor) {
+            this.logicCtor = logicCtor;
         }
 
         @Override
-        public StringTableParser createNew(StringRecordParser recordParser, URI uri) throws IOException {
-            return new DefaultTableParserLineReaderImpl(logicFactory, recordParser, uri);
+        public StringTableParser call(StringRecordParser recordParser, URI uri) throws IOException {
+            return new DefaultTableParserLineReaderImpl(logicCtor, recordParser, uri);
         }
 
         @Override
-        public StringTableParser createNew(StringRecordParser recordParser, Reader reader) {
-            return new DefaultTableParserLineReaderImpl(logicFactory, recordParser, reader);
+        public StringTableParser call(StringRecordParser recordParser, Reader reader) {
+            return new DefaultTableParserLineReaderImpl(logicCtor, recordParser, reader);
         }
     }
 
@@ -44,18 +44,18 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
-    private TableParserLogicFactory logicFactory;
+    private TableParserLogicConstructorDelegate logicCtor;
     private StringRecordParser recordParser;
 
-    private DefaultTableParserLineReaderImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
-        this(sharedLogicFactory, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
+    private DefaultTableParserLineReaderImpl(TableParserLogicConstructorDelegate sharedLogicCtor, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
+        this(sharedLogicCtor, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    private DefaultTableParserLineReaderImpl(TableParserLogicFactory sharedLogicFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {
+    private DefaultTableParserLineReaderImpl(TableParserLogicConstructorDelegate sharedLogicCtor, StringRecordParser sharedRecordParser, Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();
-        logicFactory = sharedLogicFactory;
+        logicCtor = sharedLogicCtor;
         recordParser = sharedRecordParser;
     }
 
@@ -69,7 +69,7 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry() throws IOException {
-        TableParserLogic tableParserLogic = logicFactory.createNew(recordParser, isFirstRowHeader, lineFilters, recordFilters);
+        TableParserLogic tableParserLogic = logicCtor.call(recordParser, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {
             tableParserLogic.parseRawLine(line);
