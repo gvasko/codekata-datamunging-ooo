@@ -2,7 +2,7 @@ package hu.gvasko.stringtable.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderFactory;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
@@ -26,7 +26,7 @@ public class StringTableTest {
 
     private StringTable sutTable;
     private StringRecordBuilder spyRecBuilder;
-    private StringRecordBuilderFactory spyRecBuilderFactory;
+    private StringRecordBuilderConstructor spyRecBuilderCtor;
     private String[] fakeSchema;
     private List<String[]> fakeRecords;
     private String[] passedFields;
@@ -46,10 +46,10 @@ public class StringTableTest {
                 mock(StringRecord.class)
         );
 
-        spyRecBuilderFactory = mock(StringRecordBuilderFactory.class);
-        when(spyRecBuilderFactory.createNew()).thenReturn(spyRecBuilder);
+        spyRecBuilderCtor = mock(StringRecordBuilderConstructor.class);
+        when(spyRecBuilderCtor.call()).thenReturn(spyRecBuilder);
 
-        sutTable = new DefaultStringTableImpl.FactoryImpl(spyRecBuilderFactory).createNew(fakeSchema, fakeRecords);
+        sutTable = new DefaultStringTableImpl.FactoryImpl(spyRecBuilderCtor).createNew(fakeSchema, fakeRecords);
     }
 
     @Test

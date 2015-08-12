@@ -10,15 +10,15 @@ import java.util.Map;
  */
 class DefaultStringRecordImpl implements StringRecord {
 
-    static class FactoryImpl implements StringRecordFactory {
+    static class ConstructorImpl implements StringRecordConstructorDelegate {
 
         @Inject
-        public FactoryImpl() {
+        public ConstructorImpl() {
 
         }
 
         @Override
-        public StringRecord createNew(Map<String, String> stringMap) {
+        public StringRecord call(Map<String, String> stringMap) {
             return new DefaultStringRecordImpl(stringMap);
         }
     }

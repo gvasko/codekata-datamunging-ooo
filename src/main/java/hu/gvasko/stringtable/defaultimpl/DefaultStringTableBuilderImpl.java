@@ -27,7 +27,7 @@ class DefaultStringTableBuilderImpl implements StringTableBuilder {
 
         @Override
         public StringRecordBuilder createNewRecordBuilder() {
-            return tableFactory.getRecordBuilderFactory().createNew();
+            return tableFactory.getRecordBuilderConstructorDelegate().call();
         }
 
     }

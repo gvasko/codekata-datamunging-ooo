@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class StringRecordBuilderTest {
 
     private StringRecordBuilder recBuilder;
-    private StringRecordFactory spyRecFactory;
+    private StringRecordConstructorDelegate spyRecCtor;
 
     @Before
     public void given() {
@@ -27,8 +27,8 @@ public class StringRecordBuilderTest {
         // http://xunitpatterns.com/Test%20Spy.html
         // "capture the indirect output calls made to another component
         // by the system under test (SUT) for later verification by the test"
-        spyRecFactory = mock(StringRecordFactory.class);
-        recBuilder = new DefaultStringRecordBuilderImpl.FactoryImpl(spyRecFactory).createNew();
+        spyRecCtor = mock(StringRecordConstructorDelegate.class);
+        recBuilder = new DefaultStringRecordBuilderImpl.ConstructorImpl(spyRecCtor).call();
     }
 
     @Test
@@ -39,8 +39,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalStateException ex) {
-            verify(spyRecFactory, never()).createNew(anyMap());
-            verifyZeroInteractions(spyRecFactory);
+            verify(spyRecCtor, never()).call(anyMap());
+            verifyZeroInteractions(spyRecCtor);
         }
     }
 
@@ -53,8 +53,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalArgumentException ex) {
-            verify(spyRecFactory, never()).createNew(anyMap());
-            verifyZeroInteractions(spyRecFactory);
+            verify(spyRecCtor, never()).call(anyMap());
+            verifyZeroInteractions(spyRecCtor);
         }
     }
 
@@ -62,7 +62,7 @@ public class StringRecordBuilderTest {
     public void when_FieldsAddedNormally_then_CreatesRecordUsingAllPassedFields() {
         addDefaultFieldsABC();
         recBuilder.build();
-        verify(spyRecFactory).createNew(eq(getDefaultExpectedMapABC()));
+        verify(spyRecCtor).call(eq(getDefaultExpectedMapABC()));
     }
 
     private void andGiven_BuilderHasAlreadyCreatedRecord() {
@@ -76,13 +76,13 @@ public class StringRecordBuilderTest {
 
         Map<String, String> expectedMap = getDefaultExpectedMapABC();
 
-        verify(spyRecFactory).createNew(eq(expectedMap));
+        verify(spyRecCtor).call(eq(expectedMap));
 
         recBuilder.addField("DD", "dd");
         recBuilder.build();
 
         expectedMap.put("DD", "dd");
-        verify(spyRecFactory, times(2)).createNew(eq(expectedMap));
+        verify(spyRecCtor, times(2)).call(eq(expectedMap));
     }
 
     @Test
@@ -90,14 +90,14 @@ public class StringRecordBuilderTest {
         addDefaultFieldsABC();
         recBuilder.addFields(new String[0], new String[0]);
         recBuilder.build();
-        verify(spyRecFactory).createNew(eq(getDefaultExpectedMapABC()));
+        verify(spyRecCtor).call(eq(getDefaultExpectedMapABC()));
     }
 
     @Test
     public void when_MultipleFieldsAddedNormally_then_CreatesRecordUsingAllPassedFields() {
         recBuilder.addFields(new String[] {"AA", "BB", "CC"}, new String[] {"aa", "bb", "cc"});
         recBuilder.build();
-        verify(spyRecFactory).createNew(eq(getDefaultExpectedMapABC()));
+        verify(spyRecCtor).call(eq(getDefaultExpectedMapABC()));
     }
 
     @Test
@@ -108,8 +108,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalArgumentException ex) {
-            verify(spyRecFactory, never()).createNew(anyMap());
-            verifyZeroInteractions(spyRecFactory);
+            verify(spyRecCtor, never()).call(anyMap());
+            verifyZeroInteractions(spyRecCtor);
         }
     }
 
@@ -121,8 +121,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalArgumentException ex) {
-            verify(spyRecFactory, never()).createNew(anyMap());
-            verifyZeroInteractions(spyRecFactory);
+            verify(spyRecCtor, never()).call(anyMap());
+            verifyZeroInteractions(spyRecCtor);
         }
     }
 

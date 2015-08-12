@@ -3,7 +3,7 @@ package hu.gvasko.stringtable.defaultimpl;
 import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderFactory;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
 import hu.gvasko.stringtable.StringTable;
 
 import java.util.*;
@@ -18,10 +18,10 @@ class DefaultStringTableImpl implements StringTable {
 
     static class FactoryImpl implements StringTableFactory {
 
-        private StringRecordBuilderFactory recBuilderFactory;
+        private StringRecordBuilderConstructor recBuilderFactory;
 
         @Inject
-        public FactoryImpl(StringRecordBuilderFactory recBuilderFactory) {
+        public FactoryImpl(StringRecordBuilderConstructor recBuilderFactory) {
             this.recBuilderFactory = recBuilderFactory;
         }
 
@@ -37,7 +37,7 @@ class DefaultStringTableImpl implements StringTable {
         }
 
         @Override
-        public StringRecordBuilderFactory getRecordBuilderFactory() {
+        public StringRecordBuilderConstructor getRecordBuilderConstructorDelegate() {
             return recBuilderFactory;
         }
     }
@@ -45,13 +45,13 @@ class DefaultStringTableImpl implements StringTable {
     private String[] schema;
     private List<String[]> records;
     private Map<String,Function<String,String>> fieldDecoders;
-    private StringRecordBuilderFactory sRecBuilderFactory;
+    private StringRecordBuilderConstructor recordBuilderCtor;
 
-    private DefaultStringTableImpl(StringRecordBuilderFactory sharedSRecBuilderFactory, String[] sharedSchema, List<String[]> sharedRecords) {
+    private DefaultStringTableImpl(StringRecordBuilderConstructor sharedSRecBuilderFactory, String[] sharedSchema, List<String[]> sharedRecords) {
         schema = sharedSchema;
         records = sharedRecords;
         fieldDecoders = new HashMap<>();
-        sRecBuilderFactory = sharedSRecBuilderFactory;
+        recordBuilderCtor = sharedSRecBuilderFactory;
     }
 
     @Override
@@ -70,7 +70,7 @@ class DefaultStringTableImpl implements StringTable {
     }
 
     private StringRecord toStringRecord(String[] rec) {
-        StringRecordBuilder recBuilder = sRecBuilderFactory.createNew();
+        StringRecordBuilder recBuilder = recordBuilderCtor.call();
         for (int i = 0; i < schema.length; i++) {
             String field = schema[i];
             String value = getDecodedValue(field, rec[i]);

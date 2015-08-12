@@ -1,6 +1,6 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import hu.gvasko.stringrecord.StringRecordBuilderFactory;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
@@ -21,12 +21,12 @@ import static org.mockito.Mockito.*;
 public class StringTableCtorTest {
 
     private String[] fakeSchema;
-    private StringRecordBuilderFactory spyRecBuilderFactory;
+    private StringRecordBuilderConstructor spyRecBuilderFactory;
 
     @Before
     public void given() {
         fakeSchema = new String[] { "AA", "BB" };
-        spyRecBuilderFactory = mock(StringRecordBuilderFactory.class);
+        spyRecBuilderFactory = mock(StringRecordBuilderConstructor.class);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class StringTableCtorTest {
         getNewStringTable(spyRecBuilderFactory, fakeSchema, fakeRecords);
     }
 
-    private static StringTable getNewStringTable(StringRecordBuilderFactory spyRecBuilderFactory, String[] fakeSchema, List<String[]> fakeRecords) {
+    private static StringTable getNewStringTable(StringRecordBuilderConstructor spyRecBuilderFactory, String[] fakeSchema, List<String[]> fakeRecords) {
         return new DefaultStringTableImpl.FactoryImpl(spyRecBuilderFactory).createNew(fakeSchema, fakeRecords);
     }
 

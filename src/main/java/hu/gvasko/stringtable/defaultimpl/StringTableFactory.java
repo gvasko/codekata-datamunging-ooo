@@ -1,6 +1,6 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import hu.gvasko.stringrecord.StringRecordBuilderFactory;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructor;
 import hu.gvasko.stringtable.StringTable;
 
 import java.util.List;
@@ -10,5 +10,5 @@ import java.util.List;
  */
 interface StringTableFactory {
     StringTable createNew(String[] sharedSchema, List<String[]> sharedRecords);
-    StringRecordBuilderFactory getRecordBuilderFactory();
+    StringRecordBuilderConstructor getRecordBuilderConstructorDelegate();
 }
