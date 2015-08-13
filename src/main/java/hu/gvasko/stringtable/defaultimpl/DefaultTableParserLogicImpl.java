@@ -174,7 +174,7 @@ class DefaultTableParserLogicImpl implements TableParserLogic {
     }
 
     private boolean validateRecord(String[] record) {
-        StringRecord tmpRec = tableBuilderCtor.call().addFields(getBuilder_lazy().getSchema(), record).build();
+        StringRecord tmpRec = tableBuilderCtor.getRecordBuilderConstructor().call().addFields(getBuilder_lazy().getSchema(), record).build();
         for (Predicate<StringRecord> recordPredicate : recordFilters) {
             if (!recordPredicate.test(tmpRec)) {
                 return false;

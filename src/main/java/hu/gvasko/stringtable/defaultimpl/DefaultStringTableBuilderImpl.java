@@ -2,6 +2,7 @@ package hu.gvasko.stringtable.defaultimpl;
 
 import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecordBuilder;
+import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.stringtable.StringTableBuilder;
 
@@ -26,8 +27,8 @@ class DefaultStringTableBuilderImpl implements StringTableBuilder {
         }
 
         @Override
-        public StringRecordBuilder call() {
-            return tableCtor.getRecordBuilderConstructorDelegate().call();
+        public StringRecordBuilderConstructorDelegate getRecordBuilderConstructor() {
+            return tableCtor.getRecordBuilderConstructorDelegate();
         }
 
     }
