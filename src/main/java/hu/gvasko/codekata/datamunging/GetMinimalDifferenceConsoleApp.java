@@ -6,6 +6,7 @@ import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import org.apache.commons.cli.*;
 
@@ -23,10 +24,11 @@ public class GetMinimalDifferenceConsoleApp {
     public static final String FIRST_LINE_IS_HEADER = "first-line-is-header";
     public static final String KEEP_RECORDS_IF_NUMERIC = "keep-records-if-numeric";
     public static final String DECODE_AS_INTEGER = "decode-as-integer";
-    public static final String COLUMN_WIDTHS = "column-widths";
     public static final String MINDIFF_1_COLUMN = "mindiff-1";
     public static final String MINDIFF_2_COLUMN = "mindiff-2";
     public static final String MINDIFF_RETURN_COLUMN = "mindiff-return";
+    public static final String COLUMN_WIDTHS = "column-widths";
+    public static final String COLUMN_COUNT = "column-count";
 
     private CommandLine commandLine;
     private StringTable table;
@@ -112,6 +114,10 @@ public class GetMinimalDifferenceConsoleApp {
             String[] columnWidthsStr = commandLine.getOptionValue(COLUMN_WIDTHS).split(",");
             return new FixWidthTextParserImpl(Stream.of(columnWidthsStr).mapToInt(Integer::parseInt).toArray());
         }
+        if (filePath.endsWith(".csv")) {
+            int columnCount = Integer.parseInt(commandLine.getOptionValue(COLUMN_COUNT));
+            return new CSVParserImpl(columnCount);
+        }
         throw new RuntimeException("Unknown file extension.");
     }
 
@@ -122,10 +128,11 @@ public class GetMinimalDifferenceConsoleApp {
         options.addOption(Option.builder().longOpt(FIRST_LINE_IS_HEADER).desc("process the first line as header").build());
         options.addOption(Option.builder().longOpt(KEEP_RECORDS_IF_NUMERIC).hasArg().argName("COLUMN-NAMES").desc("keep the record if the values in the given columns are numeric, filter otherwise").build());
         options.addOption(Option.builder().longOpt(DECODE_AS_INTEGER).hasArg().argName("COLUMN-NAMES").desc("treat the given columns as integer and ignore other characters").build());
-        options.addOption(Option.builder().longOpt(COLUMN_WIDTHS).hasArg().argName("COLUMN-WIDTHS").desc("fix widths of the columns in the given file").build());
         options.addOption(Option.builder().longOpt(MINDIFF_1_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("one column name to to calculate difference").build());
         options.addOption(Option.builder().longOpt(MINDIFF_2_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("another column name to calculate difference").build());
         options.addOption(Option.builder().longOpt(MINDIFF_RETURN_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("the program returns the value belonging to this column in the record where the difference is minimal").build());
+        options.addOption(Option.builder().longOpt(COLUMN_WIDTHS).hasArg().argName("COLUMN-WIDTHS").desc("fix widths of the columns in the given file").build());
+        options.addOption(Option.builder().longOpt(COLUMN_COUNT).hasArg().argName("NUMBER").desc("expected number of columns").build());
 
         return options;
     }

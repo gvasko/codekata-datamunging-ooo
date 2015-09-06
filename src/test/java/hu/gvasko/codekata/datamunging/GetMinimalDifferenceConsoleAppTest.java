@@ -28,20 +28,45 @@ public class GetMinimalDifferenceConsoleAppTest {
                 "--" + SKIP_EMPTY_LINES,
                 "--" + KEEP_RECORDS_IF_NUMERIC, WeatherFixture.DAY.columnName(),
                 "--" + DECODE_AS_INTEGER, WeatherFixture.MAX_TEMP.columnName() + "," + WeatherFixture.MIN_TEMP.columnName(),
-                "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(WeatherFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
                 "--" + MINDIFF_1_COLUMN, WeatherFixture.MIN_TEMP.columnName(),
                 "--" + MINDIFF_2_COLUMN, WeatherFixture.MAX_TEMP.columnName(),
                 "--" + MINDIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
+                "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(WeatherFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
                 file
         };
 
+        String output = runApp(arguments);
+
+        Assert.assertEquals("14" + System.lineSeparator(), output);
+    }
+
+    @Test
+    public void given_weatherCsvFile_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
+        String file = Paths.get(WeatherFixture.getCSVFile()).toString();
+        String[] arguments = {
+                "--" + FIRST_LINE_IS_HEADER,
+                "--" + SKIP_EMPTY_LINES,
+                "--" + KEEP_RECORDS_IF_NUMERIC, WeatherFixture.DAY.columnName(),
+                "--" + DECODE_AS_INTEGER, WeatherFixture.MAX_TEMP.columnName() + "," + WeatherFixture.MIN_TEMP.columnName(),
+                "--" + MINDIFF_1_COLUMN, WeatherFixture.MIN_TEMP.columnName(),
+                "--" + MINDIFF_2_COLUMN, WeatherFixture.MAX_TEMP.columnName(),
+                "--" + MINDIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
+                "--" + COLUMN_COUNT, Integer.toString(WeatherFixture.columnCount()),
+                file
+        };
+
+        String output = runApp(arguments);
+
+        Assert.assertEquals("14" + System.lineSeparator(), output);
+    }
+
+    private String runApp(String[] arguments) throws Exception {
         OutputStream tempStream = new ByteArrayOutputStream();
         PrintStream testOutput = new PrintStream(tempStream, true);
         System.setOut(testOutput);
 
         GetMinimalDifferenceConsoleApp.main(arguments);
-
-        Assert.assertEquals("14" + System.lineSeparator(), tempStream.toString());
+        return tempStream.toString();
     }
 
 }
