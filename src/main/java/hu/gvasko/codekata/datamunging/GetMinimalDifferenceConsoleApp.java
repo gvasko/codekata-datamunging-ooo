@@ -18,10 +18,12 @@ import java.util.stream.Stream;
 /**
  * Created by gvasko on 2015.09.05..
  */
+// TODO: unit tests?
 public class GetMinimalDifferenceConsoleApp {
 
-    public static final String SKIP_EMPTY_LINES = "skip-empty-lines";
     public static final String FIRST_LINE_IS_HEADER = "first-line-is-header";
+    public static final String SKIP_EMPTY_LINES = "skip-empty-lines";
+    public static final String SKIP_SPLITTER_LINES = "skip-splitter-lines";
     public static final String KEEP_RECORDS_IF_NUMERIC = "keep-records-if-numeric";
     public static final String DECODE_AS_INTEGER = "decode-as-integer";
     public static final String MINDIFF_1_COLUMN = "mindiff-1";
@@ -75,8 +77,11 @@ public class GetMinimalDifferenceConsoleApp {
         if (Files.notExists(Paths.get(file))) {
             throw new ParseException("File not found: " + file);
         }
-        if (file.endsWith(".dat") && !commandLine.hasOption(COLUMN_WIDTHS)) {
+        if (file.toLowerCase().endsWith(".dat") && !commandLine.hasOption(COLUMN_WIDTHS)) {
             throw new ParseException(".dat files consist of fix-width columns, please specify " + COLUMN_WIDTHS);
+        }
+        if (file.toLowerCase().endsWith(".csv") && !commandLine.hasOption(COLUMN_COUNT)) {
+            throw new ParseException(".csv files needs expected number of columns for validation, please specify " + COLUMN_WIDTHS);
         }
     }
 
@@ -93,6 +98,9 @@ public class GetMinimalDifferenceConsoleApp {
             }
             if (commandLine.hasOption(SKIP_EMPTY_LINES)) {
                 parser.addLineFilter(factory.skipEmptyLines());
+            }
+            if (commandLine.hasOption(SKIP_SPLITTER_LINES)) {
+                parser.addLineFilter(factory.skipSplitterLines());
             }
             if (commandLine.hasOption(KEEP_RECORDS_IF_NUMERIC)) {
                 for (String column : commandLine.getOptionValue(KEEP_RECORDS_IF_NUMERIC).split(",")) {
@@ -124,8 +132,9 @@ public class GetMinimalDifferenceConsoleApp {
     private static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(Option.builder().longOpt(SKIP_EMPTY_LINES).desc("do not process empty lines of the input file").build());
         options.addOption(Option.builder().longOpt(FIRST_LINE_IS_HEADER).desc("process the first line as header").build());
+        options.addOption(Option.builder().longOpt(SKIP_EMPTY_LINES).desc("do not process empty lines of the input file").build());
+        options.addOption(Option.builder().longOpt(SKIP_SPLITTER_LINES).desc("do not process lines consisting of the same character").build());
         options.addOption(Option.builder().longOpt(KEEP_RECORDS_IF_NUMERIC).hasArg().argName("COLUMN-NAMES").desc("keep the record if the values in the given columns are numeric, filter otherwise").build());
         options.addOption(Option.builder().longOpt(DECODE_AS_INTEGER).hasArg().argName("COLUMN-NAMES").desc("treat the given columns as integer and ignore other characters").build());
         options.addOption(Option.builder().longOpt(MINDIFF_1_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("one column name to to calculate difference").build());

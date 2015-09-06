@@ -60,6 +60,45 @@ public class GetMinimalDifferenceConsoleAppTest {
         Assert.assertEquals("14" + System.lineSeparator(), output);
     }
 
+    @Test
+    public void given_footballDatFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
+        String file = Paths.get(FootballFixture.getDatFile()).toString();
+        String[] arguments = {
+                "--" + FIRST_LINE_IS_HEADER,
+                "--" + SKIP_EMPTY_LINES,
+                "--" + SKIP_SPLITTER_LINES,
+                "--" + MINDIFF_1_COLUMN, FootballFixture.GOALS_FOR.columnName(),
+                "--" + MINDIFF_2_COLUMN, FootballFixture.GOALS_AGAINST.columnName(),
+                "--" + MINDIFF_RETURN_COLUMN, FootballFixture.TEAM.columnName(),
+                "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(FootballFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
+                file
+        };
+
+        String output = runApp(arguments);
+
+        Assert.assertEquals("Aston_Villa" + System.lineSeparator(), output);
+    }
+
+    @Test
+    public void given_footballCsvFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
+        String file = Paths.get(FootballFixture.getCSVFile()).toString();
+        String[] arguments = {
+                "--" + FIRST_LINE_IS_HEADER,
+                "--" + SKIP_EMPTY_LINES,
+                "--" + SKIP_SPLITTER_LINES,
+                "--" + MINDIFF_1_COLUMN, FootballFixture.GOALS_FOR.columnName(),
+                "--" + MINDIFF_2_COLUMN, FootballFixture.GOALS_AGAINST.columnName(),
+                "--" + MINDIFF_RETURN_COLUMN, FootballFixture.TEAM.columnName(),
+                "--" + COLUMN_COUNT, Integer.toString(FootballFixture.columnCount()),
+                file
+        };
+
+        String output = runApp(arguments);
+
+        Assert.assertEquals("Aston_Villa" + System.lineSeparator(), output);
+    }
+
+
     private String runApp(String[] arguments) throws Exception {
         OutputStream tempStream = new ByteArrayOutputStream();
         PrintStream testOutput = new PrintStream(tempStream, true);
