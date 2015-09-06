@@ -1,9 +1,10 @@
 package hu.gvasko.stringtable.integration;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringtable.StringTableFactory;
+import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
@@ -21,20 +22,20 @@ import static hu.gvasko.stringtable.defaultimpl.StringTableParserFixtures.*;
 @Category(IntegrationTest.class)
 public class StringTableParserTest {
 
-    private DefaultMainTableFactoryImpl factory;
+    private StringTableFactory factory;
     private String[] defaultSchema;
 
     @Before
     public void setUp() {
-        factory = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule());
+        factory = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl());
         defaultSchema = getDefaultSchema();
     }
 
     @Test
     public void parseWith_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
-            parser.addLineFilter(factory.skipEmptyLines());
-            parser.addRecordFilter(factory.onlyNumbersInColumn(defaultSchema[0]));
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
+            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+            parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(defaultSchema[0]));
             StringTable table = parser.firstRowIsHeader().parse();
             assertEachCellIsValid(getTable_firstRowIsHeader_skipEmptyLines_onlyNumbersInFirstColumn(), table, defaultSchema);
         }
@@ -42,9 +43,9 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_skipEmptyLines_skipSplitterLines() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
-            parser.addLineFilter(factory.skipEmptyLines());
-            parser.addLineFilter(factory.skipSplitterLines());
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
+            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+            parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
             StringTable table = parser.parse();
             assertEachCellIsValid(getTable_skipEmptyLines_skipSplitterLines(), table, getNumberedSchema());
         }
@@ -52,8 +53,8 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_skipEmptyLines() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
-            parser.addLineFilter(factory.skipEmptyLines());
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
+            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
             StringTable table = parser.parse();
             assertEachCellIsValid(getTable_skipEmptyLines(), table, getNumberedSchema());
         }
@@ -61,7 +62,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseWith_fullTable() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(defaultText))) {
             StringTable table = parser.parse();
             assertEachCellIsValid(getTable_full(), table, getNumberedSchema());
         }
@@ -69,7 +70,7 @@ public class StringTableParserTest {
 
     @Test
     public void parseEmptyText() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
             StringTable emptyTable = parser.parse();
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }
@@ -77,15 +78,15 @@ public class StringTableParserTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void parseEmptyTextIfFirstRowIsHeader() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
             parser.firstRowIsHeader().parse();
         }
     }
 
     @Test
     public void parseSpaces() throws Exception {
-        try (StringTableParser parser = factory.newStringTableParser(getDefaultRecordParser(), new StringReader(spaceText))) {
-            parser.addLineFilter(factory.skipEmptyLines());
+        try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(spaceText))) {
+            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
             StringTable emptyTable = parser.parse();
             Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
         }

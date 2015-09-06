@@ -1,6 +1,5 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringtable.*;
 
@@ -19,44 +18,24 @@ import java.util.function.Predicate;
  */
 class DefaultTableParserLineReaderImpl implements StringTableParser {
 
-    static class ConstructorDelegateImpl implements StringTableParserConstructorDelegate {
-
-        private TableParserLogicConstructorDelegate logicCtor;
-
-        @Inject
-        ConstructorDelegateImpl(TableParserLogicConstructorDelegate logicCtor) {
-            this.logicCtor = logicCtor;
-        }
-
-        @Override
-        public StringTableParser call(StringRecordParser recordParser, URI uri) throws IOException {
-            return new DefaultTableParserLineReaderImpl(logicCtor, recordParser, uri);
-        }
-
-        @Override
-        public StringTableParser call(StringRecordParser recordParser, Reader reader) {
-            return new DefaultTableParserLineReaderImpl(logicCtor, recordParser, reader);
-        }
-    }
-
     private BufferedReader reader;
     private boolean isFirstRowHeader = false;
     private List<Predicate<String>> lineFilters;
     private List<Predicate<StringRecord>> recordFilters;
 
-    private TableParserLogicConstructorDelegate logicCtor;
+    private StringTableFactoryExt tableFactory;
     private StringRecordParser recordParser;
 
-    private DefaultTableParserLineReaderImpl(TableParserLogicConstructorDelegate sharedLogicCtor, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
+    DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
         // TODO: double buffer?
-        this(sharedLogicCtor, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
+        this(tableFactory, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 
-    private DefaultTableParserLineReaderImpl(TableParserLogicConstructorDelegate sharedLogicCtor, StringRecordParser sharedRecordParser, Reader sharedReader) {
+    DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {
         reader = new BufferedReader(sharedReader);
         lineFilters = new ArrayList<>();
         recordFilters = new ArrayList<>();
-        logicCtor = sharedLogicCtor;
+        this.tableFactory = tableFactory;
         recordParser = sharedRecordParser;
     }
 
@@ -70,7 +49,7 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
     }
 
     private StringTable parseWithoutTry() throws IOException {
-        TableParserLogic tableParserLogic = logicCtor.call(recordParser, isFirstRowHeader, lineFilters, recordFilters);
+        TableParserLogic tableParserLogic = tableFactory.createTableParserLogic(recordParser, isFirstRowHeader, lineFilters, recordFilters);
         String line;
         while ((line = reader.readLine()) != null) {
             tableParserLogic.parseRawLine(line);

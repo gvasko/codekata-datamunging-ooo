@@ -3,7 +3,6 @@ package hu.gvasko.stringrecord.defaultimpl;
 import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,27 +12,12 @@ import java.util.Map;
  */
 class DefaultStringRecordBuilderImpl implements StringRecordBuilder {
 
-    static class ConstructorDelegateImpl implements StringRecordBuilderConstructorDelegate {
-
-        private StringRecordConstructorDelegate recordCtor;
-
-        @Inject
-        public ConstructorDelegateImpl(StringRecordConstructorDelegate recordCtor) {
-            this.recordCtor = recordCtor;
-        }
-
-        @Override
-        public StringRecordBuilder call() {
-            return new DefaultStringRecordBuilderImpl(recordCtor);
-        }
-    }
-
     private Map<String, String> stringMap;
-    private StringRecordConstructorDelegate stringRecordCtor;
+    private StringRecordFactoryExt factory;
 
-    private DefaultStringRecordBuilderImpl(StringRecordConstructorDelegate sharedRecordCtor) {
+    DefaultStringRecordBuilderImpl(StringRecordFactoryExt factory) {
         stringMap = new HashMap<>();
-        stringRecordCtor = sharedRecordCtor;
+        this.factory = factory;
     }
 
     @Override
@@ -63,7 +47,7 @@ class DefaultStringRecordBuilderImpl implements StringRecordBuilder {
         if (stringMap.isEmpty()) {
             throw new IllegalStateException("Empty record cannot be created.");
         } else {
-            return stringRecordCtor.call(stringMap);
+            return factory.createStringRecord(stringMap);
         }
     }
 

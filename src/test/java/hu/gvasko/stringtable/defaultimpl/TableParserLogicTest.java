@@ -2,7 +2,7 @@ package hu.gvasko.stringtable.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
+import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTableBuilder;
 import hu.gvasko.testutils.categories.UnitTest;
@@ -32,14 +32,14 @@ public class TableParserLogicTest {
         when(stubRecBuilder.addFields(anyVararg(), anyVararg())).thenReturn(stubRecBuilder);
         when(stubRecBuilder.build()).thenReturn(mock(StringRecord.class));
 
-        StringRecordBuilderConstructorDelegate stubRecBuilderCtor = mock(StringRecordBuilderConstructorDelegate.class);
-        when(stubRecBuilderCtor.call()).thenReturn(stubRecBuilder);
+        StringRecordFactory stubRecordFactory = mock(StringRecordFactory.class);
+        when(stubRecordFactory.createStringRecordBuilder()).thenReturn(stubRecBuilder);
 
-        StringTableBuilderConstructorDelegate stubTableBuilderCtor = mock(StringTableBuilderConstructorDelegate.class);
-        when(stubTableBuilderCtor.getRecordBuilderConstructor()).thenReturn(stubRecBuilderCtor);
+        StringTableFactoryExt stubTableFactory = mock(StringTableFactoryExt.class);
+        when(stubTableFactory.getRecordFactory()).thenReturn(stubRecordFactory);
         spyTableBuilder = mock(StringTableBuilder.class);
-        when(stubTableBuilderCtor.call(anyVararg())).thenReturn(spyTableBuilder);
-        sutTableParserLogic = new DefaultTableParserLogicImpl.ConstructorDelegateImpl(stubTableBuilderCtor).call(spyRecParser);
+        when(stubTableFactory.createStringTableBuilder(anyVararg())).thenReturn(spyTableBuilder);
+        sutTableParserLogic = new DefaultTableParserLogicImpl(stubTableFactory, spyRecParser);
     }
 
     @Test

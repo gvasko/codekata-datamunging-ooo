@@ -10,22 +10,9 @@ import java.util.Map;
  */
 class DefaultStringRecordImpl implements StringRecord {
 
-    static class ConstructorImpl implements StringRecordConstructorDelegate {
-
-        @Inject
-        public ConstructorImpl() {
-
-        }
-
-        @Override
-        public StringRecord call(Map<String, String> stringMap) {
-            return new DefaultStringRecordImpl(stringMap);
-        }
-    }
-
     private Map<String, String> fields;
 
-    private DefaultStringRecordImpl(Map<String, String> sharedFields) {
+    DefaultStringRecordImpl(Map<String, String> sharedFields) {
         fields = sharedFields;
     }
 

@@ -20,7 +20,7 @@ import static org.mockito.AdditionalMatchers.*;
 public class StringTableBuilderTest {
 
     private StringTableBuilder tableBuilder;
-    private StringTableConstructorDelegate spyTableCtor;
+    private StringTableFactoryExt spyTableFactory;
     private String[] schema;
 
     private final String[] rec1 = new String[] {"a1", "b1", "c1"};
@@ -33,15 +33,15 @@ public class StringTableBuilderTest {
         // http://xunitpatterns.com/Test%20Spy.html
         // "capture the indirect output calls made to another component
         // by the system under test (SUT) for later verification by the test"
-        spyTableCtor = mock(StringTableConstructorDelegate.class);
+        spyTableFactory = mock(StringTableFactoryExt.class);
         schema = new String[] {"AA", "BB", "CC"};
-        tableBuilder = getNewTableBuilder(spyTableCtor, schema);
+        tableBuilder = getNewTableBuilder(spyTableFactory, schema);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void when_SchemaContainsDuplicate_then_CtorThrowsException() {
         String[] duplicatedSchema = {"AA", "BB", "BB"};
-        getNewTableBuilder(spyTableCtor, duplicatedSchema);
+        getNewTableBuilder(spyTableFactory, duplicatedSchema);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class StringTableBuilderTest {
     public void when_ZeroRecordAdded_then_EmptyTableIsCreated() {
         tableBuilder.build();
         ArgumentCaptor<List> recordCaptor = ArgumentCaptor.forClass(List.class);
-        verify(spyTableCtor).call(aryEq(schema), recordCaptor.capture());
+        verify(spyTableFactory).createStringTable(aryEq(schema), recordCaptor.capture());
         Assert.assertEquals("Number of record passed", 0, recordCaptor.getValue().size());
     }
 
@@ -109,12 +109,12 @@ public class StringTableBuilderTest {
     @SuppressWarnings("unchecked")
     private List<String[]> getCapturedRecords(int callCount) {
         ArgumentCaptor<List> recordCaptor = ArgumentCaptor.forClass(List.class);
-        verify(spyTableCtor, times(callCount)).call(aryEq(schema), recordCaptor.capture());
+        verify(spyTableFactory, times(callCount)).createStringTable(aryEq(schema), recordCaptor.capture());
         return recordCaptor.getValue();
     }
 
-    private static StringTableBuilder getNewTableBuilder(StringTableConstructorDelegate spyTableCtor, String[] schema) {
-        return new DefaultStringTableBuilderImpl.ConstructorDelegateImpl(spyTableCtor).call(schema);
+    private static StringTableBuilder getNewTableBuilder(StringTableFactoryExt spyTableFactory, String[] schema) {
+        return new DefaultStringTableBuilderImpl(spyTableFactory, schema);
     }
 
 }

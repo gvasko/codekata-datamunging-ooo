@@ -103,7 +103,7 @@ public class GetMinimalDifferenceConsoleAppTest {
     private String runApp(String[] arguments) throws Exception {
         ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
         String encoding = Charset.defaultCharset().name();
-        
+
         PrintStream testOutput = new PrintStream(tempStream, true, encoding);
         System.setOut(testOutput);
 

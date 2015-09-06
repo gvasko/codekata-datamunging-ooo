@@ -1,12 +1,9 @@
 package hu.gvasko.codekata.datamunging;
 
-import hu.gvasko.codekata.datamunging.DataMungingUtil;
-import hu.gvasko.codekata.datamunging.FootballFixture;
-import hu.gvasko.codekata.datamunging.WeatherFixture;
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.*;
-import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import hu.gvasko.testutils.categories.IntegrationTest;
@@ -26,17 +23,17 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class DataMungingTest {
 
-    private DefaultMainTableFactoryImpl factory;
+    private StringTableFactory factory;
 
     @Before
     public void setUp() {
-        factory = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule());
+        factory = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl());
     }
 
     @Test
     public void testDayWithSmallestTemperatureSpread_fixWidthText() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(WeatherFixture.widthsAsArray());
-        try (StringTableParser parser = factory.newStringTableParser(recordParser, WeatherFixture.getDatFile())) {
+        try (StringTableParser parser = factory.createStringTableParser(recordParser, WeatherFixture.getDatFile())) {
             assertThatDayWithSmallestTemperatureSpreadIsOK(parser);
         }
     }
@@ -44,18 +41,18 @@ public class DataMungingTest {
     @Test
     public void testDayWithSmallestTemperatureSpread_CSV() throws Exception {
         StringRecordParser recordParser = new CSVParserImpl(WeatherFixture.columnCount());
-        try (StringTableParser parser = factory.newStringTableParser(recordParser, WeatherFixture.getCSVFile())) {
+        try (StringTableParser parser = factory.createStringTableParser(recordParser, WeatherFixture.getCSVFile())) {
             assertThatDayWithSmallestTemperatureSpreadIsOK(parser);
         }
     }
 
     private void assertThatDayWithSmallestTemperatureSpreadIsOK(StringTableParser parser) {
-        parser.addLineFilter(factory.skipEmptyLines());
-        parser.addRecordFilter(factory.onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
+        parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+        parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
         StringTable table = parser.firstRowIsHeader().parse();
 
         table.addStringDecoderToColumns(
-                factory.keepIntegersOnly(),
+                factory.getCommonDecoders().keepIntegersOnly(),
                 WeatherFixture.MAX_TEMP.columnName(),
                 WeatherFixture.MIN_TEMP.columnName());
 
@@ -72,7 +69,7 @@ public class DataMungingTest {
     @Test
     public void testNameOfTeamWithSmallestGoalDifference_fixWidthText() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(FootballFixture.widthsAsArray());
-        try (StringTableParser parser = factory.newStringTableParser(recordParser, FootballFixture.getDatFile())) {
+        try (StringTableParser parser = factory.createStringTableParser(recordParser, FootballFixture.getDatFile())) {
             assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(parser);
         }
     }
@@ -80,14 +77,14 @@ public class DataMungingTest {
     @Test
     public void testNameOfTeamWithSmallestGoalDifference_CSV() throws Exception {
         StringRecordParser recordParser = new CSVParserImpl(FootballFixture.columnCount());
-        try (StringTableParser parser = factory.newStringTableParser(recordParser, FootballFixture.getCSVFile())) {
+        try (StringTableParser parser = factory.createStringTableParser(recordParser, FootballFixture.getCSVFile())) {
             assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(parser);
         }
     }
 
     private void assertThatNameOfTeamWithSmallestGoalDifferenceIsOK(StringTableParser parser) {
-        parser.addLineFilter(factory.skipEmptyLines());
-        parser.addLineFilter(factory.skipSplitterLines());
+        parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+        parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
         StringTable table = parser.firstRowIsHeader().parse();
 
         StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(

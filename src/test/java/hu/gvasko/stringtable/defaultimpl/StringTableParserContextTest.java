@@ -34,7 +34,7 @@ public class StringTableParserContextTest {
 
     private StringTableParser sutTableParser;
     private TableParserLogic spyParserLogic;
-    private TableParserLogicConstructorDelegate spyTableParserLogicCtor;
+    private StringTableFactoryExt spyTableFactory;
     private StringRecordParser dummyRecParser;
     private Reader fakeReader;
 
@@ -46,14 +46,14 @@ public class StringTableParserContextTest {
     @Before
     @SuppressWarnings("unchecked")
     public void given() {
-        spyTableParserLogicCtor = mock(TableParserLogicConstructorDelegate.class);
+        spyTableFactory = mock(StringTableFactoryExt.class);
         spyParserLogic = mock(TableParserLogic.class);
         when(spyParserLogic.getTable()).thenReturn(mock(StringTable.class));
-        when(spyTableParserLogicCtor.call(any(), anyBoolean(), anyList(), anyList())).thenReturn(spyParserLogic);
+        when(spyTableFactory.createTableParserLogic(any(), anyBoolean(), anyList(), anyList())).thenReturn(spyParserLogic);
         dummyRecParser = mock(StringRecordParser.class);
         fakeReader = spy(new StringReader(TEXT));
 
-        sutTableParser = new DefaultTableParserLineReaderImpl.ConstructorDelegateImpl(spyTableParserLogicCtor).call(dummyRecParser, fakeReader);
+        sutTableParser = new DefaultTableParserLineReaderImpl(spyTableFactory, dummyRecParser, fakeReader);
 
         passedFirstRowIsHeader = null;
     }
@@ -144,7 +144,7 @@ public class StringTableParserContextTest {
         ArgumentCaptor<Boolean> headerCaptor = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<List> lineFilterCaptor = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<List> recordFilterCaptor = ArgumentCaptor.forClass(List.class);
-        verify(spyTableParserLogicCtor).call(eq(dummyRecParser), headerCaptor.capture(), lineFilterCaptor.capture(), recordFilterCaptor.capture());
+        verify(spyTableFactory).createTableParserLogic(eq(dummyRecParser), headerCaptor.capture(), lineFilterCaptor.capture(), recordFilterCaptor.capture());
         passedFirstRowIsHeader = headerCaptor.getValue();
         passedLineFilters = lineFilterCaptor.getValue();
         passedRecordFilters = recordFilterCaptor.getValue();

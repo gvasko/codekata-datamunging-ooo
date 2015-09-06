@@ -1,9 +1,8 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
+import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringTable;
 
 import java.util.*;
@@ -16,42 +15,22 @@ import java.util.stream.Collectors;
  */
 class DefaultStringTableImpl implements StringTable {
 
-    static class ConstructorDelegateImpl implements StringTableConstructorDelegate {
-
-        private StringRecordBuilderConstructorDelegate recBuilderCtor;
-
-        @Inject
-        public ConstructorDelegateImpl(StringRecordBuilderConstructorDelegate recBuilderCtor) {
-            this.recBuilderCtor = recBuilderCtor;
-        }
-
-        @Override
-        public StringTable call(String[] sharedSchema, List<String[]> sharedRecords) {
-            for (int i = 0; i < sharedRecords.size(); i++) {
-                String[] rec = sharedRecords.get(i);
-                if (sharedSchema.length != rec.length) {
-                    throw new IllegalArgumentException("Record #" + Integer.toString(i) + " [" + String.join(",", rec) + "] does not fulfill schema [" + String.join(",", sharedSchema) + "]");
-                }
-            }
-            return new DefaultStringTableImpl(recBuilderCtor, sharedSchema, sharedRecords);
-        }
-
-        @Override
-        public StringRecordBuilderConstructorDelegate getRecordBuilderConstructorDelegate() {
-            return recBuilderCtor;
-        }
-    }
-
     private String[] schema;
     private List<String[]> records;
     private Map<String,Function<String,String>> fieldDecoders;
-    private StringRecordBuilderConstructorDelegate recordBuilderCtor;
+    private StringRecordFactory recordFactory;
 
-    private DefaultStringTableImpl(StringRecordBuilderConstructorDelegate sharedRecBuilderCtor, String[] sharedSchema, List<String[]> sharedRecords) {
+    DefaultStringTableImpl(StringRecordFactory recordFactory, String[] sharedSchema, List<String[]> sharedRecords) {
+        for (int i = 0; i < sharedRecords.size(); i++) {
+            String[] rec = sharedRecords.get(i);
+            if (sharedSchema.length != rec.length) {
+                throw new IllegalArgumentException("Record #" + Integer.toString(i) + " [" + String.join(",", rec) + "] does not fulfill schema [" + String.join(",", sharedSchema) + "]");
+            }
+        }
         schema = sharedSchema;
         records = sharedRecords;
         fieldDecoders = new HashMap<>();
-        recordBuilderCtor = sharedRecBuilderCtor;
+        this.recordFactory = recordFactory;
     }
 
     @Override
@@ -70,7 +49,7 @@ class DefaultStringTableImpl implements StringTable {
     }
 
     private StringRecord toStringRecord(String[] rec) {
-        StringRecordBuilder recBuilder = recordBuilderCtor.call();
+        StringRecordBuilder recBuilder = recordFactory.createStringRecordBuilder();
         for (int i = 0; i < schema.length; i++) {
             String field = schema[i];
             String value = getDecodedValue(field, rec[i]);

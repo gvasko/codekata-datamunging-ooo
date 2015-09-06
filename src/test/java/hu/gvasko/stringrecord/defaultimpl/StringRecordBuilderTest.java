@@ -1,6 +1,7 @@
 package hu.gvasko.stringrecord.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecordBuilder;
+import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class StringRecordBuilderTest {
 
     private StringRecordBuilder recBuilder;
-    private StringRecordConstructorDelegate spyRecCtor;
+    private StringRecordFactoryExt spyFactory;
 
     @Before
     public void given() {
@@ -27,8 +28,8 @@ public class StringRecordBuilderTest {
         // http://xunitpatterns.com/Test%20Spy.html
         // "capture the indirect output calls made to another component
         // by the system under test (SUT) for later verification by the test"
-        spyRecCtor = mock(StringRecordConstructorDelegate.class);
-        recBuilder = new DefaultStringRecordBuilderImpl.ConstructorDelegateImpl(spyRecCtor).call();
+        spyFactory = mock(StringRecordFactoryExt.class);
+        recBuilder = new DefaultStringRecordBuilderImpl(spyFactory);
     }
 
     @Test
@@ -39,8 +40,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalStateException ex) {
-            verify(spyRecCtor, never()).call(anyMap());
-            verifyZeroInteractions(spyRecCtor);
+            verify(spyFactory, never()).createStringRecord(anyMap());
+            verifyZeroInteractions(spyFactory);
         }
     }
 
@@ -53,8 +54,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalArgumentException ex) {
-            verify(spyRecCtor, never()).call(anyMap());
-            verifyZeroInteractions(spyRecCtor);
+            verify(spyFactory, never()).createStringRecord(anyMap());
+            verifyZeroInteractions(spyFactory);
         }
     }
 
@@ -62,7 +63,7 @@ public class StringRecordBuilderTest {
     public void when_FieldsAddedNormally_then_CreatesRecordUsingAllPassedFields() {
         addDefaultFieldsABC();
         recBuilder.build();
-        verify(spyRecCtor).call(eq(getDefaultExpectedMapABC()));
+        verify(spyFactory).createStringRecord(eq(getDefaultExpectedMapABC()));
     }
 
     private void andGiven_BuilderHasAlreadyCreatedRecord() {
@@ -76,13 +77,13 @@ public class StringRecordBuilderTest {
 
         Map<String, String> expectedMap = getDefaultExpectedMapABC();
 
-        verify(spyRecCtor).call(eq(expectedMap));
+        verify(spyFactory).createStringRecord(eq(expectedMap));
 
         recBuilder.addField("DD", "dd");
         recBuilder.build();
 
         expectedMap.put("DD", "dd");
-        verify(spyRecCtor, times(2)).call(eq(expectedMap));
+        verify(spyFactory, times(2)).createStringRecord(eq(expectedMap));
     }
 
     @Test
@@ -90,14 +91,14 @@ public class StringRecordBuilderTest {
         addDefaultFieldsABC();
         recBuilder.addFields(new String[0], new String[0]);
         recBuilder.build();
-        verify(spyRecCtor).call(eq(getDefaultExpectedMapABC()));
+        verify(spyFactory).createStringRecord(eq(getDefaultExpectedMapABC()));
     }
 
     @Test
     public void when_MultipleFieldsAddedNormally_then_CreatesRecordUsingAllPassedFields() {
         recBuilder.addFields(new String[] {"AA", "BB", "CC"}, new String[] {"aa", "bb", "cc"});
         recBuilder.build();
-        verify(spyRecCtor).call(eq(getDefaultExpectedMapABC()));
+        verify(spyFactory).createStringRecord(eq(getDefaultExpectedMapABC()));
     }
 
     @Test
@@ -108,8 +109,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalArgumentException ex) {
-            verify(spyRecCtor, never()).call(anyMap());
-            verifyZeroInteractions(spyRecCtor);
+            verify(spyFactory, never()).createStringRecord(anyMap());
+            verifyZeroInteractions(spyFactory);
         }
     }
 
@@ -121,8 +122,8 @@ public class StringRecordBuilderTest {
             Assert.fail("Should throw exception.");
         }
         catch (IllegalArgumentException ex) {
-            verify(spyRecCtor, never()).call(anyMap());
-            verifyZeroInteractions(spyRecCtor);
+            verify(spyFactory, never()).createStringRecord(anyMap());
+            verifyZeroInteractions(spyFactory);
         }
     }
 

@@ -1,7 +1,6 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
-import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +19,7 @@ public class KeepIntegerOnlyTest {
 
     @Before
     public void setUp() {
-        op = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule()).keepIntegersOnly();
+        op = new DefaultStringTableFactoryImpl(null).keepIntegersOnly();
     }
 
     @Test

@@ -1,8 +1,8 @@
 package hu.gvasko.stringtable.integration;
 
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.StringTableBuilder;
 
 /**
@@ -28,12 +28,12 @@ public final class StringTableFixtures {
         };
     }
 
-    public static StringTable getEmptyTable() {
-        return new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule()).newStringTableBuilder(getDefaultSchema()).build();
+    public static StringTable createEmptyTable() {
+        return new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl()).createStringTableBuilder(getDefaultSchema()).build();
     }
 
-    public static StringTable getAbcTable() {
-        StringTableBuilder builder = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule()).newStringTableBuilder(getDefaultSchema());
+    public static StringTable createAbcTable() {
+        StringTableBuilder builder = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl()).createStringTableBuilder(getDefaultSchema());
 
         String[][] abcTable = getAbcArrays();
         for (int i = 0; i < abcTable.length; i++) {

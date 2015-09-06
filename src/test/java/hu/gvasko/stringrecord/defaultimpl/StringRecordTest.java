@@ -26,7 +26,7 @@ public class StringRecordTest {
         stringMap.put("AA", "axa");
         stringMap.put("BB", "bxb");
         stringMap.put("CC", "cxc");
-        rec = new DefaultStringRecordImpl.ConstructorImpl().call(stringMap);
+        rec = new DefaultStringRecordImpl(stringMap);
     }
 
     @Test(expected = NullPointerException.class)

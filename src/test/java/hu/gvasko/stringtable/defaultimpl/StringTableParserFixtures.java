@@ -17,7 +17,7 @@ public class StringTableParserFixtures {
         return new String[] { "Aaa", "Bbb", "Ccc" };
     }
     public static String[] getNumberedSchema() {
-        return DefaultMainTableFactoryImpl.getDefaultHeader(defaultHeader.length);
+        return DefaultStringTableFactoryImpl.getDefaultHeader(defaultHeader.length);
     }
 
     public static final StringRecordParser getDefaultRecordParser() {

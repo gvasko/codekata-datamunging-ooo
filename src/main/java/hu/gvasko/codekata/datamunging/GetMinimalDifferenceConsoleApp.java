@@ -1,16 +1,16 @@
 package hu.gvasko.codekata.datamunging;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTable;
+import hu.gvasko.stringtable.StringTableFactory;
 import hu.gvasko.stringtable.StringTableParser;
-import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import org.apache.commons.cli.*;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -87,24 +87,24 @@ public class GetMinimalDifferenceConsoleApp {
 
     private void loadTable() throws Exception {
         // TODO: this is tight
-        DefaultMainTableFactoryImpl factory = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule());
+        StringTableFactory factory = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl());
         String filePath = commandLine.getArgs()[0];
 
         StringRecordParser recParser = getRecParser(filePath);
 
-        try (StringTableParser parser = factory.newStringTableParser(recParser, Paths.get(filePath).toUri())) {
+        try (StringTableParser parser = factory.createStringTableParser(recParser, Paths.get(filePath).toUri())) {
             if (commandLine.hasOption(FIRST_LINE_IS_HEADER)) {
                 parser.firstRowIsHeader();
             }
             if (commandLine.hasOption(SKIP_EMPTY_LINES)) {
-                parser.addLineFilter(factory.skipEmptyLines());
+                parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
             }
             if (commandLine.hasOption(SKIP_SPLITTER_LINES)) {
-                parser.addLineFilter(factory.skipSplitterLines());
+                parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
             }
             if (commandLine.hasOption(KEEP_RECORDS_IF_NUMERIC)) {
                 for (String column : commandLine.getOptionValue(KEEP_RECORDS_IF_NUMERIC).split(",")) {
-                    parser.addRecordFilter(factory.onlyNumbersInColumn(column));
+                    parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(column));
                 }
             }
             table = parser.parse();
@@ -112,7 +112,7 @@ public class GetMinimalDifferenceConsoleApp {
 
         if (commandLine.hasOption(DECODE_AS_INTEGER)) {
             table.addStringDecoderToColumns(
-                    factory.keepIntegersOnly(),
+                    factory.getCommonDecoders().keepIntegersOnly(),
                     commandLine.getOptionValue(DECODE_AS_INTEGER).split(","));
         }
     }

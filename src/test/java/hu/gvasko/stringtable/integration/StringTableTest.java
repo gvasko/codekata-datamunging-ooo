@@ -1,9 +1,9 @@
 package hu.gvasko.stringtable.integration;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
+import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import hu.gvasko.testutils.categories.IntegrationTest;
@@ -44,20 +44,20 @@ public class StringTableTest {
 
     @Test
     public void emptyTableReturnsEmptyList() {
-        StringTable table = getEmptyTable();
+        StringTable table = createEmptyTable();
         Assert.assertArrayEquals(new StringRecord[0], table.getAllRecords().toArray());
     }
 
     @Test
     public void returnsRecordAtIndex() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         Assert.assertEquals("Row count: ", abcTable.length, table.getRowCount());
         assertRowsEquals(table, row -> abcTable[row], row -> table.getRecord(row));
     }
 
     @Test
     public void returnsAllRecords() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         List<StringRecord> records = table.getAllRecords();
         Assert.assertEquals("Row count: ", abcTable.length, records.size());
         assertRowsEquals(table, row -> abcTable[row], row -> records.get(row));
@@ -65,7 +65,7 @@ public class StringTableTest {
 
     @Test
     public void recordAtIndexDecoded() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         final String replacedValue = "replaced-value";
         final int testRow = 2;
         final int testCol = BBB_COLUMN;
@@ -77,7 +77,7 @@ public class StringTableTest {
 
     @Test
     public void allRecordsDecoded() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         final String replacedValue = "replaced-value";
         final int testRow = 2;
         final int testCol = BBB_COLUMN;
@@ -111,7 +111,7 @@ public class StringTableTest {
 
     @Test
     public void multipleDecodersAreChained() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         final String replacedValue = "replaced-value";
         final int testRow = 2;
         final int testCol = BBB_COLUMN;
@@ -123,43 +123,43 @@ public class StringTableTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void assigningDecoderToUndefinedFieldThrowsException() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         table.addStringDecoderToColumns(value -> "", "invalid-column");
     }
 
     @Test
     public void addingDecoderToEmptyTableIsAllowed() {
-        StringTable table = getEmptyTable();
+        StringTable table = createEmptyTable();
         table.addStringDecoderToColumns(value -> "", defaultSchema[AAA_COLUMN]);
     }
 
     @Test(expected = NullPointerException.class)
     public void addingNullDecoderThrowsNPE() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         table.addStringDecoderToColumns(null, defaultSchema[AAA_COLUMN]);
     }
 
     @Test(expected = NullPointerException.class)
     public void addingNullDecoderToInvalidColumnThrowsNPE() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         table.addStringDecoderToColumns(null, "invalid-column");
     }
 
     @Test(expected = NullPointerException.class)
     public void addingNullDecoderWithoutColumnThrowsNPE() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         table.addStringDecoderToColumns(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addingDecoderWithoutColumnThrowsException() {
-        StringTable table = getAbcTable();
+        StringTable table = createAbcTable();
         table.addStringDecoderToColumns(value -> "");
     }
 
     @Test
     public void singleRowTable() {
-        StringTableParser tableParser = new DefaultMainTableFactoryImpl(DefaultMainRecordFactoryImpl.createGuiceModule()).newStringTableParser(new FixWidthTextParserImpl(2, 2, 2), new StringReader("A B C "));
+        StringTableParser tableParser = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl()).createStringTableParser(new FixWidthTextParserImpl(2, 2, 2), new StringReader("A B C "));
         StringTable singleRowTable = tableParser.parse();
         Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
         StringRecord theRecord = singleRowTable.getRecord(0);

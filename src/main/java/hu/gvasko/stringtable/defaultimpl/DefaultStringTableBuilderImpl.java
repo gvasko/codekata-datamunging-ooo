@@ -1,8 +1,5 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import com.google.inject.Inject;
-import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.stringtable.StringTableBuilder;
 
@@ -13,38 +10,18 @@ import java.util.*;
  */
 class DefaultStringTableBuilderImpl implements StringTableBuilder {
 
-    static class ConstructorDelegateImpl implements StringTableBuilderConstructorDelegate {
-        private StringTableConstructorDelegate tableCtor;
-
-        @Inject
-        public ConstructorDelegateImpl(StringTableConstructorDelegate tableCtor) {
-            this.tableCtor = tableCtor;
-        }
-
-        @Override
-        public StringTableBuilder call(String... schema) {
-            return new DefaultStringTableBuilderImpl(tableCtor, schema);
-        }
-
-        @Override
-        public StringRecordBuilderConstructorDelegate getRecordBuilderConstructor() {
-            return tableCtor.getRecordBuilderConstructorDelegate();
-        }
-
-    }
-
     private String[] schema;
     private List<String[]> records;
-    private StringTableConstructorDelegate tableCtor;
+    private StringTableFactoryExt tableFactory;
 
-    private DefaultStringTableBuilderImpl(StringTableConstructorDelegate sharedTableCtor, String... sharedSchema) {
+    DefaultStringTableBuilderImpl(StringTableFactoryExt tableFactory, String... sharedSchema) {
         Set<String> uniqueSchema = new HashSet<>(Arrays.asList(sharedSchema));
         if (uniqueSchema.size() != sharedSchema.length) {
             throw new IllegalArgumentException("Duplicated attribute in the schema");
         }
         schema = sharedSchema;
         records = new ArrayList<>();
-        tableCtor = sharedTableCtor;
+        this.tableFactory = tableFactory;
     }
 
     @Override
@@ -63,7 +40,7 @@ class DefaultStringTableBuilderImpl implements StringTableBuilder {
 
     @Override
     public StringTable build() {
-        return tableCtor.call(schema, records);
+        return tableFactory.createStringTable(schema, records);
     }
 
 }

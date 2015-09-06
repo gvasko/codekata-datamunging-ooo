@@ -1,6 +1,6 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
+import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
@@ -21,21 +21,21 @@ import static org.mockito.Mockito.*;
 public class StringTableCtorTest {
 
     private String[] fakeSchema;
-    private StringRecordBuilderConstructorDelegate spyRecBuilderCtor;
+    private StringRecordFactory spyRecordFactory;
 
     @Before
     public void given() {
         fakeSchema = new String[] { "AA", "BB" };
-        spyRecBuilderCtor = mock(StringRecordBuilderConstructorDelegate.class);
+        spyRecordFactory = mock(StringRecordFactory.class);
     }
 
     @Test
     public void when_EmptyRecordList_then_CreatesEmptyTable() {
         List<String[]> fakeRecords = new ArrayList<>();
-        StringTable sutTable = getNewStringTable(spyRecBuilderCtor, fakeSchema, fakeRecords);
+        StringTable sutTable = getNewStringTable(spyRecordFactory, fakeSchema, fakeRecords);
         Assert.assertEquals("Number of records", 0, sutTable.getRowCount());
         Assert.assertTrue("Getting all records returns empty list", sutTable.getAllRecords().isEmpty());
-        verifyZeroInteractions(spyRecBuilderCtor);
+        verifyZeroInteractions(spyRecordFactory);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -44,7 +44,7 @@ public class StringTableCtorTest {
                 {"a1", "b1"},
                 {"a2"}
         });
-        getNewStringTable(spyRecBuilderCtor, fakeSchema, fakeRecords);
+        getNewStringTable(spyRecordFactory, fakeSchema, fakeRecords);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -53,11 +53,11 @@ public class StringTableCtorTest {
                 {"a1", "b1"},
                 {"a2", "b2", "c2"}
         });
-        getNewStringTable(spyRecBuilderCtor, fakeSchema, fakeRecords);
+        getNewStringTable(spyRecordFactory, fakeSchema, fakeRecords);
     }
 
-    private static StringTable getNewStringTable(StringRecordBuilderConstructorDelegate spyRecBuilderCtor, String[] fakeSchema, List<String[]> fakeRecords) {
-        return new DefaultStringTableImpl.ConstructorDelegateImpl(spyRecBuilderCtor).call(fakeSchema, fakeRecords);
+    private static StringTable getNewStringTable(StringRecordFactory spyRecordFactory, String[] fakeSchema, List<String[]> fakeRecords) {
+        return new DefaultStringTableImpl(spyRecordFactory, fakeSchema, fakeRecords);
     }
 
 

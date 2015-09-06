@@ -1,8 +1,8 @@
 package hu.gvasko.stringrecord.integration;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringrecord.StringRecordBuilderConstructorDelegate;
-import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
+import hu.gvasko.stringrecord.StringRecordBuilder;
+import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 
 /**
  * Created by gvasko on 2015.05.07..
@@ -27,23 +27,26 @@ public final class StringRecordFixtures {
     public static final String NUMBER10_VALUE = "ten";
 
     public static StringRecord getSingleFieldRecord() {
-        StringRecordBuilderConstructorDelegate recordBuilderCtor = new DefaultMainRecordFactoryImpl().getStringRecordBuilderConstructor();
-        return recordBuilderCtor.call().addField(SINGLE_KEY, SINGLE_VALUE).build();
+        return createStringRecordBuilder().addField(SINGLE_KEY, SINGLE_VALUE).build();
     }
 
     public static StringRecord getTrioFieldsRecord() {
-        StringRecordBuilderConstructorDelegate recordBuilderCtor = new DefaultMainRecordFactoryImpl().getStringRecordBuilderConstructor();
-        return recordBuilderCtor.call()
+        return createStringRecordBuilder()
                 .addField(TRIO1_KEY, TRIO1_VALUE)
                 .addField(TRIO2_KEY, TRIO2_VALUE)
                 .addField(TRIO3_KEY, TRIO3_VALUE).build();
     }
 
     public static StringRecord getNumberBasedRecords() {
-        StringRecordBuilderConstructorDelegate recordBuilderCtor = new DefaultMainRecordFactoryImpl().getStringRecordBuilderConstructor();
-        return recordBuilderCtor.call()
+        return createStringRecordBuilder()
                 .addField(NUMBER0_KEY, NUMBER0_VALUE)
                 .addField(NUMBER1_KEY, NUMBER1_VALUE)
                 .addField(NUMBER10_KEY, NUMBER10_VALUE).build();
     }
+
+    private static StringRecordBuilder createStringRecordBuilder() {
+        // TODO: singleton?
+        return new DefaultStringRecordFactoryImpl().createStringRecordBuilder();
+    }
+
 }
