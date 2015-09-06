@@ -48,6 +48,7 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
     private StringRecordParser recordParser;
 
     private DefaultTableParserLineReaderImpl(TableParserLogicConstructorDelegate sharedLogicCtor, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
+        // TODO: double buffer?
         this(sharedLogicCtor, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
     }
 

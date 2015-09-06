@@ -1,11 +1,11 @@
-package hu.gvasko.stringtable.acceptance;
+package hu.gvasko.codekata.datamunging;
 
 import hu.gvasko.stringrecord.StringRecord;
 
 import java.util.List;
 
 /**
- * Utility functions to delay design decisions
+ * Utility functions
  * Created by gvasko on 2015.05.06..
  */
 public class DataMungingUtil {

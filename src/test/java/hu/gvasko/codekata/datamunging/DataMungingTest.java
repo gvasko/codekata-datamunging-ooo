@@ -1,12 +1,15 @@
-package hu.gvasko.stringtable.acceptance;
+package hu.gvasko.codekata.datamunging;
 
+import hu.gvasko.codekata.datamunging.DataMungingUtil;
+import hu.gvasko.codekata.datamunging.FootballFixture;
+import hu.gvasko.codekata.datamunging.WeatherFixture;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.defaultimpl.DefaultMainRecordFactoryImpl;
 import hu.gvasko.stringtable.*;
 import hu.gvasko.stringtable.defaultimpl.DefaultMainTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
-import hu.gvasko.testutils.categories.AcceptanceTest;
+import hu.gvasko.testutils.categories.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +23,7 @@ import org.junit.experimental.categories.Category;
  *
  * Created by gvasko on 2015.05.06..
  */
-@Category(AcceptanceTest.class)
+@Category(IntegrationTest.class)
 public class DataMungingTest {
 
     private DefaultMainTableFactoryImpl factory;
@@ -96,4 +99,5 @@ public class DataMungingTest {
         String actualTeamName = actualRecord.get(FootballFixture.TEAM.columnName());
         Assert.assertEquals(nameOfTeamWithSmallestGoalDifference, actualTeamName);
     }
+
 }
