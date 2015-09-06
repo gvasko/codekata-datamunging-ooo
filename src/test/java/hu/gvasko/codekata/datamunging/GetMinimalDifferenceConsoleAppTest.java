@@ -8,6 +8,7 @@ import org.junit.experimental.categories.Category;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -100,12 +101,14 @@ public class GetMinimalDifferenceConsoleAppTest {
 
 
     private String runApp(String[] arguments) throws Exception {
-        OutputStream tempStream = new ByteArrayOutputStream();
-        PrintStream testOutput = new PrintStream(tempStream, true);
+        ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
+        String encoding = Charset.defaultCharset().name();
+        
+        PrintStream testOutput = new PrintStream(tempStream, true, encoding);
         System.setOut(testOutput);
 
         GetMinimalDifferenceConsoleApp.main(arguments);
-        return tempStream.toString();
+        return tempStream.toString(encoding);
     }
 
 }
