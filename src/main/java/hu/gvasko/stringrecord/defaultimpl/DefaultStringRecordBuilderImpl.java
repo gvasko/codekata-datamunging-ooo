@@ -1,6 +1,5 @@
 package hu.gvasko.stringrecord.defaultimpl;
 
-import com.google.inject.Inject;
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
 
