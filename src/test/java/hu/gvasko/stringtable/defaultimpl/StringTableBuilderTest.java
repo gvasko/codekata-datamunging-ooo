@@ -13,6 +13,10 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+
 /**
  * Created by gvasko on 2015.05.23..
  */
@@ -47,11 +51,11 @@ public class StringTableBuilderTest {
     @Test
     public void when_SchemaReturns_then_CopyReturns() {
         String[] tmpSchema = tableBuilder.getSchema();
-        Assert.assertNotEquals("Precondition", "XX", schema[0]);
-        Assert.assertNotEquals("Precondition", "XX", tmpSchema[0]);
+        assertThat("Precondition", schema[0], is(not(equalTo("XX"))));
+        assertThat("Precondition", tmpSchema[0], is(not(equalTo("XX"))));
         tmpSchema[0] = "XX";
-        Assert.assertNotEquals("Original schema is not changed", "XX", schema[0]);
-        Assert.assertArrayEquals("Original and newly obtained schemas equal", schema, tableBuilder.getSchema());
+        assertThat("Original schema is not changed", schema[0], is(not(equalTo("XX"))));
+        assertThat("Original schema is not changed", tableBuilder.getSchema(), is(equalTo(schema)));
     }
 
     @Test
@@ -60,7 +64,7 @@ public class StringTableBuilderTest {
         tableBuilder.build();
         ArgumentCaptor<List> recordCaptor = ArgumentCaptor.forClass(List.class);
         verify(spyTableFactory).createStringTable(aryEq(schema), recordCaptor.capture());
-        Assert.assertEquals("Number of record passed", 0, recordCaptor.getValue().size());
+        assertThat("Number of record passed", recordCaptor.getValue().size(), is(equalTo(0)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -81,9 +85,9 @@ public class StringTableBuilderTest {
 
         List<String[]> recordList = getCapturedRecords(1);
 
-        Assert.assertEquals("Number of record passed", 2, recordList.size());
-        Assert.assertArrayEquals("First record", rec1, recordList.get(0));
-        Assert.assertArrayEquals("Second record", rec2, recordList.get(1));
+        assertThat("Number of record passed", recordList, hasSize(2));
+        assertThat("First record passed", recordList.get(0), is(equalTo(rec1)));
+        assertThat("Second record passed", recordList.get(1), is(equalTo(rec2)));
     }
 
     private void andGiven_RecordsAddedAndTableAlreadyBuilt() {
@@ -100,10 +104,10 @@ public class StringTableBuilderTest {
 
         List<String[]> recordList = getCapturedRecords(2);
 
-        Assert.assertEquals("Number of record passed", 3, recordList.size());
-        Assert.assertArrayEquals("First record", rec1, recordList.get(0));
-        Assert.assertArrayEquals("Second record", rec2, recordList.get(1));
-        Assert.assertArrayEquals("Third record", rec3, recordList.get(2));
+        assertThat("Number of record passed", recordList.size(), is(equalTo(3)));
+        assertThat("First record passed", recordList.get(0), is(equalTo(rec1)));
+        assertThat("Second record passed", recordList.get(1), is(equalTo(rec2)));
+        assertThat("Third record passed", recordList.get(2), is(equalTo(rec3)));
     }
 
     @SuppressWarnings("unchecked")

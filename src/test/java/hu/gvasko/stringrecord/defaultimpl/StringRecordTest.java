@@ -10,6 +10,9 @@ import org.junit.experimental.categories.Category;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 /**
  * Created by gvasko on 2015.05.23..
  */
@@ -41,19 +44,19 @@ public class StringRecordTest {
 
     @Test
     public void when_GetAllFields_then_AllValuesReturn() {
-        Assert.assertEquals("AA", "axa", rec.get("AA"));
-        Assert.assertEquals("BB", "bxb", rec.get("BB"));
-        Assert.assertEquals("CC", "cxc", rec.get("CC"));
+        assertThat("AA", rec.get("AA"), is(equalTo("axa")));
+        assertThat("BB", rec.get("BB"), is(equalTo("bxb")));
+        assertThat("CC", rec.get("CC"), is(equalTo("cxc")));
     }
 
     @Test
     public void when_ToString_then_ContainsAllFieldsAndValues() {
         String str = rec.toString();
-        Assert.assertTrue("contains AA", str.contains("AA"));
-        Assert.assertTrue("contains BB", str.contains("BB"));
-        Assert.assertTrue("contains CC", str.contains("CC"));
-        Assert.assertTrue("contains axa", str.contains("axa"));
-        Assert.assertTrue("contains bxb", str.contains("bxb"));
-        Assert.assertTrue("contains cxc", str.contains("cxc"));
+        assertThat(str, containsString("AA"));
+        assertThat(str, containsString("BB"));
+        assertThat(str, containsString("CC"));
+        assertThat(str, containsString("axa"));
+        assertThat(str, containsString("bxb"));
+        assertThat(str, containsString("cxc"));
     }
 }

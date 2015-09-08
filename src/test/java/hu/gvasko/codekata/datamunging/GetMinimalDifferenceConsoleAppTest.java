@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import static hu.gvasko.codekata.datamunging.GetMinimalDifferenceConsoleApp.*;
 
 /**
@@ -36,9 +39,10 @@ public class GetMinimalDifferenceConsoleAppTest {
                 file
         };
 
-        String output = runApp(arguments);
+        String consoleAppOutput = runApp(arguments);
 
-        Assert.assertEquals("14" + System.lineSeparator(), output);
+        assertThat("The day of the smallest temperature spread",
+                consoleAppOutput, is(equalTo("14" + System.lineSeparator())));
     }
 
     @Test
@@ -56,9 +60,10 @@ public class GetMinimalDifferenceConsoleAppTest {
                 file
         };
 
-        String output = runApp(arguments);
+        String consoleAppOutput = runApp(arguments);
 
-        Assert.assertEquals("14" + System.lineSeparator(), output);
+        assertThat("The day of the smallest temperature spread",
+                consoleAppOutput, is(equalTo("14" + System.lineSeparator())));
     }
 
     @Test
@@ -75,9 +80,10 @@ public class GetMinimalDifferenceConsoleAppTest {
                 file
         };
 
-        String output = runApp(arguments);
+        String consoleAppOutput = runApp(arguments);
 
-        Assert.assertEquals("Aston_Villa" + System.lineSeparator(), output);
+        assertThat("The name of the team with the smallest difference in goals",
+                consoleAppOutput, is(equalTo("Aston_Villa" + System.lineSeparator())));
     }
 
     @Test
@@ -94,9 +100,10 @@ public class GetMinimalDifferenceConsoleAppTest {
                 file
         };
 
-        String output = runApp(arguments);
+        String consoleAppOutput = runApp(arguments);
 
-        Assert.assertEquals("Aston_Villa" + System.lineSeparator(), output);
+        assertThat("The name of the team with the smallest difference in goals",
+                consoleAppOutput, is(equalTo("Aston_Villa" + System.lineSeparator())));
     }
 
 

@@ -14,6 +14,10 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+
 /**
  * Created by gvasko on 2015.05.27..
  */
@@ -33,8 +37,8 @@ public class StringTableCtorTest {
     public void when_EmptyRecordList_then_CreatesEmptyTable() {
         List<String[]> fakeRecords = new ArrayList<>();
         StringTable sutTable = getNewStringTable(spyRecordFactory, fakeSchema, fakeRecords);
-        Assert.assertEquals("Number of records", 0, sutTable.getRowCount());
-        Assert.assertTrue("Getting all records returns empty list", sutTable.getAllRecords().isEmpty());
+        assertThat("Number of records", sutTable.getRowCount(), is(equalTo(0)));
+        assertThat("Getting all records returns empty list", sutTable.getAllRecords(), is(empty()));
         verifyZeroInteractions(spyRecordFactory);
     }
 

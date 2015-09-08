@@ -1,11 +1,13 @@
 package hu.gvasko.stringtable.defaultimpl;
 
-import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import java.util.function.UnaryOperator;
 
@@ -15,41 +17,41 @@ import java.util.function.UnaryOperator;
 @Category(UnitTest.class)
 public class KeepIntegerOnlyTest {
 
-    private UnaryOperator<String> op;
+    private UnaryOperator<String> keepIntegersOnly;
 
     @Before
-    public void setUp() {
-        op = new DefaultStringTableFactoryImpl(null).keepIntegersOnly();
+    public void given() {
+        keepIntegersOnly = new DefaultStringTableFactoryImpl(null).keepIntegersOnly();
     }
 
     @Test
-    public void integerRemains() {
-        Assert.assertEquals("1234", op.apply("1234"));
+    public void when_integer_then_sameReturns() {
+        assertThat(keepIntegersOnly.apply("1234"), equalTo("1234"));
     }
 
     @Test
-    public void integerWithSpacesAround() {
-        Assert.assertEquals("1234", op.apply("  1234  "));
+    public void when_spacesAround_then_returnsTrimmed() {
+        assertThat(keepIntegersOnly.apply("  1234  "), equalTo("1234"));
     }
 
     @Test
-    public void integerWithSpacesInside() {
-        Assert.assertEquals("1234", op.apply("12  34"));
+    public void when_spacesInside_then_spacesRemoved() {
+        assertThat(keepIntegersOnly.apply("12  34"), equalTo("1234"));
     }
 
     @Test
-    public void containsLetters() {
-        Assert.assertEquals("1234", op.apply("12Az34"));
+    public void when_containsLetters_then_lettersRemoved() {
+        assertThat(keepIntegersOnly.apply("12Az34"), equalTo("1234"));
     }
 
     @Test
-    public void lettersAround() {
-        Assert.assertEquals("1234", op.apply("A1234Z"));
+    public void when_lettersAround_then_lettersRemoved() {
+        assertThat(keepIntegersOnly.apply("A1234Z"), equalTo("1234"));
     }
 
     @Test
-    public void nonAlphaAround() {
-        Assert.assertEquals("1234", op.apply("++1234**"));
+    public void when_nonAlphaCharactersAround_then_theyRemoved() {
+        assertThat(keepIntegersOnly.apply("++1234**"), equalTo("1234"));
     }
 
 }

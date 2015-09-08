@@ -15,10 +15,14 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static org.mockito.Mockito.*;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 
 /**
@@ -62,22 +66,22 @@ public class StringTableParserContextTest {
     public void when_FirstRowIsHeader_then_PassesTrue() {
         sutTableParser.firstRowIsHeader().parse();
         getPassedValuesAfterParse();
-        Assert.assertTrue("first row is header", passedFirstRowIsHeader.booleanValue());
+        assertThat("First row is header", passedFirstRowIsHeader.booleanValue(), is(true));
     }
 
     @Test
     public void when_FirstRowIsNotHeader_then_PassesFalse() {
         sutTableParser.parse();
         getPassedValuesAfterParse();
-        Assert.assertFalse("first row is not header", passedFirstRowIsHeader.booleanValue());
+        assertThat("First row is not header", passedFirstRowIsHeader.booleanValue(), is(false));
     }
 
     @Test
     public void when_NoFilterAddedToColumn_then_NothingPassed() {
         sutTableParser.parse();
         getPassedValuesAfterParse();
-        Assert.assertTrue("no line filters added", passedLineFilters.isEmpty());
-        Assert.assertTrue("no record filters added", passedRecordFilters.isEmpty());
+        assertThat("No line filters added", passedLineFilters, is(empty()));
+        assertThat("No record filters added", passedRecordFilters, is(empty()));
     }
 
     @Test
@@ -87,7 +91,7 @@ public class StringTableParserContextTest {
         sutTableParser.addLineFilter(mock(Predicate.class));
         sutTableParser.parse();
         getPassedValuesAfterParse();
-        Assert.assertEquals("line filters added", 2, passedLineFilters.size());
+        assertThat("Line filters added", passedLineFilters, hasSize(2));
     }
 
     @Test
@@ -97,26 +101,27 @@ public class StringTableParserContextTest {
         sutTableParser.addRecordFilter(mock(Predicate.class));
         sutTableParser.parse();
         getPassedValuesAfterParse();
-        Assert.assertEquals("record filters added", 2, passedRecordFilters.size());
+        assertThat("Record filters added", passedRecordFilters, hasSize(2));
     }
 
     @Test
     public void when_MultiLineText_then_ParsesEachRow() {
         sutTableParser.parse();
         getPassedValuesAfterParse();
-        Assert.assertArrayEquals(LINES, passedLines.toArray(new String[0]));
+        String[] passedLinesAsArray = passedLines.toArray(new String[0]);
+        assertThat(passedLinesAsArray, is(equalTo(LINES)));
     }
 
     @Test
-    public void when_FinishesParsing_then_TryWithResourcesClosesReader() throws IOException {
+    public void when_ParsingFinished_then_TryWithResourcesClosesReader() throws IOException {
         Exception testEx = new RuntimeException("test exception");
         Mockito.doThrow(testEx).when(spyParserLogic).parseRawLine(eq(LINE2));
         try (StringTableParser parser = sutTableParser) {
             parser.parse();
-            Assert.fail("Exception should be thrown");
+            Assert.fail("Exception should have been thrown");
         } catch (Exception e) {
-            Assert.assertSame("Expected exception thrown", testEx, e);
-            Assert.assertEquals("Number of suppressed exceptions", 0, e.getSuppressed().length);
+            assertThat("Expected exception thrown", e, is(sameInstance(testEx)));
+            assertThat("Number of suppressed exceptions", Arrays.asList(e.getSuppressed()), is(empty()));
         }
         verify(fakeReader).close();
     }
@@ -133,9 +138,9 @@ public class StringTableParserContextTest {
             parser.parse();
             Assert.fail("Exception should be thrown");
         } catch (Exception e) {
-            Assert.assertSame("Expected exception thrown", testEx, e);
-            Assert.assertEquals("Number of suppressed exceptions", 1, e.getSuppressed().length);
-            Assert.assertSame("Expected suppressed exception", closeEx, e.getSuppressed()[0]);
+            assertThat("Expected exception thrown", e, is(sameInstance(testEx)));
+            assertThat("Number of suppressed exceptions", Arrays.asList(e.getSuppressed()), hasSize(1));
+            assertThat("Expected suppressed exception", e.getSuppressed()[0], is(sameInstance(closeEx)));
         }
     }
 

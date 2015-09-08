@@ -11,9 +11,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-// TODO: unfortunately hamcrest is not available in Idea & Gradle project
-//import static org.hamcrest.MatcherAssert.assertThat;
-//import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 
 
 /**
@@ -31,7 +31,7 @@ public class DataMungingTest {
     }
 
     @Test
-    public void given_weatherFixWidthDatFile_when_dayWithSmallestTemperatureSpread_then_returns14() throws Exception {
+    public void given_weatherDatFile_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(WeatherFixture.widthsAsArray());
         try (StringTableParser parser = factory.createStringTableParser(recordParser, WeatherFixture.getDatFile())) {
             assertThatDayWithSmallestTemperatureSpreadIs14(parser);
@@ -39,7 +39,7 @@ public class DataMungingTest {
     }
 
     @Test
-    public void given_weatherCsvFile_when_dayWithSmallestTemperatureSpread_then_returns14() throws Exception {
+    public void given_weatherCsvFile_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
         StringRecordParser recordParser = new CSVParserImpl(WeatherFixture.columnCount());
         try (StringTableParser parser = factory.createStringTableParser(recordParser, WeatherFixture.getCSVFile())) {
             assertThatDayWithSmallestTemperatureSpreadIs14(parser);
@@ -62,12 +62,13 @@ public class DataMungingTest {
                 WeatherFixture.MIN_TEMP.columnName());
 
         String dayOfSmallestTemperatureSpread = "14";
-        String actualDay = actualRecord.get(WeatherFixture.DAY.columnName());
-        Assert.assertEquals(dayOfSmallestTemperatureSpread, actualDay);
+        String resultDay = actualRecord.get(WeatherFixture.DAY.columnName());
+        assertThat("The day of the smallest temperature spread",
+                resultDay, is(equalTo(dayOfSmallestTemperatureSpread)));
     }
 
     @Test
-    public void given_footballFixWidthDatFile_when_nameOfTeamWithSmallestGoalDifference_then_returnsAstonVilla() throws Exception {
+    public void given_footballDatFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(FootballFixture.widthsAsArray());
         try (StringTableParser parser = factory.createStringTableParser(recordParser, FootballFixture.getDatFile())) {
             assertThatNameOfTeamWithSmallestGoalDifferenceIsAstonVilla(parser);
@@ -75,7 +76,7 @@ public class DataMungingTest {
     }
 
     @Test
-    public void given_footballCsvFile_when_nameOfTeamWithSmallestGoalDifference_then_returnsAstonVilla() throws Exception {
+    public void given_footballCsvFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
         StringRecordParser recordParser = new CSVParserImpl(FootballFixture.columnCount());
         try (StringTableParser parser = factory.createStringTableParser(recordParser, FootballFixture.getCSVFile())) {
             assertThatNameOfTeamWithSmallestGoalDifferenceIsAstonVilla(parser);
@@ -93,8 +94,9 @@ public class DataMungingTest {
                 FootballFixture.GOALS_AGAINST.columnName());
 
         String nameOfTeamWithSmallestGoalDifference = "Aston_Villa";
-        String actualTeamName = actualRecord.get(FootballFixture.TEAM.columnName());
-        Assert.assertEquals(nameOfTeamWithSmallestGoalDifference, actualTeamName);
+        String resultTeamName = actualRecord.get(FootballFixture.TEAM.columnName());
+        assertThat("The name of the team with the smallest difference in goals",
+                resultTeamName, is(equalTo(nameOfTeamWithSmallestGoalDifference)));
     }
 
 }
