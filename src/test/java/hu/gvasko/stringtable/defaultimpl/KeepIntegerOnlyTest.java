@@ -26,32 +26,32 @@ public class KeepIntegerOnlyTest {
 
     @Test
     public void when_integer_then_sameReturns() {
-        assertThat(keepIntegersOnly.apply("1234"), equalTo("1234"));
+        assertThat(keepIntegersOnly.apply("1234"), is(equalTo("1234")));
     }
 
     @Test
     public void when_spacesAround_then_returnsTrimmed() {
-        assertThat(keepIntegersOnly.apply("  1234  "), equalTo("1234"));
+        assertThat(keepIntegersOnly.apply("  1234  "), is(equalTo("1234")));
     }
 
     @Test
     public void when_spacesInside_then_spacesRemoved() {
-        assertThat(keepIntegersOnly.apply("12  34"), equalTo("1234"));
+        assertThat(keepIntegersOnly.apply("12  34"), is(equalTo("1234")));
     }
 
     @Test
     public void when_containsLetters_then_lettersRemoved() {
-        assertThat(keepIntegersOnly.apply("12Az34"), equalTo("1234"));
+        assertThat(keepIntegersOnly.apply("12Az34"), is(equalTo("1234")));
     }
 
     @Test
     public void when_lettersAround_then_lettersRemoved() {
-        assertThat(keepIntegersOnly.apply("A1234Z"), equalTo("1234"));
+        assertThat(keepIntegersOnly.apply("A1234Z"), is(equalTo("1234")));
     }
 
     @Test
     public void when_nonAlphaCharactersAround_then_theyRemoved() {
-        assertThat(keepIntegersOnly.apply("++1234**"), equalTo("1234"));
+        assertThat(keepIntegersOnly.apply("++1234**"), is(equalTo("1234")));
     }
 
 }
