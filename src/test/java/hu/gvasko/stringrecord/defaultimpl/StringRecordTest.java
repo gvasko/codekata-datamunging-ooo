@@ -2,7 +2,6 @@ package hu.gvasko.stringrecord.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.testutils.categories.UnitTest;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

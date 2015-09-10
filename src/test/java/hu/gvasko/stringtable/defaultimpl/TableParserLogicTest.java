@@ -6,15 +6,13 @@ import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTableBuilder;
 import hu.gvasko.testutils.categories.UnitTest;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static org.mockito.Mockito.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by gvasko on 2015.05.27..

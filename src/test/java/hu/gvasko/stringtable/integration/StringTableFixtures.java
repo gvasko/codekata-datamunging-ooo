@@ -2,8 +2,8 @@ package hu.gvasko.stringtable.integration;
 
 import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.StringTableBuilder;
+import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 
 /**
  * Created by gvasko on 2015.05.07..

@@ -1,14 +1,12 @@
 package hu.gvasko.stringtable.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringtable.*;
+import hu.gvasko.stringtable.StringRecordParser;
+import hu.gvasko.stringtable.StringTable;
+import hu.gvasko.stringtable.StringTableParser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -27,8 +25,7 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
     private StringRecordParser recordParser;
 
     DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
-        // TODO: double buffer?
-        this(tableFactory, sharedRecordParser, Files.newBufferedReader(Paths.get(fileLocation)));
+        this(tableFactory, sharedRecordParser, new FileReader(new File(fileLocation)));
     }
 
     DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {
@@ -75,6 +72,7 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
 
     @Override
     public void close() throws Exception {
+        // TODO: should that be closed if it is not created by us?
         if (reader != null) {
             reader.close();
         }

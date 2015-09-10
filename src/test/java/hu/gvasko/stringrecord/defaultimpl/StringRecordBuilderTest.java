@@ -1,7 +1,6 @@
 package hu.gvasko.stringrecord.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.testutils.categories.UnitTest;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,7 +1,9 @@
 package hu.gvasko.stringtable.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.stringtable.*;
+import hu.gvasko.stringtable.StringRecordParser;
+import hu.gvasko.stringtable.StringTable;
+import hu.gvasko.stringtable.StringTableBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

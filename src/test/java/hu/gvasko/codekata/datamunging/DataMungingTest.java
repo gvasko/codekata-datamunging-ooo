@@ -2,7 +2,10 @@ package hu.gvasko.codekata.datamunging;
 
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
-import hu.gvasko.stringtable.*;
+import hu.gvasko.stringtable.StringRecordParser;
+import hu.gvasko.stringtable.StringTable;
+import hu.gvasko.stringtable.StringTableFactory;
+import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
@@ -14,7 +17,8 @@ import org.junit.experimental.categories.Category;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 /**
  *

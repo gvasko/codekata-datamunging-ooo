@@ -5,7 +5,10 @@ import hu.gvasko.stringrecord.StringRecordBuilder;
 import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringTable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;

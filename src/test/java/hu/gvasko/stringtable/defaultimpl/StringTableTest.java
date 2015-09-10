@@ -5,7 +5,6 @@ import hu.gvasko.stringrecord.StringRecordBuilder;
 import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.testutils.categories.UnitTest;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -15,10 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import static org.mockito.Mockito.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 
 /**

@@ -2,11 +2,10 @@ package hu.gvasko.stringtable.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordFactory;
-import hu.gvasko.stringtable.*;
+import hu.gvasko.stringtable.StringRecordParser;
+import hu.gvasko.stringtable.StringTable;
+import hu.gvasko.stringtable.StringTableFactory;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.net.URI;
 import java.util.List;
 import java.util.function.Predicate;
 

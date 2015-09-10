@@ -5,12 +5,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.*;
-
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
 
 import static hu.gvasko.bootstrap.factory.ABFixture.*;
 import static hu.gvasko.bootstrap.factory.DiamondFixture.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by gvasko on 2015.09.07..

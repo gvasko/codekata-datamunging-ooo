@@ -1,22 +1,19 @@
 package hu.gvasko.codekata.datamunging;
 
 import hu.gvasko.testutils.categories.AcceptanceTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.stream.Stream;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 import static hu.gvasko.codekata.datamunging.GetMinimalDifferenceConsoleApp.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by gvasko on 2015.09.05..
