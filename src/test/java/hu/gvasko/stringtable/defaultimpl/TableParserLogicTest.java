@@ -13,6 +13,9 @@ import org.junit.experimental.categories.Category;
 
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 /**
  * Created by gvasko on 2015.05.27..
  */
@@ -45,9 +48,9 @@ public class TableParserLogicTest {
     @Test
     public void when_SetFirstRowHeaderTwice_then_SecondInvocationIsIgnored_inOrderTo_avoidIllegalState() {
         sutTableParserLogic.setFirstRowHeader(true);
-        Assert.assertTrue("first invocation", sutTableParserLogic.isFirstRowHeader());
+        assertThat("First invocation", sutTableParserLogic.isFirstRowHeader(), is(true));
         sutTableParserLogic.setFirstRowHeader(false);
-        Assert.assertTrue("second invocation", sutTableParserLogic.isFirstRowHeader());
+        assertThat("Second invocation", sutTableParserLogic.isFirstRowHeader(), is(true));
     }
 
     @Test
@@ -78,12 +81,13 @@ public class TableParserLogicTest {
     public void when_FirstRowIsNotHeader_and_NoRows_then_ReturnsEmptyTable() {
         sutTableParserLogic.setFirstRowHeader(false);
         sutTableParserLogic.getTable();
+        verify(spyTableBuilder, never()).addRecord(anyVararg());
         verify(spyRecParser, never()).parseRecord(anyString());
     }
 
     @Test
     public void when_NotExplicitlySet_then_FirstRowIsNotHeader() {
-        Assert.assertFalse("first row is not header by default", sutTableParserLogic.isFirstRowHeader());
+        assertThat("First row is not header by default", sutTableParserLogic.isFirstRowHeader(), is(false));
     }
 
     @Test

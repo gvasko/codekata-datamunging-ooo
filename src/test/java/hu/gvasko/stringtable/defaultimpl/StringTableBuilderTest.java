@@ -62,9 +62,8 @@ public class StringTableBuilderTest {
     @SuppressWarnings("unchecked")
     public void when_ZeroRecordAdded_then_EmptyTableIsCreated() {
         tableBuilder.build();
-        ArgumentCaptor<List> recordCaptor = ArgumentCaptor.forClass(List.class);
-        verify(spyTableFactory).createStringTable(aryEq(schema), recordCaptor.capture());
-        assertThat("Number of record passed", recordCaptor.getValue().size(), is(equalTo(0)));
+        List<String[]> recordList = getCapturedRecords(1);
+        assertThat("Number of record passed", recordList, is(empty()));
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -17,6 +17,9 @@ import java.util.function.UnaryOperator;
 
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 
 /**
  * Created by gvasko on 2015.05.26..
@@ -54,15 +57,15 @@ public class StringTableTest {
 
     @Test
     public void when_GetRowCount_then_ReturnsNumberOfGivenRecords() {
-        Assert.assertEquals("row count", fakeRecords.size(), sutTable.getRowCount());
+        assertThat("Row count", sutTable.getRowCount(), is(equalTo(fakeRecords.size())));
     }
 
     @Test
     public void when_GetAllRecords_then_ReturnsAllGivenRecords() {
-        Assert.assertEquals("number of all records", fakeRecords.size(), sutTable.getAllRecords().size());
+        assertThat("Number of all records", sutTable.getAllRecords(), hasSize(fakeRecords.size()));
         getPassedRecords();
-        Assert.assertArrayEquals("Fields passed", new String[]{"AA", "BB", "AA", "BB"}, passedFields);
-        Assert.assertArrayEquals("Values passed", new String[]{"a1", "b1", "a2", "b2"}, passedValues);
+        assertThat("Fields passed", passedFields, is(equalTo(new String[]{"AA", "BB", "AA", "BB"})));
+        assertThat("Values passed", passedValues, is(equalTo(new String[]{"a1", "b1", "a2", "b2"})));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -86,8 +89,8 @@ public class StringTableTest {
             sutTable.getRecord(i);
         }
         getPassedRecords();
-        Assert.assertArrayEquals("Fields passed", new String[]{"AA", "BB", "AA", "BB"}, passedFields);
-        Assert.assertArrayEquals("Values passed", new String[]{"aa11", "b1", "aa22", "b2"}, passedValues);
+        assertThat("Fields passed", passedFields, is(equalTo(new String[]{"AA", "BB", "AA", "BB"})));
+        assertThat("Values passed", passedValues, is(equalTo(new String[]{"aa11", "b1", "aa22", "b2"})));
     }
 
     @Test
@@ -95,8 +98,8 @@ public class StringTableTest {
         sutTable.addStringDecoderToColumns(getFakeDecoder1(), "AA");
         sutTable.getAllRecords();
         getPassedRecords();
-        Assert.assertArrayEquals("Fields passed", new String[]{"AA", "BB", "AA", "BB"}, passedFields);
-        Assert.assertArrayEquals("Values passed", new String[]{"aa11", "b1", "aa22", "b2"}, passedValues);
+        assertThat("Fields passed", passedFields, is(equalTo(new String[]{"AA", "BB", "AA", "BB"})));
+        assertThat("Values passed", passedValues, is(equalTo(new String[]{"aa11", "b1", "aa22", "b2"})));
     }
 
     @Test
@@ -105,8 +108,8 @@ public class StringTableTest {
         sutTable.addStringDecoderToColumns(getFakeDecoder2(), "AA");
         sutTable.getAllRecords();
         getPassedRecords();
-        Assert.assertArrayEquals("Fields passed", new String[]{"AA", "BB", "AA", "BB"}, passedFields);
-        Assert.assertArrayEquals("Values passed", new String[]{"abcdefg", "b1", "aa22", "b2"}, passedValues);
+        assertThat("Fields passed", passedFields, is(equalTo(new String[]{"AA", "BB", "AA", "BB"})));
+        assertThat("Values passed", passedValues, is(equalTo(new String[]{"abcdefg", "b1", "aa22", "b2"})));
     }
 
     @Test(expected = NullPointerException.class)

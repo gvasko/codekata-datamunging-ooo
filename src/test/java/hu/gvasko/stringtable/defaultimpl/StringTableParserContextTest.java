@@ -66,14 +66,14 @@ public class StringTableParserContextTest {
     public void when_FirstRowIsHeader_then_PassesTrue() {
         sutTableParser.firstRowIsHeader().parse();
         getPassedValuesAfterParse();
-        assertThat("First row is header", passedFirstRowIsHeader.booleanValue(), is(true));
+        assertThat("First row is header", passedFirstRowIsHeader, is(true));
     }
 
     @Test
     public void when_FirstRowIsNotHeader_then_PassesFalse() {
         sutTableParser.parse();
         getPassedValuesAfterParse();
-        assertThat("First row is not header", passedFirstRowIsHeader.booleanValue(), is(false));
+        assertThat("First row is not header", passedFirstRowIsHeader, is(false));
     }
 
     @Test
