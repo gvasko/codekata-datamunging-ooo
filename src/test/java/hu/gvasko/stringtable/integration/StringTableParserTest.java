@@ -17,6 +17,7 @@ import java.io.StringReader;
 import static hu.gvasko.stringtable.defaultimpl.StringTableParserFixtures.*;
 
 /**
+ * Check if the classes that are already tested in isolation works together.
  * Created by Gvasko on 2015.05.08..
  */
 @Category(IntegrationTest.class)
