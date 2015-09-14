@@ -11,6 +11,7 @@ import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import org.apache.commons.cli.*;
 
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -31,6 +32,7 @@ public class GetMinimalDifferenceConsoleApp {
     public static final String MINDIFF_RETURN_COLUMN = "mindiff-return";
     public static final String COLUMN_WIDTHS = "column-widths";
     public static final String COLUMN_COUNT = "column-count";
+    public static final String CHARSET = "charset";
 
     private CommandLine commandLine;
     private StringTable table;
@@ -92,7 +94,8 @@ public class GetMinimalDifferenceConsoleApp {
 
         StringRecordParser recParser = getRecParser(filePath);
 
-        try (StringTableParser parser = factory.createStringTableParser(recParser, Paths.get(filePath).toUri())) {
+        Charset charset = Charset.forName(commandLine.getOptionValue(CHARSET));
+        try (StringTableParser parser = factory.createStringTableParser(recParser, Paths.get(filePath).toUri(), charset)) {
             if (commandLine.hasOption(FIRST_LINE_IS_HEADER)) {
                 parser.firstRowIsHeader();
             }
@@ -142,6 +145,7 @@ public class GetMinimalDifferenceConsoleApp {
         options.addOption(Option.builder().longOpt(MINDIFF_RETURN_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("the program returns the value belonging to this column in the record where the difference is minimal").build());
         options.addOption(Option.builder().longOpt(COLUMN_WIDTHS).hasArg().argName("COLUMN-WIDTHS").desc("fix widths of the columns in the given file").build());
         options.addOption(Option.builder().longOpt(COLUMN_COUNT).hasArg().argName("NUMBER").desc("expected number of columns").build());
+        options.addOption(Option.builder().longOpt(CHARSET).required().hasArg().argName("NAME").desc("name of the charset for the given text file").build());
 
         return options;
     }

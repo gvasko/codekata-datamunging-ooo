@@ -2,6 +2,7 @@ package hu.gvasko.codekata.datamunging;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -56,5 +57,9 @@ public enum WeatherFixture {
             // so URISyntaxException cannot be thrown here.
             throw new RuntimeException("getResource URL to URI", ex);
         }
+    }
+
+    public static Charset getCharset() {
+        return Charset.forName("US-ASCII");
     }
 }

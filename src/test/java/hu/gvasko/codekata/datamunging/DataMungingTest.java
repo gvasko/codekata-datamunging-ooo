@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.net.URI;
+import java.nio.charset.Charset;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,29 +38,29 @@ public class DataMungingTest {
     @Test
     public void given_weatherDatFile_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(WeatherFixture.widthsAsArray());
-        testDayWithSmallestTemperatureSpreadIs14(recordParser, WeatherFixture.getDatFile());
+        testDayWithSmallestTemperatureSpreadIs14(recordParser, WeatherFixture.getDatFile(), WeatherFixture.getCharset());
     }
 
     @Test
     public void given_weatherCsvFile_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
         StringRecordParser recordParser = new CSVParserImpl(WeatherFixture.columnCount());
-        testDayWithSmallestTemperatureSpreadIs14(recordParser, WeatherFixture.getCSVFile());
+        testDayWithSmallestTemperatureSpreadIs14(recordParser, WeatherFixture.getCSVFile(), WeatherFixture.getCharset());
     }
 
     @Test
     public void given_footballDatFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(FootballFixture.widthsAsArray());
-        testSmallestDifferenceInGoalsIsAstonVilla(recordParser, FootballFixture.getDatFile());
+        testSmallestDifferenceInGoalsIsAstonVilla(recordParser, FootballFixture.getDatFile(), FootballFixture.getCharset());
     }
 
     @Test
     public void given_footballCsvFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
         StringRecordParser recordParser = new CSVParserImpl(FootballFixture.columnCount());
-        testSmallestDifferenceInGoalsIsAstonVilla(recordParser, FootballFixture.getCSVFile());
+        testSmallestDifferenceInGoalsIsAstonVilla(recordParser, FootballFixture.getCSVFile(), FootballFixture.getCharset());
     }
 
-    private void testDayWithSmallestTemperatureSpreadIs14(StringRecordParser recordParser, URI file) throws Exception {
-        try (StringTableParser parser = factory.createStringTableParser(recordParser, file)) {
+    private void testDayWithSmallestTemperatureSpreadIs14(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
+        try (StringTableParser parser = factory.createStringTableParser(recordParser, file, charset)) {
             StringTable table = parseWeatherTable(parser);
             String resultDay = getDayOfSmallestTemperatureSpread(table);
             String expectedDay = "14";
@@ -67,8 +68,8 @@ public class DataMungingTest {
         }
     }
 
-    private void testSmallestDifferenceInGoalsIsAstonVilla(StringRecordParser recordParser, URI file) throws Exception {
-        try (StringTableParser parser = factory.createStringTableParser(recordParser, file)) {
+    private void testSmallestDifferenceInGoalsIsAstonVilla(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
+        try (StringTableParser parser = factory.createStringTableParser(recordParser, file, charset)) {
             StringTable table = parseFootballTable(parser);
             String resultTeamName = getTeamNameWithSmallestGoalDifference(table);
             String expectedTeamName = "Aston_Villa";

@@ -7,6 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+
+
 /**
  * Created by gvasko on 2015.05.22..
  */
@@ -25,28 +30,28 @@ public class FixWidthStringRecordParserTest {
     @Test
     public void when_EmptyLineParsed_then_ReturnsArrayOfEmptyStrings() {
         final String[] arrayOfEmptyStrings = {"", "", ""};
-        Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(arrayOfEmptyStrings, recParser.parseRecord(""));
+        assertThat("Column count", recParser.getColumnCount(), is(equalTo(testColumns.length)));
+        assertThat(recParser.parseRecord(""), is(equalTo(arrayOfEmptyStrings)));
     }
 
     @Test
     public void when_LastColumnMissing_then_UseEmptyString() {
         final String[] record = {"aaa", "bbbb", ""};
-        Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(record, recParser.parseRecord("aaabbbb"));
+        assertThat("Column count", recParser.getColumnCount(), is(equalTo(testColumns.length)));
+        assertThat(recParser.parseRecord("aaabbbb"), is(equalTo(record)));
     }
 
     @Test
     public void when_SpacesAreAround_then_FieldValuesAreTrimmed() {
         final String[] record = {"a", "b", "c"};
-        Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(record, recParser.parseRecord(" a  b    c  "));
+        assertThat("Column count", recParser.getColumnCount(), is(equalTo(testColumns.length)));
+        assertThat(recParser.parseRecord(" a  b    c  "), is(equalTo(record)));
     }
 
     @Test
     public void when_LineIsLongerThanExpected_then_TailIsSkipped() {
         final String[] record = {"aaa", "bbbb", "ccccc"};
-        Assert.assertEquals("columnCount", testColumns.length, recParser.getColumnCount());
-        Assert.assertArrayEquals(record, recParser.parseRecord("aaabbbbcccccdddddd"));
+        assertThat("Column count", recParser.getColumnCount(), is(equalTo(testColumns.length)));
+        assertThat(recParser.parseRecord("aaabbbbcccccdddddd"), is(equalTo(record)));
     }
 }

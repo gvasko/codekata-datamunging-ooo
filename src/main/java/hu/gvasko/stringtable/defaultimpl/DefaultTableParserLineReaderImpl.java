@@ -7,6 +7,7 @@ import hu.gvasko.stringtable.StringTableParser;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -24,8 +25,8 @@ class DefaultTableParserLineReaderImpl implements StringTableParser {
     private StringTableFactoryExt tableFactory;
     private StringRecordParser recordParser;
 
-    DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, URI fileLocation) throws IOException {
-        this(tableFactory, sharedRecordParser, new FileReader(new File(fileLocation)));
+    DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, URI fileLocation, Charset charset) throws IOException {
+        this(tableFactory, sharedRecordParser, new InputStreamReader(new FileInputStream(new File(fileLocation)), charset));
     }
 
     DefaultTableParserLineReaderImpl(StringTableFactoryExt tableFactory, StringRecordParser sharedRecordParser, Reader sharedReader) {

@@ -7,6 +7,7 @@ import hu.gvasko.stringtable.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -83,8 +84,8 @@ public class DefaultStringTableFactoryImpl implements StringTableFactoryExt, Com
     }
 
     @Override
-    public StringTableParser createStringTableParser(StringRecordParser recordParser, URI uri) throws IOException {
-        return new DefaultTableParserLineReaderImpl(this, recordParser, uri);
+    public StringTableParser createStringTableParser(StringRecordParser recordParser, URI uri, Charset charset) throws IOException {
+        return new DefaultTableParserLineReaderImpl(this, recordParser, uri, charset);
     }
 
     @Override

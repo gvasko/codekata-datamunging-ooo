@@ -33,6 +33,7 @@ public class GetMinimalDifferenceConsoleAppTest {
                 "--" + MINDIFF_2_COLUMN, WeatherFixture.MAX_TEMP.columnName(),
                 "--" + MINDIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
                 "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(WeatherFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
+                "--" + CHARSET, "US-ASCII",
                 file
         };
 
@@ -54,6 +55,7 @@ public class GetMinimalDifferenceConsoleAppTest {
                 "--" + MINDIFF_2_COLUMN, WeatherFixture.MAX_TEMP.columnName(),
                 "--" + MINDIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
                 "--" + COLUMN_COUNT, Integer.toString(WeatherFixture.columnCount()),
+                "--" + CHARSET, "US-ASCII",
                 file
         };
 
@@ -74,6 +76,7 @@ public class GetMinimalDifferenceConsoleAppTest {
                 "--" + MINDIFF_2_COLUMN, FootballFixture.GOALS_AGAINST.columnName(),
                 "--" + MINDIFF_RETURN_COLUMN, FootballFixture.TEAM.columnName(),
                 "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(FootballFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
+                "--" + CHARSET, "US-ASCII",
                 file
         };
 
@@ -94,6 +97,7 @@ public class GetMinimalDifferenceConsoleAppTest {
                 "--" + MINDIFF_2_COLUMN, FootballFixture.GOALS_AGAINST.columnName(),
                 "--" + MINDIFF_RETURN_COLUMN, FootballFixture.TEAM.columnName(),
                 "--" + COLUMN_COUNT, Integer.toString(FootballFixture.columnCount()),
+                "--" + CHARSET, "US-ASCII",
                 file
         };
 

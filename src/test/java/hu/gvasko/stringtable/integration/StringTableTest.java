@@ -20,6 +20,7 @@ import static hu.gvasko.stringtable.integration.StringTableFixtures.*;
 
 
 /**
+ * Check if the classes that are already tested in isolation works together.
  * Created by gvasko on 2015.05.07..
  */
 @Category(IntegrationTest.class)

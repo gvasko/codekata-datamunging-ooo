@@ -37,13 +37,6 @@ public final class StringRecordFixtures {
                 .addField(TRIO3_KEY, TRIO3_VALUE).build();
     }
 
-    public static StringRecord getNumberBasedRecords() {
-        return createStringRecordBuilder()
-                .addField(NUMBER0_KEY, NUMBER0_VALUE)
-                .addField(NUMBER1_KEY, NUMBER1_VALUE)
-                .addField(NUMBER10_KEY, NUMBER10_VALUE).build();
-    }
-
     private static StringRecordBuilder createStringRecordBuilder() {
         // TODO: singleton?
         return new DefaultStringRecordFactoryImpl().createStringRecordBuilder();
