@@ -1,7 +1,7 @@
 package hu.gvasko.stringrecord.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecordBuilder;
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by gvasko on 2015.05.22..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class StringRecordBuilderTest {
 
     private StringRecordBuilder recBuilder;

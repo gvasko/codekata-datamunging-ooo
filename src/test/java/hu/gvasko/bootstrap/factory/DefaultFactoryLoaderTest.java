@@ -1,6 +1,6 @@
 package hu.gvasko.bootstrap.factory;
 
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by gvasko on 2015.09.07..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class DefaultFactoryLoaderTest {
 
     // avoid infinite recursive loop?

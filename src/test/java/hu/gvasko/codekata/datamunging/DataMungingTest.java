@@ -9,7 +9,7 @@ import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
-import hu.gvasko.testutils.categories.IntegrationTest;
+import hu.gvasko.testutils.categories.ComponentLevelTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.is;
  *
  * Created by gvasko on 2015.05.06..
  */
-@Category(IntegrationTest.class)
+@Category(ComponentLevelTest.class)
 public class DataMungingTest {
 
     private StringTableFactory factory;

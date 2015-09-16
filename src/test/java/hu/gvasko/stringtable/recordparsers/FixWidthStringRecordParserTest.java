@@ -1,8 +1,7 @@
 package hu.gvasko.stringtable.recordparsers;
 
 import hu.gvasko.stringtable.StringRecordParser;
-import hu.gvasko.testutils.categories.UnitTest;
-import org.junit.Assert;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -15,7 +14,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * Created by gvasko on 2015.05.22..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class FixWidthStringRecordParserTest {
 
     int[] testColumns;

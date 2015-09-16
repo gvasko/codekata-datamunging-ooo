@@ -4,7 +4,7 @@ import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.StringRecordBuilder;
 import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringTable;
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by gvasko on 2015.05.26..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class StringTableTest {
 
     private StringTable sutTable;

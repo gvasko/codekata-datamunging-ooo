@@ -1,7 +1,7 @@
 package hu.gvasko.stringrecord.integration;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.testutils.categories.IntegrationTest;
+import hu.gvasko.testutils.categories.ComponentLevelTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -10,7 +10,7 @@ import org.junit.experimental.categories.Category;
  * Check if the classes that are already tested in isolation works together.
  * Created by gvasko on 2015.05.07..
  */
-@Category(IntegrationTest.class)
+@Category(ComponentLevelTest.class)
 public class StringRecordTest {
 
     @Test

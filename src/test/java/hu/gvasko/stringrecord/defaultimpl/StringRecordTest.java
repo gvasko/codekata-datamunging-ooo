@@ -1,7 +1,7 @@
 package hu.gvasko.stringrecord.defaultimpl;
 
 import hu.gvasko.stringrecord.StringRecord;
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.*;
  * Created by gvasko on 2015.05.23..
  */
 
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class StringRecordTest {
 
     private Map<String, String> stringMap;

@@ -1,6 +1,6 @@
 package hu.gvasko.codekata.datamunging;
 
-import hu.gvasko.testutils.categories.AcceptanceTest;
+import hu.gvasko.testutils.categories.SystemLevelTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 /**
  * Created by gvasko on 2015.09.05..
  */
-@Category(AcceptanceTest.class)
+@Category(SystemLevelTest.class)
 public class GetMinimalDifferenceConsoleAppTest {
 
     @Test

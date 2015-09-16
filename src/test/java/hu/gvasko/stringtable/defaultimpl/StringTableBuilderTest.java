@@ -1,7 +1,7 @@
 package hu.gvasko.stringtable.defaultimpl;
 
 import hu.gvasko.stringtable.StringTableBuilder;
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by gvasko on 2015.05.23..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class StringTableBuilderTest {
 
     private StringTableBuilder tableBuilder;

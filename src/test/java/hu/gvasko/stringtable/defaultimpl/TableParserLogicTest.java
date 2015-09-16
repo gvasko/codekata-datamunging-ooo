@@ -5,7 +5,7 @@ import hu.gvasko.stringrecord.StringRecordBuilder;
 import hu.gvasko.stringrecord.StringRecordFactory;
 import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTableBuilder;
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by gvasko on 2015.05.27..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class TableParserLogicTest {
 
     private TableParserLogic sutTableParserLogic;

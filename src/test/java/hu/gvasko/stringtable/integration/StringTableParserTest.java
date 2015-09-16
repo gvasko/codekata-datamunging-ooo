@@ -6,7 +6,7 @@ import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.stringtable.StringTableFactory;
 import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
-import hu.gvasko.testutils.categories.IntegrationTest;
+import hu.gvasko.testutils.categories.ComponentLevelTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import static hu.gvasko.stringtable.defaultimpl.StringTableParserFixtures.*;
  * Check if the classes that are already tested in isolation works together.
  * Created by Gvasko on 2015.05.08..
  */
-@Category(IntegrationTest.class)
+@Category(ComponentLevelTest.class)
 public class StringTableParserTest {
 
     private StringTableFactory factory;

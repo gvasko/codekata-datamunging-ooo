@@ -4,7 +4,7 @@ import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTable;
 import hu.gvasko.stringtable.StringTableParser;
-import hu.gvasko.testutils.categories.UnitTest;
+import hu.gvasko.testutils.categories.ClassLevelTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created by gvasko on 2015.05.24..
  */
-@Category(UnitTest.class)
+@Category(ClassLevelTest.class)
 public class StringTableParserContextTest {
 
     private static final String LINE1 = "line1";
