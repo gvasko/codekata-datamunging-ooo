@@ -14,6 +14,9 @@ import org.junit.experimental.categories.Category;
 
 import java.io.StringReader;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import static hu.gvasko.stringtable.defaultimpl.StringTableParserFixtures.*;
 
 /**
@@ -73,7 +76,7 @@ public class StringTableParserTest {
     public void parseEmptyText() throws Exception {
         try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(emptyText))) {
             StringTable emptyTable = parser.parse();
-            Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
+            assertThat("Row count", emptyTable.getRowCount(), is(equalTo(0)));
         }
     }
 
@@ -89,18 +92,18 @@ public class StringTableParserTest {
         try (StringTableParser parser = factory.createStringTableParser(getDefaultRecordParser(), new StringReader(spaceText))) {
             parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
             StringTable emptyTable = parser.parse();
-            Assert.assertEquals("Row count: ", 0, emptyTable.getRowCount());
+            assertThat("Row count", emptyTable.getRowCount(), is(equalTo(0)));
         }
     }
 
     private void assertEachCellIsValid(String[][] expected, StringTable actual, String[] schema) {
-        Assert.assertEquals("Row count: ", expected.length, actual.getRowCount());
+        assertThat("Row count", actual.getRowCount(), is(equalTo(expected.length)));
         for (int row = 0; row < expected.length; row++) {
             String[] expectedRecord = expected[row];
             StringRecord actualRecord = actual.getRecord(row);
             for (int col = 0; col < defaultSchema.length; col++) {
                 String message = "Row " + Integer.toString(row) + ", column " + defaultSchema[col];
-                Assert.assertEquals(message, expectedRecord[col], actualRecord.get(schema[col]));
+                assertThat(message, actualRecord.get(schema[col]), is(equalTo(expectedRecord[col])));
             }
         }
     }

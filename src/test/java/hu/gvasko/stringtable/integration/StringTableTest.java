@@ -18,6 +18,9 @@ import java.util.List;
 
 import static hu.gvasko.stringtable.integration.StringTableFixtures.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 
 /**
  * Check if the classes that are already tested in isolation works together.
@@ -46,22 +49,22 @@ public class StringTableTest {
     @Test
     public void emptyTableReturnsEmptyList() {
         StringTable table = createEmptyTable();
-        Assert.assertArrayEquals(new StringRecord[0], table.getAllRecords().toArray());
+        assertThat(table.getAllRecords().toArray(), is(equalTo(new StringRecord[0])));
     }
 
     @Test
     public void returnsRecordAtIndex() {
         StringTable table = createAbcTable();
-        Assert.assertEquals("Row count: ", abcTable.length, table.getRowCount());
-        assertRowsEquals(table, row -> abcTable[row], row -> table.getRecord(row));
+        assertThat("Row count", table.getRowCount(), is(equalTo(abcTable.length)));
+        assertThatRowsAreEqual(table, row -> abcTable[row], row -> table.getRecord(row));
     }
 
     @Test
     public void returnsAllRecords() {
         StringTable table = createAbcTable();
         List<StringRecord> records = table.getAllRecords();
-        Assert.assertEquals("Row count: ", abcTable.length, records.size());
-        assertRowsEquals(table, row -> abcTable[row], row -> records.get(row));
+        assertThat("Record count", records, hasSize(abcTable.length));
+        assertThatRowsAreEqual(table, row -> abcTable[row], row -> records.get(row));
     }
 
     @Test
@@ -73,7 +76,7 @@ public class StringTableTest {
         final String testValue = abcTable[testRow][testCol];
         table.addStringDecoderToColumns(value -> testValue.equals(value) ? replacedValue : value, defaultSchema[testCol]);
 
-        assertRowsEquals(table, row -> row != testRow ? abcTable[row] : copyAndReplace(abcTable[row], testCol, replacedValue), row -> table.getRecord(row));
+        assertThatRowsAreEqual(table, row -> row != testRow ? abcTable[row] : copyAndReplace(abcTable[row], testCol, replacedValue), row -> table.getRecord(row));
     }
 
     @Test
@@ -86,7 +89,7 @@ public class StringTableTest {
         table.addStringDecoderToColumns(value -> testValue.equals(value) ? replacedValue : value, defaultSchema[testCol]);
 
         List<StringRecord> records = table.getAllRecords();
-        assertRowsEquals(table, row -> row != testRow ? abcTable[row] : copyAndReplace(abcTable[row], testCol, replacedValue), row -> records.get(row));
+        assertThatRowsAreEqual(table, row -> row != testRow ? abcTable[row] : copyAndReplace(abcTable[row], testCol, replacedValue), row -> records.get(row));
     }
 
     private static String[] copyAndReplace(String[] rawRecord, int col, String newValue) {
@@ -95,13 +98,13 @@ public class StringTableTest {
         return tmp;
     }
 
-    private void assertRowsEquals(StringTable table, RawRecordSupplier expectedRecSupplier, RecordSupplier actualRecSupplier) {
+    private void assertThatRowsAreEqual(StringTable table, RawRecordSupplier expectedRecSupplier, RecordSupplier actualRecSupplier) {
         for (int row = 0; row < table.getRowCount(); row++) {
             String[] expectedRecord = expectedRecSupplier.getRecordAtRow(row);
             StringRecord actualRecord = actualRecSupplier.getRecordAtRow(row);
             for (int col = 0; col < defaultSchema.length; col++) {
                 String message = getMessage(row, col);
-                Assert.assertEquals(message, expectedRecord[col], actualRecord.get(defaultSchema[col]));
+                assertThat(message, actualRecord.get(defaultSchema[col]), is(equalTo(expectedRecord[col])));
             }
         }
     }
@@ -119,7 +122,7 @@ public class StringTableTest {
         table.addStringDecoderToColumns(value -> abcTable[testRow][testCol].equals(value) ? replacedValue : value, defaultSchema[testCol]);
         table.addStringDecoderToColumns(value -> value.replace("replaced", "new"), defaultSchema[testCol]);
 
-        Assert.assertEquals("new-value", table.getRecord(testRow).get(defaultSchema[testCol]));
+        assertThat(table.getRecord(testRow).get(defaultSchema[testCol]), is(equalTo("new-value")));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -162,11 +165,11 @@ public class StringTableTest {
     public void singleRowTable() {
         StringTableParser tableParser = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl()).createStringTableParser(new FixWidthTextParserImpl(2, 2, 2), new StringReader("A B C "));
         StringTable singleRowTable = tableParser.parse();
-        Assert.assertEquals("Row count", 1, singleRowTable.getRowCount());
+        assertThat("Row count", singleRowTable.getRowCount(), is(equalTo(1)));
         StringRecord theRecord = singleRowTable.getRecord(0);
-        Assert.assertEquals("element 0", "A", theRecord.get("0"));
-        Assert.assertEquals("element 1", "B", theRecord.get("1"));
-        Assert.assertEquals("element 2", "C", theRecord.get("2"));
+        assertThat("element 0", theRecord.get("0"), is(equalTo("A")));
+        assertThat("element 1", theRecord.get("1"), is(equalTo("B")));
+        assertThat("element 2", theRecord.get("2"), is(equalTo("C")));
     }
 
 }
