@@ -34,7 +34,7 @@ public class StringTableTest {
     private String[] passedValues;
 
     @Before
-    public void given() {
+    public void given_aStringTable_isolated_withFakeRecords() {
         fakeSchema = new String[] { "AA", "BB" };
         fakeRecords = Arrays.asList(new String[][] {
                 { "a1", "b1" },

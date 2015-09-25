@@ -49,7 +49,7 @@ public class StringTableParserContextTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void given() {
+    public void given_aTableParser_isolated() {
         spyTableFactory = mock(StringTableFactoryExt.class);
         spyParserLogic = mock(TableParserLogic.class);
         when(spyParserLogic.getTable()).thenReturn(mock(StringTable.class));

@@ -30,7 +30,7 @@ public class StringTableBuilderTest {
     private final String[] rec3 = new String[] {"a3", "b3", "c3"};
 
     @Before
-    public void given() {
+    public void given_aTableBuilder_withFakeSchema() {
         // TODO: why spy() cannot be used here?
         // http://xunitpatterns.com/Test%20Spy.html
         // "capture the indirect output calls made to another component

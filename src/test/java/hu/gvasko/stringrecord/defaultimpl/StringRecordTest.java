@@ -23,7 +23,7 @@ public class StringRecordTest {
     private StringRecord rec;
 
     @Before
-    public void given() {
+    public void given_aStringRecord() {
         stringMap = new HashMap<>();
         stringMap.put("AA", "axa");
         stringMap.put("BB", "bxb");

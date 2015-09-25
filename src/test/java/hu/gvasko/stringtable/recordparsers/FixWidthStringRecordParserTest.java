@@ -21,7 +21,7 @@ public class FixWidthStringRecordParserTest {
     StringRecordParser recParser;
 
     @Before
-    public void given() {
+    public void given_aFixWidthParser() {
         testColumns = new int[] {3, 4, 5};
         recParser = new FixWidthTextParserImpl(testColumns);
     }

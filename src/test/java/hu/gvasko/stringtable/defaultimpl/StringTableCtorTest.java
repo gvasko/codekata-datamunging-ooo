@@ -27,7 +27,7 @@ public class StringTableCtorTest {
     private StringRecordFactory spyRecordFactory;
 
     @Before
-    public void given() {
+    public void given_aSpyRecordFactory() {
         fakeSchema = new String[] { "AA", "BB" };
         spyRecordFactory = mock(StringRecordFactory.class);
     }

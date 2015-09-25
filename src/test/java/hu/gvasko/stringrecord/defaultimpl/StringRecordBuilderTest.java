@@ -22,7 +22,7 @@ public class StringRecordBuilderTest {
     private StringRecordFactoryExt spyFactory;
 
     @Before
-    public void given() {
+    public void given_aRecordBuilder() {
         // TODO: why spy() cannot be used here?
         // http://xunitpatterns.com/Test%20Spy.html
         // "capture the indirect output calls made to another component

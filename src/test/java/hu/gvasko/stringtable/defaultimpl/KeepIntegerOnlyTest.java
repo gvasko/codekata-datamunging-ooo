@@ -20,7 +20,7 @@ public class KeepIntegerOnlyTest {
     private UnaryOperator<String> keepIntegersOnly;
 
     @Before
-    public void given() {
+    public void given_theOperator() {
         keepIntegersOnly = new DefaultStringTableFactoryImpl(null).keepIntegersOnly();
     }
 

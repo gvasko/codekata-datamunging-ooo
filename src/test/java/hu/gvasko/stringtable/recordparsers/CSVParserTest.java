@@ -20,7 +20,7 @@ public class CSVParserTest {
     private StringRecordParser recParser;
 
     @Before
-    public void given() {
+    public void given_aCSVParser() {
         recParser = new CSVParserImpl(testColumns);
     }
 

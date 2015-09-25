@@ -25,7 +25,7 @@ public class TableParserLogicTest {
     private StringRecordParser spyRecParser;
 
     @Before
-    public void given() {
+    public void given_aTableParserLogic_isolated() {
         spyRecParser = mock(StringRecordParser.class);
         when(spyRecParser.parseRecord(anyString())).thenReturn(new String[] {"x", "y", "z"});
 
