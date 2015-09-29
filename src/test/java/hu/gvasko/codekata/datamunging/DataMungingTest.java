@@ -48,6 +48,12 @@ public class DataMungingTest {
     }
 
     @Test
+    public void given_weatherDatFile_then_dayWithSmallestRSpreadIs14() throws Exception {
+        StringRecordParser recordParser = new FixWidthTextParserImpl(WeatherFixture.widthsAsArray());
+        testDayWithSmallestRSpreadIs14(recordParser, WeatherFixture.getDatFile(), WeatherFixture.getCharset());
+    }
+
+    @Test
     public void given_footballDatFile_then_smallestDifferenceInGoalsIsAstonVilla() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(FootballFixture.widthsAsArray());
         testSmallestDifferenceInGoalsIsAstonVilla(recordParser, FootballFixture.getDatFile(), FootballFixture.getCharset());
@@ -60,51 +66,65 @@ public class DataMungingTest {
     }
 
     private void testDayWithSmallestTemperatureSpreadIs14(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
+        StringTable table = readWeatherTable(recordParser, file, charset);
+        String resultDay = getValueAtMinDiff(table,
+                WeatherFixture.MAX_TEMP.columnName(),
+                WeatherFixture.MIN_TEMP.columnName(),
+                WeatherFixture.DAY.columnName());
+        String expectedDay = "14";
+        assertThat("The day of the smallest temperature spread", resultDay, is(equalTo(expectedDay)));
+    }
+
+    private void testDayWithSmallestRSpreadIs14(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
+        StringTable table = readWeatherTable(recordParser, file, charset);
+        String resultDay = getValueAtMinDiff(table,
+                WeatherFixture.MAX_R.columnName(),
+                WeatherFixture.MIN_R.columnName(),
+                WeatherFixture.DAY.columnName());
+        String expectedDay = "14";
+        assertThat("The day of the smallest R spread", resultDay, is(equalTo(expectedDay)));
+    }
+
+    private StringTable readWeatherTable(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
         try (StringTableParser parser = factory.createStringTableParser(recordParser, file, charset)) {
-            StringTable table = parseWeatherTable(parser);
-            String resultDay = getDayOfSmallestTemperatureSpread(table);
-            String expectedDay = "14";
-            assertThat("The day of the smallest temperature spread", resultDay, is(equalTo(expectedDay)));
+            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+            parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
+            StringTable table = parser.firstRowIsHeader().parse();
+
+            table.addStringDecoderToColumns(
+                    factory.getCommonDecoders().keepIntegersOnly(),
+                    WeatherFixture.MAX_TEMP.columnName(),
+                    WeatherFixture.MIN_TEMP.columnName());
+
+            return table;
         }
     }
 
     private void testSmallestDifferenceInGoalsIsAstonVilla(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
+        StringTable table = readFootballTable(recordParser, file, charset);
+        String resultTeamName = getTeamNameWithSmallestGoalDifference(table);
+        String expectedTeamName = "Aston_Villa";
+        assertThat("The name of the team with the smallest difference in goals",
+                resultTeamName, is(equalTo(expectedTeamName)));
+    }
+
+    private StringTable readFootballTable(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
         try (StringTableParser parser = factory.createStringTableParser(recordParser, file, charset)) {
-            StringTable table = parseFootballTable(parser);
-            String resultTeamName = getTeamNameWithSmallestGoalDifference(table);
-            String expectedTeamName = "Aston_Villa";
-            assertThat("The name of the team with the smallest difference in goals",
-                    resultTeamName, is(equalTo(expectedTeamName)));
+            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+            parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
+            StringTable table = parser.firstRowIsHeader().parse();
+            return table;
         }
     }
 
-    private StringTable parseWeatherTable(StringTableParser parser) {
-        parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
-        parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
-        StringTable table = parser.firstRowIsHeader().parse();
 
-        table.addStringDecoderToColumns(
-                factory.getCommonDecoders().keepIntegersOnly(),
-                WeatherFixture.MAX_TEMP.columnName(),
-                WeatherFixture.MIN_TEMP.columnName());
-
-        return table;
-    }
-
-    private StringTable parseFootballTable(StringTableParser parser) {
-        parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
-        parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
-        StringTable table = parser.firstRowIsHeader().parse();
-        return table;
-    }
-
-    private String getDayOfSmallestTemperatureSpread(StringTable table) {
+    private String getValueAtMinDiff(StringTable table, String column1, String column2, String returnColumn) {
         StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
                 table.getAllRecords(),
-                WeatherFixture.MAX_TEMP.columnName(),
-                WeatherFixture.MIN_TEMP.columnName());
+                column1,
+                column2);
 
-        return actualRecord.get(WeatherFixture.DAY.columnName());
+        return actualRecord.get(returnColumn);
     }
 
     private String getTeamNameWithSmallestGoalDifference(StringTable table) {

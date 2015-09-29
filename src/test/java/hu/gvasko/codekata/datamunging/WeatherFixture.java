@@ -11,7 +11,21 @@ import java.util.Arrays;
 public enum WeatherFixture {
     DAY("Dy", 5),
     MAX_TEMP("MxT", 6),
-    MIN_TEMP("MnT", 6);
+    MIN_TEMP("MnT", 6),
+    AVG_TEMP("AvT", 6),
+    HDDAY("HDDay", 7),
+    AVDP("AvDP", 5),
+    HRP("1HrP", 5),
+    TPCPN("TPcpn", 6),
+    WXTYPE("WxType", 7),
+    PDIR("PDir", 5),
+    AVSP("AvSp", 5),
+    DIR("Dir", 4),
+    MXS("MxS", 4),
+    SKYC("SkyC", 5),
+    MAX_R("MxR", 4),
+    MIN_R("MnR", 3),
+    AVSLP("AvSLP", 6);
 
     private String name;
     private int len;
