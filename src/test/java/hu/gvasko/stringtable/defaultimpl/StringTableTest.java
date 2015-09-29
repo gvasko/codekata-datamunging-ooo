@@ -101,13 +101,24 @@ public class StringTableTest {
     }
 
     @Test
-    public void when_MultipleDecoderAddedToTheSameColumn_then_JoinsThemWhenApplying() {
+    public void when_TwoDecodersAddedToTheSameColumn_then_JoinsThemWhenApplying() {
         sutTable.addStringDecoderToColumns(getFakeDecoder1(), "AA");
         sutTable.addStringDecoderToColumns(getFakeDecoder2(), "AA");
         sutTable.getAllRecords();
         getPassedRecords();
         assertThat("Fields passed", passedFields, is(equalTo(new String[]{"AA", "BB", "AA", "BB"})));
         assertThat("Values passed", passedValues, is(equalTo(new String[]{"abcdefg", "b1", "aa22", "b2"})));
+    }
+
+    @Test
+    public void when_ThreeDecodersAddedToTheSameColumn_then_JoinsThemWhenApplying() {
+        sutTable.addStringDecoderToColumns(getFakeDecoder1(), "AA");
+        sutTable.addStringDecoderToColumns(getFakeDecoder2(), "AA");
+        sutTable.addStringDecoderToColumns(getFakeDecoder3(), "AA");
+        sutTable.getAllRecords();
+        getPassedRecords();
+        assertThat("Fields passed", passedFields, is(equalTo(new String[]{"AA", "BB", "AA", "BB"})));
+        assertThat("Values passed", passedValues, is(equalTo(new String[]{"abCDEfg", "b1", "aa22", "b2"})));
     }
 
     @Test(expected = NullPointerException.class)
@@ -137,6 +148,11 @@ public class StringTableTest {
     @SuppressWarnings("unchecked")
     private UnaryOperator<String> getFakeDecoder2() {
         return s -> "aa11".equals(s) ? "abcdefg" : s;
+    }
+
+    @SuppressWarnings("unchecked")
+    private UnaryOperator<String> getFakeDecoder3() {
+        return s -> "abcdefg".equals(s) ? "abCDEfg" : s;
     }
 
 
