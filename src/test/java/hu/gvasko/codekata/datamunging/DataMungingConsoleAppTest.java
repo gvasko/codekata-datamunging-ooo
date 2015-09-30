@@ -4,14 +4,12 @@ import hu.gvasko.testutils.categories.SystemLevelTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static hu.gvasko.codekata.datamunging.DataMungingConsoleApp.*;
 import static hu.gvasko.codekata.datamunging.FunctionMinDiff.*;
+import static hu.gvasko.codekata.datamunging.DataMungingConsoleAppTestUtil.runApp;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -112,17 +110,5 @@ public class DataMungingConsoleAppTest {
                 consoleAppOutput, is(equalTo("Aston_Villa" + System.lineSeparator())));
     }
 
-
-    private String runApp(String[] arguments) throws Exception {
-        ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
-        String encoding = Charset.defaultCharset().name();
-
-        PrintStream testOutput = new PrintStream(tempStream, true, encoding);
-        System.setOut(testOutput);
-        System.setErr(testOutput);
-
-        DataMungingConsoleApp.main(arguments);
-        return tempStream.toString(encoding);
-    }
 
 }
