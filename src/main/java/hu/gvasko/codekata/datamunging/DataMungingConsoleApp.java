@@ -1,6 +1,5 @@
 package hu.gvasko.codekata.datamunging;
 
-import hu.gvasko.stringrecord.StringRecord;
 import hu.gvasko.stringrecord.defaultimpl.DefaultStringRecordFactoryImpl;
 import hu.gvasko.stringtable.StringRecordParser;
 import hu.gvasko.stringtable.StringTable;
@@ -14,58 +13,73 @@ import org.apache.commons.cli.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
  * Created by gvasko on 2015.09.05..
  */
 // TODO: unit tests?
-public class GetMinimalDifferenceConsoleApp {
+public class DataMungingConsoleApp {
 
     public static final String FIRST_LINE_IS_HEADER = "first-line-is-header";
     public static final String SKIP_EMPTY_LINES = "skip-empty-lines";
     public static final String SKIP_SPLITTER_LINES = "skip-splitter-lines";
     public static final String KEEP_RECORDS_IF_NUMERIC = "keep-records-if-numeric";
     public static final String DECODE_AS_INTEGER = "decode-as-integer";
-    public static final String MINDIFF_1_COLUMN = "mindiff-1";
-    public static final String MINDIFF_2_COLUMN = "mindiff-2";
-    public static final String MINDIFF_RETURN_COLUMN = "mindiff-return";
     public static final String COLUMN_WIDTHS = "column-widths";
     public static final String COLUMN_COUNT = "column-count";
     public static final String CHARSET = "charset";
+    public static final String FUNCTIONS = "functions";
 
     private CommandLine commandLine;
-    private StringTable table;
+    private static List<ConsoleTableFunction> functions;
+    private List<ConsoleTableFunction> initialisedFunctions;
 
     public static void main(String[] args) throws Exception {
         CommandLineParser commandLineParser = new DefaultParser();
 
         try {
-            CommandLine commandLine = commandLineParser.parse(createOptions(), args);
+            createAllFunctions();
+
+            final CommandLine commandLine = commandLineParser.parse(createOptions(), args);
             validateCommandLine(commandLine);
 
-            GetMinimalDifferenceConsoleApp app = new GetMinimalDifferenceConsoleApp(commandLine);
+            final List<ConsoleTableFunction> initialisedFunctions = getInitialisedFunctions(commandLine);
+
+            if (initialisedFunctions.isEmpty()) {
+                throw new RuntimeException("No functions defined, please add at least one.");
+            }
+
+            DataMungingConsoleApp app = new DataMungingConsoleApp(commandLine, initialisedFunctions);
             app.run();
         }
         catch (ParseException pe) {
             System.err.println("Invalid arguments. " + pe.getMessage());
         }
+        catch (RuntimeException re) {
+            System.err.println(re.getMessage());
+        }
+    }
+
+    private static void createAllFunctions() {
+        functions = new ArrayList<>();
+        functions.add(new FunctionMinDiff());
     }
 
     private void run() throws Exception {
-        loadTable();
+        StringTable table = loadTable();
 
-        StringRecord actualRecord = DataMungingUtil.getFirstMinDiffRecord(
-                table.getAllRecords(),
-                commandLine.getOptionValue(MINDIFF_1_COLUMN),
-                commandLine.getOptionValue(MINDIFF_2_COLUMN));
-
-        String actualValue = actualRecord.get(commandLine.getOptionValue(MINDIFF_RETURN_COLUMN));
-        System.out.println(actualValue);
+        for (ConsoleTableFunction f : initialisedFunctions) {
+            System.out.println(f.getValue(table));
+        }
     }
 
-    private GetMinimalDifferenceConsoleApp(CommandLine commandLine) {
+    private DataMungingConsoleApp(CommandLine commandLine, List<ConsoleTableFunction> initialisedFunctions) {
         this.commandLine = commandLine;
+        this.initialisedFunctions = initialisedFunctions;
     }
 
     private static void validateCommandLine(CommandLine commandLine) throws ParseException {
@@ -87,13 +101,27 @@ public class GetMinimalDifferenceConsoleApp {
         }
     }
 
-    private void loadTable() throws Exception {
+    private static List<ConsoleTableFunction> getInitialisedFunctions(CommandLine commandLine) {
+        List<ConsoleTableFunction> initialisedFunctions = new ArrayList<>();
+
+        List<String> passedFunctions = Arrays.asList(commandLine.getOptionValues(FUNCTIONS));
+
+        functions.stream().filter(f -> passedFunctions.contains(f.getName())).forEach(f -> {
+            initialisedFunctions.add(f);
+            f.setArguments(commandLine);
+        });
+
+        return initialisedFunctions;
+    }
+
+    private StringTable loadTable() throws Exception {
         // TODO: this is tight
         StringTableFactory factory = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl());
         String filePath = commandLine.getArgs()[0];
 
         StringRecordParser recParser = getRecParser(filePath);
 
+        StringTable table = null;
         Charset charset = Charset.forName(commandLine.getOptionValue(CHARSET));
         try (StringTableParser parser = factory.createStringTableParser(recParser, Paths.get(filePath).toUri(), charset)) {
             if (commandLine.hasOption(FIRST_LINE_IS_HEADER)) {
@@ -118,6 +146,8 @@ public class GetMinimalDifferenceConsoleApp {
                     factory.getCommonDecoders().keepIntegersOnly(),
                     commandLine.getOptionValue(DECODE_AS_INTEGER).split(","));
         }
+
+        return table;
     }
 
     private StringRecordParser getRecParser(String filePath) {
@@ -140,12 +170,14 @@ public class GetMinimalDifferenceConsoleApp {
         options.addOption(Option.builder().longOpt(SKIP_SPLITTER_LINES).desc("do not process lines consisting of the same character").build());
         options.addOption(Option.builder().longOpt(KEEP_RECORDS_IF_NUMERIC).hasArg().argName("COLUMN-NAMES").desc("keep the record if the values in the given columns are numeric, filter otherwise").build());
         options.addOption(Option.builder().longOpt(DECODE_AS_INTEGER).hasArg().argName("COLUMN-NAMES").desc("treat the given columns as integer and ignore other characters").build());
-        options.addOption(Option.builder().longOpt(MINDIFF_1_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("one column name to to calculate difference").build());
-        options.addOption(Option.builder().longOpt(MINDIFF_2_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("another column name to calculate difference").build());
-        options.addOption(Option.builder().longOpt(MINDIFF_RETURN_COLUMN).required().hasArg().argName("COLUMN-NAME").desc("the program returns the value belonging to this column in the record where the difference is minimal").build());
         options.addOption(Option.builder().longOpt(COLUMN_WIDTHS).hasArg().argName("COLUMN-WIDTHS").desc("fix widths of the columns in the given file").build());
         options.addOption(Option.builder().longOpt(COLUMN_COUNT).hasArg().argName("NUMBER").desc("expected number of columns").build());
         options.addOption(Option.builder().longOpt(CHARSET).required().hasArg().argName("NAME").desc("name of the charset for the given text file").build());
+        options.addOption(Option.builder().longOpt(FUNCTIONS).required().hasArg().argName("FUNC").desc("list of functions to perform").build());
+
+        for (ConsoleTableFunction f : functions) {
+            f.initOptions(options);
+        }
 
         return options;
     }
