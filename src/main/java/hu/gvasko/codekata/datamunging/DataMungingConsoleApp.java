@@ -8,6 +8,7 @@ import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
+import hu.gvasko.stringtable.recordparsers.SpaceSeparatedTextParserImpl;
 import org.apache.commons.cli.*;
 
 import java.nio.charset.Charset;
@@ -32,7 +33,13 @@ public class DataMungingConsoleApp {
     public static final String COLUMN_WIDTHS = "column-widths";
     public static final String COLUMN_COUNT = "column-count";
     public static final String CHARSET = "charset";
+    public static final String LINE_PARSER = "line-parser";
+    public static final String LINE_PARSER_CSV = "csv";
+    public static final String LINE_PARSER_FIX_WIDTH = "fix-width";
+    public static final String LINE_PARSER_SPACE_SEP = "space-separated";
     public static final String FUNCTIONS = "functions";
+
+    private static final String[] LINE_PARSERS = {LINE_PARSER_CSV, LINE_PARSER_FIX_WIDTH, LINE_PARSER_SPACE_SEP};
 
     private CommandLine commandLine;
     private static List<ConsoleTableFunction> functions;
@@ -89,15 +96,24 @@ public class DataMungingConsoleApp {
         if (commandLine.getArgs().length > 1) {
             throw new ParseException("Too many arguments provided.");
         }
+        final String parser = commandLine.getOptionValue(LINE_PARSER);
+        final String actualParser = parser;
+        if (!Arrays.asList(LINE_PARSERS).contains(actualParser)) {
+            throw new ParseException("Unknown line parser: " + actualParser);
+        }
+
         String file = commandLine.getArgs()[0];
         if (Files.notExists(Paths.get(file))) {
             throw new ParseException("File not found: " + file);
         }
-        if (file.toLowerCase().endsWith(".dat") && !commandLine.hasOption(COLUMN_WIDTHS)) {
-            throw new ParseException(".dat files consist of fix-width columns, please specify " + COLUMN_WIDTHS);
+        if (LINE_PARSER_FIX_WIDTH.equals(parser) && !commandLine.hasOption(COLUMN_WIDTHS)) {
+            throw new ParseException("Fix width parser needs fix-width columns, please specify " + COLUMN_WIDTHS);
         }
-        if (file.toLowerCase().endsWith(".csv") && !commandLine.hasOption(COLUMN_COUNT)) {
-            throw new ParseException(".csv files needs expected number of columns for validation, please specify " + COLUMN_WIDTHS);
+        if (LINE_PARSER_CSV.equals(parser) && !commandLine.hasOption(COLUMN_COUNT)) {
+            throw new ParseException("CSV parser needs expected number of columns for validation, please specify " + COLUMN_WIDTHS);
+        }
+        if (LINE_PARSER_SPACE_SEP.equals(parser) && !commandLine.hasOption(COLUMN_COUNT)) {
+            throw new ParseException("CSV parser needs expected number of columns for validation, please specify " + COLUMN_WIDTHS);
         }
     }
 
@@ -119,7 +135,7 @@ public class DataMungingConsoleApp {
         StringTableFactory factory = new DefaultStringTableFactoryImpl(new DefaultStringRecordFactoryImpl());
         String filePath = commandLine.getArgs()[0];
 
-        StringRecordParser recParser = getRecParser(filePath);
+        StringRecordParser recParser = getRecParser();
 
         StringTable table = null;
         Charset charset = Charset.forName(commandLine.getOptionValue(CHARSET));
@@ -150,14 +166,18 @@ public class DataMungingConsoleApp {
         return table;
     }
 
-    private StringRecordParser getRecParser(String filePath) {
-        if (filePath.endsWith(".dat")) {
+    private StringRecordParser getRecParser() {
+        if (LINE_PARSER_CSV.equals(commandLine.getOptionValue(LINE_PARSER))) {
+            int columnCount = Integer.parseInt(commandLine.getOptionValue(COLUMN_COUNT));
+            return new CSVParserImpl(columnCount);
+        }
+        if (LINE_PARSER_FIX_WIDTH.equals(commandLine.getOptionValue(LINE_PARSER))) {
             String[] columnWidthsStr = commandLine.getOptionValue(COLUMN_WIDTHS).split(",");
             return new FixWidthTextParserImpl(Stream.of(columnWidthsStr).mapToInt(Integer::parseInt).toArray());
         }
-        if (filePath.endsWith(".csv")) {
+        if (LINE_PARSER_SPACE_SEP.equals(commandLine.getOptionValue(LINE_PARSER))) {
             int columnCount = Integer.parseInt(commandLine.getOptionValue(COLUMN_COUNT));
-            return new CSVParserImpl(columnCount);
+            return new SpaceSeparatedTextParserImpl(columnCount);
         }
         throw new RuntimeException("Unknown file extension.");
     }
@@ -173,6 +193,7 @@ public class DataMungingConsoleApp {
         options.addOption(Option.builder().longOpt(COLUMN_WIDTHS).hasArg().argName("COLUMN-WIDTHS").desc("fix widths of the columns in the given file").build());
         options.addOption(Option.builder().longOpt(COLUMN_COUNT).hasArg().argName("NUMBER").desc("expected number of columns").build());
         options.addOption(Option.builder().longOpt(CHARSET).required().hasArg().argName("NAME").desc("name of the charset for the given text file").build());
+        options.addOption(Option.builder().longOpt(LINE_PARSER).required().hasArg().argName("LINE-PARSER").desc("how to parse each line: " + LINE_PARSER_CSV + ", " + LINE_PARSER_FIX_WIDTH + ", or " + LINE_PARSER_SPACE_SEP).build());
         options.addOption(Option.builder().longOpt(FUNCTIONS).required().hasArg().argName("FUNC").desc("list of functions to perform").build());
 
         for (ConsoleTableFunction f : functions) {

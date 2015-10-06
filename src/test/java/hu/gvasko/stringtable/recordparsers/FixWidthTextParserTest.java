@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.*;
  * Created by gvasko on 2015.05.22..
  */
 @Category(ClassLevelTest.class)
-public class FixWidthStringRecordParserTest {
+public class FixWidthTextParserTest {
 
     int[] testColumns;
     StringRecordParser recParser;

@@ -9,7 +9,7 @@ import hu.gvasko.stringtable.StringRecordParser;
 public class CSVParserImpl implements StringRecordParser {
 
     private final int columnCount;
-    private static final String commaRegex = "\\,";
+    private static final String separatorRegex = "\\,";
 
     public CSVParserImpl(int columnCount) {
         this.columnCount = columnCount;
@@ -23,7 +23,7 @@ public class CSVParserImpl implements StringRecordParser {
     @Override
     public String[] parseRecord(String rawLine) {
         String safeLine = " " + rawLine + " ";
-        String[] values = safeLine.split(commaRegex);
+        String[] values = safeLine.split(separatorRegex);
 
         if (columnCount > values.length) {
             throw new IllegalArgumentException("Minimal number of columns is " + columnCount + ". Raw line contains different number of columns: " + rawLine);

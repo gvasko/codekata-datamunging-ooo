@@ -9,6 +9,7 @@ import hu.gvasko.stringtable.StringTableParser;
 import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
+import hu.gvasko.stringtable.recordparsers.SpaceSeparatedTextParserImpl;
 import hu.gvasko.testutils.categories.ComponentLevelTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +37,15 @@ public class DataMungingTest {
     }
 
     @Test
-    public void given_weatherDatFile_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
+    public void given_weatherDatFile_when_fixWidthParser_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
         StringRecordParser recordParser = new FixWidthTextParserImpl(WeatherFixture.widthsAsArray());
+        testDayWithSmallestTemperatureSpreadIs14(recordParser, WeatherFixture.getDatFile(), WeatherFixture.getCharset());
+    }
+
+    @Test
+    public void given_weatherDatFile_when_spaceSepParser_then_dayWithSmallestTemperatureSpreadIs14() throws Exception {
+        // The simplest solution would be
+        StringRecordParser recordParser = new SpaceSeparatedTextParserImpl(WeatherFixture.columnCount());
         testDayWithSmallestTemperatureSpreadIs14(recordParser, WeatherFixture.getDatFile(), WeatherFixture.getCharset());
     }
 

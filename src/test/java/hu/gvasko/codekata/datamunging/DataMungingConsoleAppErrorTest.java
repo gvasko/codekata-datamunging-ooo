@@ -32,6 +32,7 @@ public class DataMungingConsoleAppErrorTest {
                 "--" + DIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
                 "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(WeatherFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
                 "--" + CHARSET, "US-ASCII",
+                "--" + LINE_PARSER, LINE_PARSER_FIX_WIDTH,
                 "--" + FUNCTIONS, FUNCTION_NAME_MINDIFF,
                 file
         };
@@ -58,6 +59,7 @@ public class DataMungingConsoleAppErrorTest {
 //                "--" + DIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
                 "--" + COLUMN_WIDTHS, String.join(",", String.join(",", Arrays.stream(WeatherFixture.widthsAsArray()).mapToObj(Integer::toString).toArray(String[]::new))),
                 "--" + CHARSET, "US-ASCII",
+                "--" + LINE_PARSER, LINE_PARSER_FIX_WIDTH,
                 "--" + FUNCTIONS, FUNCTION_NAME_MINDIFF,
                 file
         };
@@ -84,6 +86,7 @@ public class DataMungingConsoleAppErrorTest {
                 "--" + DIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
                 "--" + COLUMN_COUNT, Integer.toString(WeatherFixture.columnCount()),
                 "--" + CHARSET, "US-ASCII",
+                "--" + LINE_PARSER, LINE_PARSER_CSV,
                 "--" + FUNCTIONS, FUNCTION_NAME_MINDIFF,
                 file
         };
@@ -96,6 +99,54 @@ public class DataMungingConsoleAppErrorTest {
         assertThat("Error message in the output",
                 consoleAppOutput, containsString("Minimal number of columns"));
     }
+
+    @Test
+    public void given_footballDatFile_when_spaceSepParser_then_cannotParse() throws Exception {
+        String file = Paths.get(FootballFixture.getDatFile()).toString();
+        String[] arguments = {
+                "--" + FIRST_LINE_IS_HEADER,
+                "--" + SKIP_EMPTY_LINES,
+                "--" + SKIP_SPLITTER_LINES,
+                "--" + DIFF_1_COLUMN, FootballFixture.GOALS_FOR.columnName(),
+                "--" + DIFF_2_COLUMN, FootballFixture.GOALS_AGAINST.columnName(),
+                "--" + DIFF_RETURN_COLUMN, FootballFixture.TEAM.columnName(),
+                "--" + COLUMN_COUNT, Integer.toString(FootballFixture.columnCount()),
+                "--" + CHARSET, "US-ASCII",
+                "--" + LINE_PARSER, LINE_PARSER_SPACE_SEP,
+                "--" + FUNCTIONS, FUNCTION_NAME_MINDIFF,
+                file
+        };
+
+        String consoleAppOutput = runApp(arguments);
+
+        assertThat("The name of the team with the smallest difference in goals",
+                consoleAppOutput, is(not(equalTo("Aston_Villa" + System.lineSeparator()))));
+    }
+
+    @Test
+    public void given_weatherDatFile_when_spaceSepParser_then_dayWithSmallestRSpreadIs14() throws Exception {
+        String file = Paths.get(WeatherFixture.getDatFile()).toString();
+        String[] arguments = {
+                "--" + FIRST_LINE_IS_HEADER,
+                "--" + SKIP_EMPTY_LINES,
+                "--" + KEEP_RECORDS_IF_NUMERIC, WeatherFixture.DAY.columnName(),
+                "--" + DECODE_AS_INTEGER, WeatherFixture.MAX_R.columnName() + "," + WeatherFixture.MIN_R.columnName(),
+                "--" + DIFF_1_COLUMN, WeatherFixture.MIN_R.columnName(),
+                "--" + DIFF_2_COLUMN, WeatherFixture.MAX_R.columnName(),
+                "--" + DIFF_RETURN_COLUMN, WeatherFixture.DAY.columnName(),
+                "--" + COLUMN_COUNT, Integer.toString(WeatherFixture.columnCount()),
+                "--" + CHARSET, "US-ASCII",
+                "--" + LINE_PARSER, LINE_PARSER_SPACE_SEP,
+                "--" + FUNCTIONS, FUNCTION_NAME_MINDIFF,
+                file
+        };
+
+        String consoleAppOutput = runApp(arguments);
+
+        assertThat("The day of the smallest temperature spread",
+                consoleAppOutput, is(not(equalTo("14" + System.lineSeparator()))));
+    }
+
 
 
 }
