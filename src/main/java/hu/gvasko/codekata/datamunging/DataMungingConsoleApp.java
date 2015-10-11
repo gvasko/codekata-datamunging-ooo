@@ -9,6 +9,7 @@ import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import hu.gvasko.stringtable.recordparsers.SpaceSeparatedTextParserImpl;
+import static hu.gvasko.stringtable.filters.StringTableFilters.*;
 import org.apache.commons.cli.*;
 
 import java.nio.charset.Charset;
@@ -144,14 +145,14 @@ public class DataMungingConsoleApp {
                 parser.firstRowIsHeader();
             }
             if (commandLine.hasOption(SKIP_EMPTY_LINES)) {
-                parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
+                parser.addLineFilter(skipEmptyLines());
             }
             if (commandLine.hasOption(SKIP_SPLITTER_LINES)) {
-                parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
+                parser.addLineFilter(skipSplitterLines());
             }
             if (commandLine.hasOption(KEEP_RECORDS_IF_NUMERIC)) {
                 for (String column : commandLine.getOptionValue(KEEP_RECORDS_IF_NUMERIC).split(",")) {
-                    parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(column));
+                    parser.addRecordFilter(onlyNumbersInColumn(column));
                 }
             }
             table = parser.parse();
@@ -159,7 +160,7 @@ public class DataMungingConsoleApp {
 
         if (commandLine.hasOption(DECODE_AS_INTEGER)) {
             table.addStringDecoderToColumns(
-                    factory.getCommonDecoders().keepIntegersOnly(),
+                    keepIntegersOnly(),
                     commandLine.getOptionValue(DECODE_AS_INTEGER).split(","));
         }
 

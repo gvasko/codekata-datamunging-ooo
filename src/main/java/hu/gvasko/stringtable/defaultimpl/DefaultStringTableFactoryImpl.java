@@ -15,57 +15,12 @@ import java.util.function.UnaryOperator;
 /**
  * Created by gvasko on 2015.05.06..
  */
-public class DefaultStringTableFactoryImpl implements StringTableFactoryExt, CommonDecoders, CommonLineFilters, CommonRecordFilters {
+public class DefaultStringTableFactoryImpl implements StringTableFactoryExt {
 
     private StringRecordFactory recordFactory;
 
     public DefaultStringTableFactoryImpl(StringRecordFactory recordFactory) {
         this.recordFactory = recordFactory;
-    }
-
-    // TODO: move to somewhere else?
-
-    @Override
-    public CommonDecoders getCommonDecoders() {
-        return this;
-    }
-
-    @Override
-    public CommonLineFilters getCommonLineFilters() {
-        return this;
-    }
-
-    @Override
-    public CommonRecordFilters getCommonRecordFilters() {
-        return this;
-    }
-
-    @Override
-    public UnaryOperator<String> keepIntegersOnly() {
-        return s -> {
-            StringBuilder sb = new StringBuilder();
-            for (char c : s.toCharArray()) {
-                if (Character.isDigit(c)) {
-                    sb.append(c);
-                }
-            }
-            return sb.toString();
-        };
-    }
-
-    @Override
-    public Predicate<String> skipEmptyLines() {
-        return line -> !"".equals(line);
-    }
-
-    @Override
-    public Predicate<String> skipSplitterLines() {
-        return line -> "".equals(line) || !"".equals(line.replace(line.charAt(0), ' ').trim());
-    }
-
-    @Override
-    public Predicate<StringRecord> onlyNumbersInColumn(String column) {
-        return record -> record.get(column).matches("^[+-]?\\d+$");
     }
 
     @Override

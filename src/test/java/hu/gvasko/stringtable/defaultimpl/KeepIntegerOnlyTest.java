@@ -7,6 +7,8 @@ import org.junit.experimental.categories.Category;
 
 import java.util.function.UnaryOperator;
 
+import static hu.gvasko.stringtable.filters.StringTableFilters.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -21,7 +23,7 @@ public class KeepIntegerOnlyTest {
 
     @Before
     public void given_theOperator() {
-        keepIntegersOnly = new DefaultStringTableFactoryImpl(null).keepIntegersOnly();
+        keepIntegersOnly = keepIntegersOnly();
     }
 
     @Test

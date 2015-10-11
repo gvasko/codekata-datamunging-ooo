@@ -10,7 +10,9 @@ import hu.gvasko.stringtable.defaultimpl.DefaultStringTableFactoryImpl;
 import hu.gvasko.stringtable.recordparsers.CSVParserImpl;
 import hu.gvasko.stringtable.recordparsers.FixWidthTextParserImpl;
 import hu.gvasko.stringtable.recordparsers.SpaceSeparatedTextParserImpl;
+import static hu.gvasko.stringtable.filters.StringTableFilters.*;
 import hu.gvasko.testutils.categories.ComponentLevelTest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -95,12 +97,12 @@ public class DataMungingTest {
 
     private StringTable readWeatherTable(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
         try (StringTableParser parser = factory.createStringTableParser(recordParser, file, charset)) {
-            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
-            parser.addRecordFilter(factory.getCommonRecordFilters().onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
+            parser.addLineFilter(skipEmptyLines());
+            parser.addRecordFilter(onlyNumbersInColumn(WeatherFixture.DAY.columnName()));
             StringTable table = parser.firstRowIsHeader().parse();
 
             table.addStringDecoderToColumns(
-                    factory.getCommonDecoders().keepIntegersOnly(),
+                    keepIntegersOnly(),
                     WeatherFixture.MAX_TEMP.columnName(),
                     WeatherFixture.MIN_TEMP.columnName());
 
@@ -118,8 +120,8 @@ public class DataMungingTest {
 
     private StringTable readFootballTable(StringRecordParser recordParser, URI file, Charset charset) throws Exception {
         try (StringTableParser parser = factory.createStringTableParser(recordParser, file, charset)) {
-            parser.addLineFilter(factory.getCommonLineFilters().skipEmptyLines());
-            parser.addLineFilter(factory.getCommonLineFilters().skipSplitterLines());
+            parser.addLineFilter(skipEmptyLines());
+            parser.addLineFilter(skipSplitterLines());
             StringTable table = parser.firstRowIsHeader().parse();
             return table;
         }
