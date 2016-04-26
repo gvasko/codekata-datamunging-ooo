@@ -1,3 +1,19 @@
 language: java
 jdk:
   - oraclejdk8
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "QBsxnb1PpatvKOl1VO93LimENcqKwBBCW/Jqb7861eCfJFNqoPCaNa0c9bwRvWOAO327H88xTjUfWxVBAPzmli/E5z24wY0ET/FRfdTomRHsATgNHFCcg8RZvlmfndJpXlDcKl6nHEOMoFMdBqBNl8FJQ/vW3D/y+SQA15EguTQ/Ct2dJVZ5roxSiML9wO1gg+WHrQKAHmIImjj61rv8Ii3cvxLlUq4kI+W0BCLq7VqB3urdmHGEuihE9Wu9GB/aPpCY8HriBeQxalW8RibE3rtmIKwiR9NAMz6Ssd7YW5Lcg6kacdy7L5VgtW45ep4Z3DBfKUw6Oz7xfhyFrzkqYklNTT88YAf2IghRJqU32iKpH9Kjw5Pz65fpWqZdgemggRONlDiFTSBH8Vw8hpwfWufdgoAQvdopvl+FYqCJO3brCD9zBDVjBJmKK2eBNMNGySUCY/tguzjE4FMJbBoSgTJX+JtFDwAWvd2YOa/qWV/3hLQ8VS/RrZxX7aU/bTSvgSvBvqsEscedzW9pK/bo4YiB4a7gwoEmvCtLE4qqNNI0ui5+PwlH1CsQjllGsrosdNgVTXBWLnUsLsOrDVw7Az4Lq6ZM33wjPGYywEoyt8+FFCJnWSxB/k8yxawFby+v69nNikNQQwAT+RQIkM3LP8TvPtbo+M7BjHi6NqNt03w="
+
+addons:
+  coverity_scan:
+    project:
+      name: "gvasko/codekata-datamunging-ooo"
+      description: "Practicing OO and testing on codekata 04"
+    notification_email: gabor.vaskoszedlar@gmail.com
+    build_command_prepend: ""
+    build_command:   "gradle build"
+    branch_pattern: master
