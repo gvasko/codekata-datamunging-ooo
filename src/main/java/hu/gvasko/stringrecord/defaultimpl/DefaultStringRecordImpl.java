@@ -33,13 +33,13 @@ class DefaultStringRecordImpl implements StringRecord {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         boolean first = true;
-        for (String field : fields.keySet()) {
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
             if (!first) {
                 sb.append(',');
             }
-            sb.append(field);
+            sb.append(entry.getKey());
             sb.append(':');
-            sb.append(fields.get(field));
+            sb.append(entry.getValue());
             first = false;
         }
         sb.append('}');

@@ -35,3 +35,7 @@ tasks.withType(JDepend) {
         text.enabled = false
     }
 }
+
+findbugs {
+    sourceSets = [sourceSets.main]
+}
