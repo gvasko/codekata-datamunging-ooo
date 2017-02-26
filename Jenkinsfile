@@ -1,6 +1,5 @@
 node('java') {
     stage 'Checkout'
-        deleteDir()
         checkout scm
 
     stage 'Build'
